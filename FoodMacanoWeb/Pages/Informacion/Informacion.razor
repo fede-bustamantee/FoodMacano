@@ -1,0 +1,39 @@
+﻿@page "/informacion/{ProductoId:int}"
+@inject IGenericService<Producto> productoService
+@inject IGenericService<DescripcionProducto> descripcionProductoService
+
+<main>
+    <section class="info container">
+        <div class="info-img">
+            @if (producto != null)
+            {
+                <img src="@producto.ImagenUrl" alt="@producto.Nombre" />
+            }
+        </div>
+
+        <div class="info-txt">
+            @if (producto != null && descripcionProducto != null)
+            {
+                <h2>@producto.Nombre</h2>
+                <p>@descripcionProducto.DescripcionLarga</p>
+                <a href="menu" class="btn-2">Encargar</a>
+
+            }
+        </div>
+    </section>
+</main>
+
+@code {
+    [Parameter] public int ProductoId { get; set; }
+    private Producto? producto;
+    private DescripcionProducto? descripcionProducto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        producto = await productoService.GetByIdAsync(ProductoId);
+        if (producto?.DescripcionProductoId != null)
+        {
+            descripcionProducto = await descripcionProductoService.GetByIdAsync(producto.DescripcionProductoId);
+        }
+    }
+}

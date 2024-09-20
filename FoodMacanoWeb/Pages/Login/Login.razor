@@ -1,0 +1,121 @@
+﻿@page "/login"
+@inject FirebaseAuthService AuthService
+
+<h3>Iniciar sesión</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+@if (!IsAuthenticated)
+{
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" @bind="usuario.Email" />
+    </div>
+    <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" class="form-control" @bind="usuario.Password" />
+    </div>
+    <div>
+        @if (isLoading)
+        {
+            <p>Cargando...</p>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="IniciarSesion">Ingresar</button>
+        }
+    </div>
+
+    <h4>O inicia sesión con</h4>
+    <button class="btn btn-danger" @onclick="IniciarSesionGoogle">Google</button>
+    <button class="btn btn-primary" @onclick="IniciarSesionFacebook">Facebook</button>
+}
+else
+{
+    <p>Ya has iniciado sesión.</p>
+    <button class="btn btn-secondary" @onclick="CerrarSesion">Cerrar sesión</button>
+}
+
+@code {
+    private Usuario usuario = new Usuario();
+    private bool IsAuthenticated = false;
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsAuthenticated = await AuthService.IsUserAuthenticated();
+    }
+
+    private async Task IniciarSesion()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            var userId = await AuthService.SignInWithEmailPassword(usuario.Email, usuario.Password);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                IsAuthenticated = true;
+                NavigationManager.NavigateTo("/");  // Redirigir a la página principal después del login exitoso
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task IniciarSesionGoogle()
+    {
+        try
+        {
+            var userId = await AuthService.SignInWithGoogle();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                IsAuthenticated = true;
+                NavigationManager.NavigateTo("/");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task IniciarSesionFacebook()
+    {
+        try
+        {
+            var userId = await AuthService.SignInWithFacebook();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                IsAuthenticated = true;
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Error al iniciar sesión con Facebook.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task CerrarSesion()
+    {
+        await AuthService.SignOut();
+        usuario = new Usuario();
+        IsAuthenticated = false;
+        NavigationManager.NavigateTo("/");
+    }
+}
