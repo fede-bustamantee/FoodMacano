@@ -21,11 +21,11 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Build FoodMacano project
-        run: dotnet build FoodMacano/FoodMacano.csproj --configuration Release
+      - name: Build BackFoodMacano project
+        run: dotnet build BackFoodMacano/BackFoodMacano.csproj --configuration Release
 
-      - name: Publish FoodMacano project
-        run: dotnet publish FoodMacano/FoodMacano.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Publish BackFoodMacano project
+        run: dotnet publish BackFoodMacano/BackFoodMacano.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
