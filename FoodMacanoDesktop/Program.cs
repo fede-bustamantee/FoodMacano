@@ -16,7 +16,7 @@ namespace FoodMacanoDesktop
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            Application.Run(new Productos());
+            Application.Run(new MenuPrincipalView());
             
         }
     }

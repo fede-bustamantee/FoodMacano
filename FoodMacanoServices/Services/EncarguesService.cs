@@ -1,52 +1,47 @@
-﻿using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
-using System.Net.Http.Json;
+﻿using FoodMacanoServices.Models;
+using FoodMacanoServices.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoodMacanoServices.Services
 {
-    public class EncarguesService : IGenericService<Encargue>
+    public class EncarguesService
     {
-        private readonly HttpClient _httpClient;
-        private const string ApiEndpoint = "encargues";
+        private readonly IGenericService<Encargue> _encargueService;
 
-        public EncarguesService(HttpClient httpClient)
+        public EncarguesService()
         {
-            _httpClient = httpClient;
+            _encargueService = new GenericService<Encargue>();
         }
 
-        public async Task<List<Encargue>> GetAllAsync()
+        // Obtener todos los encargues
+        public async Task<List<Encargue>> GetEncarguesAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<Encargue>>(ApiEndpoint);
+            return await _encargueService.GetAllAsync() ?? new List<Encargue>();
         }
 
-        public async Task<Encargue> GetByIdAsync(int id)
+        // Agregar un nuevo encargue
+        public async Task AddEncargueAsync(Encargue nuevoEncargue)
         {
-            return await _httpClient.GetFromJsonAsync<Encargue>($"{ApiEndpoint}/{id}");
+            await _encargueService.AddAsync(nuevoEncargue);
         }
 
-        public async Task<Encargue> AddAsync(Encargue encargue)
+        // Eliminar un encargue por su Id
+        public async Task DeleteEncargueAsync(int id)
         {
-            var response = await _httpClient.PostAsJsonAsync(ApiEndpoint, encargue);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<Encargue>();
+            await _encargueService.DeleteAsync(id);
         }
 
-        public async Task UpdateAsync(Encargue encargue)
+        // Actualizar un encargue existente
+        public async Task UpdateEncargueAsync(Encargue encargue)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{ApiEndpoint}/{encargue.Id}", encargue);
-            response.EnsureSuccessStatusCode();
+            await _encargueService.UpdateAsync(encargue);
         }
 
-        public async Task DeleteAsync(int id)
+        // Obtener un encargue por su Id
+        public async Task<Encargue> GetEncargueByIdAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"{ApiEndpoint}/{id}");
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task<List<Encargue>> GetAleatoriosAsync()
-        {
-            // Este método no es relevante para Encargues, pero lo implementamos para cumplir con la interfaz
-            throw new NotImplementedException();
+            return await _encargueService.GetByIdAsync(id);
         }
     }
 }

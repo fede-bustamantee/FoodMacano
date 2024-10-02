@@ -71,15 +71,29 @@ namespace FoodMacanoServices.Services
                 throw new ApplicationException(response?.ToString());
             }
         }
-
+        public async Task<bool> ResourceExistsAsync(int id)
+        {
+            var response = await client.GetAsync($"{_endpoint}/{id}");
+            return response.IsSuccessStatusCode; // Retorna true si el recurso existe
+        }
         public async Task DeleteAsync(int id)
         {
+            // Verificar si el recurso existe
+            if (!await ResourceExistsAsync(id))
+            {
+                Console.WriteLine($"El recurso con ID {id} no se encuentra y no se puede eliminar.");
+                return; // O manejarlo como prefieras
+            }
+
+            // Si el recurso existe, proceder a eliminarlo
             var response = await client.DeleteAsync($"{_endpoint}/{id}");
             if (!response.IsSuccessStatusCode)
             {
-                throw new ApplicationException(response.ToString());
+                var content = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"Error al eliminar el recurso: {response.StatusCode}, Detalles: {content}");
             }
         }
+
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using FoodMacanoServices.Models;
+﻿using FoodMacanoDesktop.Views.Configuracion;
+using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 
 namespace FoodMacanoDesktop.Views.Productos
 {
-    public partial class Productos : Form
+    public partial class ProductosView : Form
     {
         GenericService<Categoria> categoriaService = new GenericService<Categoria>();
 
@@ -21,7 +21,7 @@ namespace FoodMacanoDesktop.Views.Productos
 
         BindingSource listaProductos = new BindingSource();
         BindingSource listaCategorias = new BindingSource();
-        public Productos()
+        public ProductosView()
         {
             InitializeComponent();
             dataGridProductos.DataSource = listaProductos;
@@ -48,6 +48,32 @@ namespace FoodMacanoDesktop.Views.Productos
 
         private void cboCategorias_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CargarDatosGrilla();
+        }
+        private async void btnEliminar_Click(object sender, EventArgs e)
+        {
+            var producto = (Producto)listaProductos.Current;
+            var respuesta = MessageBox.Show($"¿Está seguro que quiere eliminar el producto {producto.Nombre}?", "Eliminar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (respuesta == DialogResult.Yes)
+            {
+                await productoService.DeleteAsync(producto.Id);
+                CargarDatosGrilla();
+            }
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            var categoria = (Categoria)listaCategorias.Current;
+            AgregarEditarProductoView agregarEditarProductoView = new AgregarEditarProductoView(categoria);
+            agregarEditarProductoView.ShowDialog();
+            CargarDatosGrilla();
+        }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            var producto = (Producto)listaProductos.Current;
+            AgregarEditarProductoView agregarEditarProductoView = new AgregarEditarProductoView(producto);
+            agregarEditarProductoView.ShowDialog();
             CargarDatosGrilla();
         }
     }

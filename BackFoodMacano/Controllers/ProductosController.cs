@@ -41,6 +41,7 @@ namespace BackFoodMacano.Controllers
                 .OrderBy(p => Guid.NewGuid())  // Orden aleatorio
                 .Take(8)                       // Seleccionar 7 productos aleatorios
                 .Include(p => p.DescripcionProducto) // Incluir la entidad relacionada
+                .Include(c => c.Categoria)
                 .ToListAsync();
 
             return productosAleatorios;
@@ -52,7 +53,8 @@ namespace BackFoodMacano.Controllers
         {
             // Incluir la entidad relacionada DescripcionProducto
             var producto = await _context.productos
-                                         .Include(p => p.DescripcionProducto) // Asegúrate de incluir la relación
+                                         .Include(p => p.DescripcionProducto)
+                                         .Include(c => c.Categoria)
                                          .FirstOrDefaultAsync(p => p.Id == id);
 
             if (producto == null)

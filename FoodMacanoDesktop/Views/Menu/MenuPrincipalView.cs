@@ -1,4 +1,5 @@
 ﻿using FoodMacanoDesktop.Views.Login;
+using FoodMacanoDesktop.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,12 +9,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FoodMacanoDesktop.Views.Productos;
+using FoodMacanoDesktop.Views.Encargues;
+using FoodMacanoDesktop.Views.DatosDelNegocio;
 
 namespace FoodMacanoDesktop.Views.Menu
 {
     public partial class MenuPrincipalView : Form
     {
         bool logueado = false;
+        // Asegúrate de que este panel esté definido
+        private Button botonActual; // Para rastrear el botón actualmente resaltado
+
+
         public MenuPrincipalView()
         {
             InitializeComponent();
@@ -38,9 +46,9 @@ namespace FoodMacanoDesktop.Views.Menu
         //Metodo sin retorno que oculta todos los submenus cuando se llama
         private void SubMenu()
         {
-            SubmenuClientes.Visible = false;//establece que la propiedad bool en false
-            SubmenuProductos.Visible = false;
-            SubmenuEmpleados.Visible = false;
+            SubmenuPedidos.Visible = false;//establece que la propiedad bool en false
+            SubmenuEncargues.Visible = false;
+            SubmenuDatos.Visible = false;
             SubmenuLocalidades.Visible = false;
             SubmenuConfiguracion.Visible = false;
             SubmenuInfo.Visible = false;
@@ -52,9 +60,9 @@ namespace FoodMacanoDesktop.Views.Menu
         private void OcultarSubmenu()
         {
             //Verifica si cada submenú está visible y lo oculta si es necesario.
-            if (SubmenuClientes.Visible == true) SubmenuClientes.Visible = false;
-            if (SubmenuProductos.Visible == true) SubmenuProductos.Visible = false;
-            if (SubmenuEmpleados.Visible == true) SubmenuEmpleados.Visible = false;
+            if (SubmenuPedidos.Visible == true) SubmenuPedidos.Visible = false;
+            if (SubmenuEncargues.Visible == true) SubmenuEncargues.Visible = false;
+            if (SubmenuDatos.Visible == true) SubmenuDatos.Visible = false;
             if (SubmenuLocalidades.Visible == true) SubmenuLocalidades.Visible = false;
             if (SubmenuConfiguracion.Visible == true) SubmenuConfiguracion.Visible = false;
             if (SubmenuInfo.Visible == true) SubmenuInfo.Visible = false;
@@ -91,127 +99,88 @@ namespace FoodMacanoDesktop.Views.Menu
             formularioHijos.BringToFront();//ya que uso un logo traigo el formulario para enfrente
             formularioHijos.Show(); //mostramos el formulario hijo
         }
+        private void ResaltarBoton(Button botonSeleccionado)
+        {
+            // Si ya hay un botón resaltado, restablece su color
+            if (botonActual != null)
+            {
+                botonActual.BackColor = Color.Transparent; // O el color original que quieras
+            }
+
+            // Resaltar el nuevo botón
+            botonSeleccionado.BackColor = Color.Orchid; // Color para el botón seleccionado
+
+            // Actualiza la referencia del botón actual
+            botonActual = botonSeleccionado;
+        }
+        private void ResaltarEncabezadosAbiertos()
+        {
+            // Restablece el color de fondo de los botones
+            btnPedidos.BackColor = 
+            btnEncargues.BackColor = 
+            btnNosotros.BackColor = 
+            btnConfiguracion.BackColor = Color.Empty;
+
+            // Resalta el encabezado si los submenús son visibles
+            if (SubmenuPedidos.Visible) btnPedidos.BackColor = Color.Pink;
+            if (SubmenuEncargues.Visible) btnEncargues.BackColor = Color.Pink;
+            if (SubmenuDatos.Visible) btnNosotros.BackColor = Color.Pink;
+            if (SubmenuConfiguracion.Visible) btnConfiguracion.BackColor = Color.Pink;
+        }
 
         //botones que abren los submenus y formularios hijos
-        private void btnClientes_Click(object sender, EventArgs e)
+        private void btnPedidos_Click(object sender, EventArgs e)
         {
-            MostrarSubmenu(SubmenuClientes);
+            MostrarSubmenu(SubmenuPedidos);
+            ResaltarEncabezadosAbiertos();
         }
 
-        private void btnTodosLosClientes_Click(object sender, EventArgs e)
+        private void btnTodos_Click(object sender, EventArgs e)
         {
-            //AbrirFormulariosHijos(new ClientesViewFrom());
-            OcultarSubmenu();
+            AbrirFormulariosHijos(new TodosLosProductos());
+            ResaltarBoton(btnTodos);
         }
 
-        private void btnProductos_Click(object sender, EventArgs e)
+        private void btnHamburguesas_Click(object sender, EventArgs e)
         {
-            MostrarSubmenu(SubmenuProductos);
+            AbrirFormulariosHijos(new PrimerCategoriaView());
+            ResaltarBoton(btnHamburguesas);
         }
 
-        private void btnListaProductos_Click(object sender, EventArgs e)
+        private void btnEncargues_Click(object sender, EventArgs e)
         {
-            OcultarSubmenu();
-            //AbrirFormulariosHijos(new ProductosViewFrom());
+            MostrarSubmenu(SubmenuEncargues);
+            ResaltarEncabezadosAbiertos();
         }
 
-        private void btnEmpleados_Click(object sender, EventArgs e)
+        private void btnListaEncargues_Click(object sender, EventArgs e)
         {
-            MostrarSubmenu(SubmenuEmpleados);
+            AbrirFormulariosHijos(new EncarguesView());
+            ResaltarBoton(btnListaEncargues);
         }
 
-        private void btnRegistroEmpleados_Click(object sender, EventArgs e)
+        private void btnNosotros_Click(object sender, EventArgs e)
         {
-            OcultarSubmenu();
-            //AbrirFormulariosHijos(new EmpleadosViewFrom());
+            MostrarSubmenu(SubmenuDatos);
+            ResaltarEncabezadosAbiertos();
         }
-        private void btnConfiguracion_Click(object sender, EventArgs e)
+
+        private void btnDatos_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new DatosView());
+            ResaltarBoton(btnDatos);
+        }
+
+        private void btnConfiguracion_Click_1(object sender, EventArgs e)
         {
             MostrarSubmenu(SubmenuConfiguracion);
-        }
-
-        private void btnConfigClientes_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmConfigClientes(this));
-            OcultarSubmenu();
+            ResaltarEncabezadosAbiertos();
         }
 
         private void btnConfigProductos_Click(object sender, EventArgs e)
         {
-            //AbrirFormulariosHijos(new FrmConfigProductos(this));
-            OcultarSubmenu();
-        }
-
-        private void btnConfigEmpleados_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmConfigEmpleados(this));
-            OcultarSubmenu();
-        }
-
-        private void btnConfigAbastecedor_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmConfigAbastecedores(this));
-            OcultarSubmenu();
-        }
-
-        private void btnConfigSector_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmConfigSectores(this));
-            OcultarSubmenu();
-        }
-
-        private void btnConfigLocalidad_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmConfigLocalidades(this));
-            OcultarSubmenu();
-        }
-
-        private void btnConfigProvincia_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmConfigProvincias(this));
-            OcultarSubmenu();
-        }
-
-        private void btnAyuda_Click(object sender, EventArgs e)
-        {
-            MostrarSubmenu(SubmenuInfo);
-        }
-
-        private void btnInfo_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new FrmInformaciones());
-            MostrarSubmenu(SubmenuInfo);
-        }
-        private void btnSalir_Click(object sender, EventArgs e)
-        {
-            MostrarSubmenu(SubmenuSalir);
-        }
-
-        private void btnSalirDelSistema_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-            OcultarSubmenu();
-        }
-        private void btnLocalidades_Click(object sender, EventArgs e)
-        {
-            MostrarSubmenu(SubmenuLocalidades);
-        }
-
-        private void btnArchivoLocalidades_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new LocalidadesViewFrom());
-            OcultarSubmenu();
-        }
-
-        private void btnReabastecimiento_Click(object sender, EventArgs e)
-        {
-            MostrarSubmenu(SubmenuReabastecimiento);
-        }
-
-        private void btnInforme_Click(object sender, EventArgs e)
-        {
-            //AbrirFormulariosHijos(new AbastecedoresViewFrom());
-            OcultarSubmenu();
+            AbrirFormulariosHijos(new ProductosView());
+            ResaltarBoton(btnConfigProductos);
         }
     }
 }
