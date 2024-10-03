@@ -28,11 +28,23 @@ namespace FoodMacanoDesktop.Views.Configuracion
         public AgregarEditarProductoView(Producto producto)
         {
             InitializeComponent();
+
             this.producto = producto;
-            txtCategoria.Text = producto?.Categoria?.Nombre;
+
+            // Si el producto tiene una categoría cargada, la mostramos
+            if (producto?.Categoria != null)
+            {
+                txtCategoria.Text = producto.Categoria.Nombre;
+            }
+            else
+            {
+                txtCategoria.Text = "Sin categoría";  // Puedes manejar esto como prefieras
+            }
+
             txtProducto.Text = producto?.Nombre;
             txtImagen.Text = producto?.ImagenUrl;
         }
+
         private async void btnGuardar_Click(object sender, EventArgs e)
         {
             producto.Nombre = txtProducto.Text;

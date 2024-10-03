@@ -63,8 +63,8 @@ namespace FoodMacanoDesktop.Views.Productos
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            var categoria = (Categoria)listaCategorias.Current;
-            AgregarEditarProductoView agregarEditarProductoView = new AgregarEditarProductoView(categoria);
+            var producto = (Producto)listaProductos.Current;
+            AgregarEditarProductoView agregarEditarProductoView = new AgregarEditarProductoView(producto);
             agregarEditarProductoView.ShowDialog();
             CargarDatosGrilla();
         }
@@ -72,8 +72,18 @@ namespace FoodMacanoDesktop.Views.Productos
         private void btnEditar_Click(object sender, EventArgs e)
         {
             var producto = (Producto)listaProductos.Current;
+
+            if (producto == null)
+            {
+                MessageBox.Show("Seleccione un producto para editar.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Abrimos el formulario de edición con el producto seleccionado
             AgregarEditarProductoView agregarEditarProductoView = new AgregarEditarProductoView(producto);
             agregarEditarProductoView.ShowDialog();
+
+            // Recargamos los datos de la grilla después de cerrar el formulario de edición
             CargarDatosGrilla();
         }
     }

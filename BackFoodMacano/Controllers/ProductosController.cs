@@ -23,7 +23,11 @@ namespace BackFoodMacano.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> Getproductos([FromQuery] int? idCategoria)
         {
-            var query = _context.productos.Include(p => p.DescripcionProducto).AsQueryable();
+            // Incluimos la relación con Categoria
+            var query = _context.productos
+                                .Include(p => p.DescripcionProducto)
+                                .Include(p => p.Categoria) 
+                                .AsQueryable();
 
             if (idCategoria.HasValue)
             {
