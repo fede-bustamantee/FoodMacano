@@ -93,6 +93,17 @@ namespace FoodMacanoServices.Services
                 throw new ApplicationException($"Error al eliminar el recurso: {response.StatusCode}, Detalles: {content}");
             }
         }
+        public async Task<List<T>?> GetRandomAsync(int count)
+        {
+            var response = await client.GetAsync($"{_endpoint}/aleatorios?count={count}");
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content?.ToString());
+            }
+            return JsonSerializer.Deserialize<List<T>>(content, options);
+        }
+
 
     }
 

@@ -22,6 +22,7 @@ namespace FoodMacanoDesktop.Views.Configuracion
             InitializeComponent();
             producto = new Producto();
             producto.CategoriaId = categoria.Id;
+            producto.DescripcionProducto = new DescripcionProducto();  // Aseguramos la inicialización
             txtCategoria.Text = categoria.Nombre;
         }
         //editar
@@ -31,23 +32,25 @@ namespace FoodMacanoDesktop.Views.Configuracion
 
             this.producto = producto;
 
-            // Si el producto tiene una categoría cargada, la mostramos
-            if (producto?.Categoria != null)
-            {
-                txtCategoria.Text = producto.Categoria.Nombre;
-            }
-            else
-            {
-                txtCategoria.Text = "Sin categoría";  // Puedes manejar esto como prefieras
-            }
-
+            // Verificamos si el producto tiene una categoría asociada
+            txtCategoria.Text = producto?.Categoria?.Nombre;
             txtProducto.Text = producto?.Nombre;
             txtImagen.Text = producto?.ImagenUrl;
+            txtPrecio.Text = producto?.Precio.ToString();
+            txtCalidad.Text = producto?.Calidad;
+            txtCalorias.Text = producto?.Calorias.ToString();
+            txtDescripcionCorta.Text = producto?.DescripcionProducto?.DescripcionCorta;
+            txtDescripcionLarga.Text = producto?.DescripcionProducto?.DescripcionLarga;
         }
-
         private async void btnGuardar_Click(object sender, EventArgs e)
         {
             producto.Nombre = txtProducto.Text;
+            producto.ImagenUrl = txtImagen.Text;
+            producto.Precio = Convert.ToInt32(txtPrecio.Text);
+            producto.Calidad = txtCalidad.Text;
+            producto.Calorias = Convert.ToInt32(txtCalorias.Text);
+            producto.DescripcionProducto.DescripcionCorta = txtDescripcionCorta.Text;
+            producto.DescripcionProducto.DescripcionLarga = txtDescripcionLarga.Text;
 
             if (producto.Id == 0)
             {

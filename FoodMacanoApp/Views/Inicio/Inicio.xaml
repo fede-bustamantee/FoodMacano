@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodMacanoApp.Views.Inicio.Inicio"
+             Title="Inicio"
+             BackgroundColor="Black">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Barra superior -->
+        <Grid Padding="25,25" ColumnDefinitions="Auto,*,Auto">
+            <Label Grid.Column="0" 
+                   FontFamily="FontAwesomeSolid" 
+                   Text="&#xf0c9;"
+                   FontSize="18"
+                   HeightRequest="24"/>
+            <Label Grid.Column="2" 
+                   FontFamily="FontAwesomeSolid" 
+                   Text="&#xf07a;" 
+                   FontSize="18" 
+                   HeightRequest="24"/>
+        </Grid>
+
+        <!-- Contenido principal -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20,0">
+                <!-- Buscador -->
+                <Frame CornerRadius="20" Padding="15,5" BorderColor="Gray">
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="&#xf002;" 
+                            FontFamily="FontAwesomeSolid" 
+                            FontSize="15" 
+                            TextColor="White" 
+                            VerticalOptions="Center"/>
+                        <Entry Placeholder="Buscar Comida..." 
+                            PlaceholderColor="Gray" 
+                            TextColor="White"
+                            HorizontalOptions="FillAndExpand"
+                            />
+                    </HorizontalStackLayout>
+                </Frame>
+                
+                <!-- Ofertas -->
+                <Label Text="Ofertas Especiales" TextColor="White" FontSize="18"/>
+                <CarouselView HeightRequest="180" ItemsSource="{Binding OfertasEspeciales}">
+                    <CarouselView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#2A2A2A" CornerRadius="25" Padding="0">
+                                <Grid RowDefinitions="*,Auto">
+                                    <Grid Padding="15" ColumnDefinitions="*,Auto" RowSpacing="0">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                            <Label Text="{Binding Nombre}" TextColor="White" FontSize="16"/>
+                                            <HorizontalStackLayout Spacing="5">
+                                                <Image Source="star_icon.png" HeightRequest="15"/>
+                                                <Label Text="{Binding Calidad, StringFormat='Calidad: {0}'}" TextColor="Gray" FontSize="12"/>
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Precio, StringFormat='${0}'}" TextColor="White" FontSize="16"/>
+                                        </VerticalStackLayout>
+                                        <Image Grid.Column="1"
+                                               Source="{Binding ImagenUrl}" 
+                                               HeightRequest="200" WidthRequest="150"
+                                               TranslationY="20"/>
+                                    </Grid>
+                                    <Button Grid.Row="1"
+                                            Text="Agregar al Carrito" 
+                                            BackgroundColor="Orange" 
+                                            TextColor="Black" 
+                                            CornerRadius="10"
+                                            HeightRequest="50"
+                                            HorizontalOptions="Start"
+                                            WidthRequest="180"/>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CarouselView.ItemTemplate>
+                </CarouselView>
+
+                <!-- Categorias -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Categorias" TextColor="White" FontSize="18"/>
+                    <Label Grid.Column="1" Text="Ver todo" TextColor="Orange" FontSize="14" VerticalOptions="Center"/>
+                </Grid>
+                <CollectionView HeightRequest="100" ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Padding="10">
+                                <Frame BackgroundColor="#2A2A2A" CornerRadius="20" Padding="15">
+                                    <Image Source="{Binding Icon}" HeightRequest="30" WidthRequest="30"/>
+                                </Frame>
+                                <Label Text="{Binding Name}" TextColor="Gray" HorizontalOptions="Center"/>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Productos de categoría -->
+                <CollectionView ItemsLayout="VerticalGrid, 2">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#2A2A2A" CornerRadius="20" Margin="5" Padding="10">
+                                <VerticalStackLayout Spacing="5">
+                                    <Image Source="{Binding Image}" Aspect="AspectFit" HeightRequest="100"/>
+                                    <Label Text="{Binding Name}" TextColor="White" FontSize="14"/>
+                                    <Label Text="{Binding Description}" TextColor="Gray" FontSize="12"/>
+                                    <Label Text="{Binding Price}" TextColor="Orange" FontSize="14"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Menú inferior fijo -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*" BackgroundColor="#2A2A2A" Padding="0,10">
+            <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                <Image Source="home_icon.png" HeightRequest="24"/>
+                <Label Text="Home" TextColor="Orange" FontSize="12"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                <Image Source="orders_icon.png" HeightRequest="24"/>
+                <Label Text="Orders" TextColor="Gray" FontSize="12"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                <Image Source="favorites_icon.png" HeightRequest="24"/>
+                <Label Text="Favorites" TextColor="Gray" FontSize="12"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center">
+                <Image Source="profile_icon.png" HeightRequest="24"/>
+                <Label Text="Profile" TextColor="Gray" FontSize="12"/>
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

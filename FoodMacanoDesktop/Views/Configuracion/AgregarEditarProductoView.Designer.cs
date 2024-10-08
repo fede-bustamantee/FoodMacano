@@ -36,12 +36,16 @@
             btnGuardar = new FontAwesome.Sharp.IconButton();
             txtImagen = new TextBox();
             label3 = new Label();
-            textBox2 = new TextBox();
+            txtPrecio = new TextBox();
             label4 = new Label();
-            textBox3 = new TextBox();
+            txtCalorias = new TextBox();
             label5 = new Label();
-            textBox4 = new TextBox();
+            txtCalidad = new TextBox();
             label6 = new Label();
+            txtDescripcionCorta = new TextBox();
+            label7 = new Label();
+            txtDescripcionLarga = new TextBox();
+            label8 = new Label();
             SuspendLayout();
             // 
             // txtCategoria
@@ -92,7 +96,7 @@
             btnCancelar.IconFont = FontAwesome.Sharp.IconFont.Solid;
             btnCancelar.IconSize = 30;
             btnCancelar.ImageAlign = ContentAlignment.MiddleLeft;
-            btnCancelar.Location = new Point(414, 328);
+            btnCancelar.Location = new Point(424, 379);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(111, 30);
             btnCancelar.TabIndex = 20;
@@ -106,7 +110,7 @@
             btnGuardar.IconFont = FontAwesome.Sharp.IconFont.Solid;
             btnGuardar.IconSize = 30;
             btnGuardar.ImageAlign = ContentAlignment.MiddleLeft;
-            btnGuardar.Location = new Point(273, 328);
+            btnGuardar.Location = new Point(283, 379);
             btnGuardar.Name = "btnGuardar";
             btnGuardar.Size = new Size(111, 30);
             btnGuardar.TabIndex = 19;
@@ -130,18 +134,18 @@
             label3.Location = new Point(243, 117);
             label3.Margin = new Padding(1, 0, 1, 0);
             label3.Name = "label3";
-            label3.Size = new Size(72, 20);
+            label3.Size = new Size(62, 20);
             label3.TabIndex = 25;
-            label3.Text = "Producto:";
+            label3.Text = "Imagen:";
             // 
-            // textBox2
+            // txtPrecio
             // 
-            textBox2.Font = new Font("Segoe UI", 11F);
-            textBox2.Location = new Point(329, 152);
-            textBox2.Margin = new Padding(1);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(225, 27);
-            textBox2.TabIndex = 28;
+            txtPrecio.Font = new Font("Segoe UI", 11F);
+            txtPrecio.Location = new Point(329, 152);
+            txtPrecio.Margin = new Padding(1);
+            txtPrecio.Name = "txtPrecio";
+            txtPrecio.Size = new Size(225, 27);
+            txtPrecio.TabIndex = 28;
             // 
             // label4
             // 
@@ -150,18 +154,18 @@
             label4.Location = new Point(243, 155);
             label4.Margin = new Padding(1, 0, 1, 0);
             label4.Name = "label4";
-            label4.Size = new Size(72, 20);
+            label4.Size = new Size(53, 20);
             label4.TabIndex = 27;
-            label4.Text = "Producto:";
+            label4.Text = "Precio:";
             // 
-            // textBox3
+            // txtCalorias
             // 
-            textBox3.Font = new Font("Segoe UI", 11F);
-            textBox3.Location = new Point(331, 231);
-            textBox3.Margin = new Padding(1);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(225, 27);
-            textBox3.TabIndex = 32;
+            txtCalorias.Font = new Font("Segoe UI", 11F);
+            txtCalorias.Location = new Point(331, 231);
+            txtCalorias.Margin = new Padding(1);
+            txtCalorias.Name = "txtCalorias";
+            txtCalorias.Size = new Size(225, 27);
+            txtCalorias.TabIndex = 32;
             // 
             // label5
             // 
@@ -170,18 +174,18 @@
             label5.Location = new Point(245, 234);
             label5.Margin = new Padding(1, 0, 1, 0);
             label5.Name = "label5";
-            label5.Size = new Size(72, 20);
+            label5.Size = new Size(65, 20);
             label5.TabIndex = 31;
-            label5.Text = "Producto:";
+            label5.Text = "Calorias:";
             // 
-            // textBox4
+            // txtCalidad
             // 
-            textBox4.Font = new Font("Segoe UI", 11F);
-            textBox4.Location = new Point(331, 193);
-            textBox4.Margin = new Padding(1);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(225, 27);
-            textBox4.TabIndex = 30;
+            txtCalidad.Font = new Font("Segoe UI", 11F);
+            txtCalidad.Location = new Point(331, 193);
+            txtCalidad.Margin = new Padding(1);
+            txtCalidad.Name = "txtCalidad";
+            txtCalidad.Size = new Size(225, 27);
+            txtCalidad.TabIndex = 30;
             // 
             // label6
             // 
@@ -190,20 +194,64 @@
             label6.Location = new Point(245, 196);
             label6.Margin = new Padding(1, 0, 1, 0);
             label6.Name = "label6";
-            label6.Size = new Size(72, 20);
+            label6.Size = new Size(63, 20);
             label6.TabIndex = 29;
-            label6.Text = "Producto:";
+            label6.Text = "Calidad:";
+            // 
+            // txtDescripcionCorta
+            // 
+            txtDescripcionCorta.Font = new Font("Segoe UI", 11F);
+            txtDescripcionCorta.Location = new Point(331, 272);
+            txtDescripcionCorta.Margin = new Padding(1);
+            txtDescripcionCorta.Name = "txtDescripcionCorta";
+            txtDescripcionCorta.Size = new Size(225, 27);
+            txtDescripcionCorta.TabIndex = 34;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 11F);
+            label7.Location = new Point(190, 275);
+            label7.Margin = new Padding(1, 0, 1, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(130, 20);
+            label7.TabIndex = 33;
+            label7.Text = "Descripcion Corta:";
+            // 
+            // txtDescripcionLarga
+            // 
+            txtDescripcionLarga.Font = new Font("Segoe UI", 11F);
+            txtDescripcionLarga.Location = new Point(331, 321);
+            txtDescripcionLarga.Margin = new Padding(1);
+            txtDescripcionLarga.Name = "txtDescripcionLarga";
+            txtDescripcionLarga.Size = new Size(225, 27);
+            txtDescripcionLarga.TabIndex = 36;
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Segoe UI", 11F);
+            label8.Location = new Point(184, 321);
+            label8.Margin = new Padding(1, 0, 1, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(131, 20);
+            label8.TabIndex = 35;
+            label8.Text = "Descripcion Larga:";
             // 
             // AgregarEditarProductoView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(textBox3);
+            Controls.Add(txtDescripcionLarga);
+            Controls.Add(label8);
+            Controls.Add(txtDescripcionCorta);
+            Controls.Add(label7);
+            Controls.Add(txtCalorias);
             Controls.Add(label5);
-            Controls.Add(textBox4);
+            Controls.Add(txtCalidad);
             Controls.Add(label6);
-            Controls.Add(textBox2);
+            Controls.Add(txtPrecio);
             Controls.Add(label4);
             Controls.Add(txtImagen);
             Controls.Add(label3);
@@ -229,11 +277,15 @@
         private FontAwesome.Sharp.IconButton btnGuardar;
         private TextBox txtImagen;
         private Label label3;
-        private TextBox textBox2;
+        private TextBox txtPrecio;
         private Label label4;
-        private TextBox textBox3;
+        private TextBox txtCalorias;
         private Label label5;
-        private TextBox textBox4;
+        private TextBox txtCalidad;
         private Label label6;
+        private TextBox txtDescripcionCorta;
+        private Label label7;
+        private TextBox txtDescripcionLarga;
+        private Label label8;
     }
 }

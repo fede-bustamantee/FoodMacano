@@ -37,9 +37,9 @@ namespace BackFoodMacano.DataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Categoria>().HasData(
-                new Categoria { Id = 1, Nombre = "Hamburguesas" },
-                new Categoria { Id = 2, Nombre = "Sanguches" },
-                new Categoria { Id = 3, Nombre = "Bebidas" }
+                new Categoria { Id = 1, Nombre = "Hamburguesas", IconUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/Icons%2FIconHamburguesa.png?alt=media&token=b280cbd2-9016-4647-85e9-048858807010" },
+                new Categoria { Id = 2, Nombre = "Sanguches" , IconUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/Icons%2FIconSandwich.png?alt=media&token=dc21b284-630e-4b54-9b93-1b4668f316f2" },
+                new Categoria { Id = 3, Nombre = "Bebidas", IconUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/Icons%2FIconBebidas.png?alt=media&token=c87c60a9-215c-4a8f-8939-b3423e48a1c0" }
             );
 
             modelBuilder.Entity<DescripcionProducto>().HasData(
