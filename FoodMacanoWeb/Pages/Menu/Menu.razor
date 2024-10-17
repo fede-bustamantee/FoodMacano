@@ -57,9 +57,9 @@
                 @foreach (var item in carritoItems)
                 {
                     <div class="cart-item">
-                        <span>(@item.Cantidad x) @item.Nombre</span>
+                        <span>(@item.Cantidad x) @item.Producto?.Nombre</span>
                         <div class="price-and-remove">
-                            <span>$@((item.Precio * item.Cantidad).ToString("F2"))</span>
+                            <span>$@((item.Producto?.Precio * item.Cantidad ?? 0).ToString("F2"))</span>
                             <span class="remove-item" @onclick="() => RemoveFromCart(item.Id)"><i class="fa-solid fa-xmark"></i></span>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
         <div class="sidebar--footer">
             <div class="total--amount">
                 <h5>Total</h5>
-                <div class="cart-total">$@(carritoItems.Sum(item => item.Precio * item.Cantidad).ToString("F2"))</div>
+                <div class="cart-total">$@(carritoItems.Sum(item => item.Producto?.Precio * item.Cantidad ?? 0).ToString("F2"))</div>
             </div>
             <div class="checkout-btn" @onclick="Checkout">Encargar</div>
         </div>

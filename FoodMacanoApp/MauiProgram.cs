@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FoodMacanoApp.Views.Carrito;
+using FoodMacanoApp.Views.Inicio;
+using Microsoft.Extensions.Logging;
 
 namespace FoodMacanoApp
 {
@@ -14,6 +16,7 @@ namespace FoodMacanoApp
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("fa-solid-900.ttf", "FontAwesomeSolid");
+                    fonts.AddFont("fa-regular-400.ttf", "FontAwesomeRegular");
                     fonts.AddFont("fa-brands-400.ttf", "FontAwesomeBrands");
                     fonts.AddFont("Afacad", "Afacad");
                 });

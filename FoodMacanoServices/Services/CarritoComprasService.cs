@@ -30,7 +30,7 @@ namespace FoodMacanoServices.Services
         public async Task AddToCartAsync(Producto producto)
         {
             var cartItems = await GetCartItemsAsync();
-            var existingItem = cartItems.FirstOrDefault(item => item.Nombre == producto.Nombre);
+            var existingItem = cartItems.FirstOrDefault(item => item.ProductoId == producto.Id);
             if (existingItem != null)
             {
                 existingItem.Cantidad++;
@@ -40,8 +40,7 @@ namespace FoodMacanoServices.Services
             {
                 var newItem = new CarritoCompra
                 {
-                    Nombre = producto.Nombre,
-                    Precio = producto.Precio,
+                    ProductoId = producto.Id,
                     Cantidad = 1
                 };
                 await _carritoService.AddAsync(newItem);
@@ -60,14 +59,30 @@ namespace FoodMacanoServices.Services
             {
                 var encargue = new Encargue
                 {
-                    ProductoId = item.Id,  // Asumiendo que el Id del CarritoCompra corresponde al ProductoId
-                    NombreProducto = item.Nombre,
-                    Precio = item.Precio,
+                    ProductoId = item.ProductoId,
+                    NombreProducto = item.Producto?.Nombre ?? "Unknown",
+                    Precio = item.Producto?.Precio ?? 0, 
                     Cantidad = item.Cantidad,
                 };
                 await _encargueService.AddAsync(encargue);
                 await _carritoService.DeleteAsync(item.Id);
             }
+        }
+        public async Task UpdateAsync(CarritoCompra carritoCompra)
+        {
+            await _carritoService.UpdateAsync(carritoCompra);
+        }
+
+        public async Task<int> GetTotalItemCountAsync()
+        {
+            var cartItems = await GetCartItemsAsync();
+            return cartItems.Sum(item => item.Cantidad);
+        }
+
+        public async Task<int> GetUniqueItemCountAsync()
+        {
+            var cartItems = await GetCartItemsAsync();
+            return cartItems.Count;
         }
     }
 }

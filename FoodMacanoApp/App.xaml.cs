@@ -8,7 +8,7 @@ namespace FoodMacanoApp
         {
             InitializeComponent();
 
-            MainPage = new Inicio();
+            MainPage = new NavigationPage(new Inicio());
         }
     }
 }
