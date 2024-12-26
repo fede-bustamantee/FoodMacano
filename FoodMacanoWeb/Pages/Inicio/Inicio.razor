@@ -1,0 +1,217 @@
+﻿@page "/"
+@inject IAleatorioService<Producto> aleatorioService
+@inject IGenericService<Negocio> negocioService
+@inject EncarguesService encarguesService
+@inject FirebaseAuthService firebaseAuthService
+@inject IUsuarioService UsuarioService
+
+<PageTitle>Food Macano</PageTitle>
+
+<header>
+    <div class="menu container">
+        <img class="logo-1" src="img/logo.svg" alt="Alternate Text" />
+        <input type="checkbox" id="menu" />
+        <label for="menu">
+            <img src="img/menu.png" alt="Alternate Text" class="menu-icono" />
+        </label>
+        <nav class="navbar">
+            <div class="menu-1">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="menu" class="nav-link">Menú</a></li>
+                    <li><a href="horarios" class="nav-link">Horarios</a></li>
+                </ul>
+            </div>
+
+            <img class="logo-2" src="img/MACANO.png" alt="Alternate Text" />
+            <div class="menu-2">
+                <ul>
+                    <li><a href="" class="nav-link" id="open-sidebar">Mis Encargues</a></li>
+                </ul>
+                <div class="socials">
+                    @if (negocio?.RedesSocial != null)
+                    {
+                        <a href="@negocio.RedesSocial.Whatsapp" target="_blank">
+                            <div class="social">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </div>
+                        </a>
+                        <a href="@negocio.RedesSocial.Instagram" target="_blank">
+                            <div class="social">
+                                <i class="fa-brands fa-instagram"></i>
+                            </div>
+                        </a>
+                        <a href="@negocio.RedesSocial.Facebook" target="_blank">
+                            <div class="social">
+                                <i class="fa-brands fa-facebook"></i>
+                            </div>
+                        </a>
+                    }
+                </div>
+                <div class="user-icon">
+                    <a href="login" class="nav-link">
+                        @if (isAuthenticated)
+                        {
+                            <div class="circle">@userInitial</div>
+                        }
+                        else
+                        {
+                            <img src="/img/userr.png" alt="Usuario" class="user-icon-img" />
+                        }
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-content container">
+        <div class="swiper mySwiper-1">
+            <div class="swiper-wrapper">
+                @if (productos == null)
+                {
+                    <div class="swiper-slide">
+                        <p>Cargando...</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var producto in productos)
+                    {
+                        <div class="swiper-slide">
+                            <div class="slider">
+                                <div class="slider-txt">
+                                    <h1>@producto.Nombre</h1>
+                                    <p>@producto.DescripcionProducto?.DescripcionCorta</p>
+                                    <div class="botones">
+                                        <a href="menu" class="btn-1">Encargar</a>
+                                        <a href="informacion/@producto.Id" class="btn-1">Información</a>
+                                    </div>
+                                </div>
+                                <div class="slider-img">
+                                    <img src="@producto.ImagenUrl" alt="@producto.Nombre" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</header>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-close">
+        <i class="fa-solid fa-xmark" id="close-sidebar"></i>
+    </div>
+    <div class="cart-menu">
+        <h3>Mis ENCARGUES</h3>
+        <h2>Bienvenido</h2>
+        <div id="cart-items">
+            @foreach (var encargue in encargues)
+            {
+                <div class="cart-item">
+                    <span>(@encargue.Cantidad x) @encargue.Producto.Nombre</span>
+                    <span>$@((encargue.Producto.Precio * encargue.Cantidad).ToString("F2"))</span>
+                    <span>@encargue.FechaEncargue.ToString("dd/MM/yyyy HH:mm")</span> <!-- Muestra la fecha y hora -->
+                </div>
+            }
+        </div>
+    </div>
+    <div class="sidebar--footer">
+        <div class="total--amount">
+            <h5>Total</h5>
+            <div class="cart-total">$@(encargues.Sum(e => e.Producto.Precio * e.Cantidad).ToString("F2"))</div>
+        </div>
+        <div class="checkout-btn" @onclick="CancelarEncargues">Cancelar Encargue</div>
+
+    </div>
+</div>
+
+<script>
+    var swiper = new Swiper('.mySwiper-1', {
+        loop: false,
+        autoplay: {
+            delay: 6000, // Cambia a la siguiente diapositiva cada 6 segundos (6000 ms)
+            disableOnInteraction: false, // Sigue cambiando después de que el usuario interactúe
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+
+
+    // Abrir el sidebar
+    document.getElementById('open-sidebar').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('sidebar').classList.add('open');
+    });
+
+    // Cerrar el sidebar al hacer clic en la cruz (fa-xmark)
+    document.getElementById('close-sidebar').addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+    });
+</script>
+<style>
+    .swiper-pagination-bullet {
+        background-color: gray; /* Cambia el color del indicador por defecto */
+        opacity: 0.7; /* Ajusta la opacidad si es necesario */
+    }
+
+    .swiper-pagination-bullet-active {
+        background-color: white; /* Cambia el color del indicador activo */
+        opacity: 1;
+    }
+
+</style>
+
+@code {
+    private List<Producto>? productos;
+    private List<Encargue> encargues = new List<Encargue>();
+    private Negocio? negocio;
+    private bool isAuthenticated = false;
+    private string userInitial = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        productos = await aleatorioService.GetAleatoriosAsync();
+        negocio = await negocioService.GetByIdAsync(1);
+
+        // Obtén el UserId del usuario autenticado
+        var userId = await firebaseAuthService.GetUserId();
+
+        // Cargar encargues relacionados con el usuario
+        if (!string.IsNullOrEmpty(userId))
+        {
+            encargues = await encarguesService.GetEncarguesAsync(userId);
+            isAuthenticated = true;
+
+            // Obtener la inicial del usuario
+            var usuario = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(userId);
+            if (usuario != null && !string.IsNullOrEmpty(usuario.User))
+            {
+                userInitial = usuario.User.Substring(0, 1).ToUpper();
+            }
+        }
+    }
+
+    // Método para eliminar todos los encargues
+    private async Task CancelarEncargues()
+    {
+        // Recorre y elimina todos los encargues
+        foreach (var encargue in encargues)
+        {
+            await encarguesService.DeleteEncargueAsync(encargue.Id);
+        }
+
+        // Refresca la lista de encargues
+        encargues = new List<Encargue>();
+    }
+}

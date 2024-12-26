@@ -1,0 +1,71 @@
+﻿* {
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+main {
+    background-color: #000000;
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
+}
+
+.horario {
+    padding: 70px 0px;
+    background-color: #2a2a2a;
+}
+.horario-info h2 {
+    font-size: 75px;
+    color: #ffffff;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+}
+.horario-txt {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 50px;
+}
+.txt{
+    color:#ffffff;
+}
+.txt h4{
+    font-size:18px;
+    color:#a7a7a7;
+    margin-bottom:30px;
+}
+
+.txt p{
+    font-size:18px;
+    text-transform:uppercase;
+    font-weight:600;
+    margin-bottom:15px;
+}
+.redes {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espacio entre los íconos */
+}
+
+.icon-redes {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff; /* Fondo blanco */
+    border-radius: 50%; /* Hace el fondo redondo */
+}
+
+.icon-redes a {
+    color: #000000; /* Color del ícono */
+    font-size: 20px; /* Tamaño del ícono */
+}
+
+.icon-redes:hover {
+    background-color: #db241b; /* Cambia el fondo al pasar el ratón */
+}
+
+.map{
+    filter:grayscale(100%) invert(92%) contrast(93%);
+}

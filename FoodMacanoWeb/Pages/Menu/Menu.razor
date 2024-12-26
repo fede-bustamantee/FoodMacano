@@ -1,0 +1,192 @@
+﻿@page "/menu"
+@inject IJSRuntime JSRuntime
+@inject IGenericService<Categoria> categoriaService
+@inject IGenericService<Producto> productoService
+@inject CarritoComprasService carritoComprasService
+@inject FirebaseAuthService firebaseAuthService
+
+<main class="products">
+    <div class="shopping-icon" @onclick="ToggleSidebar">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>@carritoItems.Count</span>
+    </div>
+
+    <div class="tabs container">
+        @foreach (var categoria in categorias)
+        {
+            <input type="radio" name="tabs" id="tab@(categoria.Id)" checked="@(categoria.Id == 1)" class="tabInput" value="@categoria.Id" />
+            <label for="tab@(categoria.Id)">@categoria.Nombre</label>
+
+            <div class="tab">
+                <div class="swiper mySwiper-2" id="swiper@(categoria.Id)">
+                    <div class="swiper-wrapper">
+                        @foreach (var producto in productos.Where(p => p.CategoriaId == categoria.Id))
+                        {
+                            <div class="swiper-slide">
+                                <div class="product">
+                                    <div class="product-img">
+                                        <h4>calidad: @producto.Calidad</h4>
+                                        <img src="@producto.ImagenUrl" alt="@producto.Nombre" />
+                                        <i class="fa-solid fa-plus add-to-cart" @onclick="() => AddToCart(producto)"></i>
+                                    </div>
+                                    <div class="product-txt">
+                                        <h4>@producto.Nombre</h4>
+                                        <p>@producto.Calorias Calorias</p>
+                                        <span class="price">$@producto.Precio.ToString("F2")</span>
+                                        <div class="botones">
+                                            <a href="informacion/@producto.Id" class="btn-1">Información</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="sidebar @(sidebarOpen ? "open" : "")" id="sidebar">
+        <div class="sidebar-close" @onclick="ToggleSidebar">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div class="cart-menu">
+            <h3>Mi Carrito</h3>
+            <div id="cart-items">
+                @foreach (var item in carritoItems)
+                {
+                    <div class="cart-item">
+                        <span>(@item.Cantidad x) @item.Producto?.Nombre</span>
+                        <div class="price-and-remove">
+                            <span>$@((item.Producto?.Precio * item.Cantidad ?? 0).ToString("F2"))</span>
+                            <span class="remove-item" @onclick="() => RemoveFromCart(item.Id)"><i class="fa-solid fa-xmark"></i></span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="sidebar--footer">
+            <div class="total--amount">
+                <h5>Total</h5>
+                <div class="cart-total">$@(carritoItems.Sum(item => item.Producto?.Precio * item.Cantidad ?? 0).ToString("F2"))</div>
+            </div>
+            <div class="checkout-btn" @onclick="Checkout">Encargar</div>
+        </div>
+    </div>
+</main>
+
+<script>
+    window.initializeSwipers = function () {
+        console.log("Initializing swipers...");
+
+        // Si no hay swiper, espera hasta que estén disponibles
+        if (!document.querySelectorAll('.mySwiper-2').length) {
+            console.log("Swiper elements not found, retrying...");
+            setTimeout(window.initializeSwipers, 100); // Intentar de nuevo después de 100 ms
+            return;
+        }
+
+        var swipers = [];
+        document.querySelectorAll('.mySwiper-2').forEach(function (swiperElement, index) {
+            swipers[index] = new Swiper(swiperElement, {
+                slidesPerView: 3,
+                spaceBetween: 30,
+                navigation: {
+                    nextEl: swiperElement.querySelector('.swiper-button-next'),
+                    prevEl: swiperElement.querySelector('.swiper-button-prev'),
+                }
+            });
+        });
+    };
+</script>
+
+<style>
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+        .cart-item .price-and-remove {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .remove-item {
+        cursor: pointer;
+    }
+
+        .remove-item i {
+            color: #DB241B;
+            transition: color 0.3s ease;
+        }
+
+            .remove-item i:hover {
+                color: darkred;
+            }
+</style>
+
+@code {
+    private List<Categoria> categorias = new List<Categoria>();
+    private List<Producto> productos = new List<Producto>();
+    private List<CarritoCompra> carritoItems = new List<CarritoCompra>();
+    private bool sidebarOpen = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Verifica si el usuario está autenticado
+        if (!await firebaseAuthService.IsUserAuthenticated())
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            categorias = await categoriaService.GetAllAsync();
+            productos = await productoService.GetAllAsync();
+            await LoadCarritoItems();
+        }
+    }
+
+    private async Task LoadCarritoItems()
+    {
+        carritoItems = await carritoComprasService.GetCartItemsAsync();
+    }
+
+    private async Task AddToCart(Producto producto)
+    {
+        await carritoComprasService.AddToCartAsync(producto);
+        await LoadCarritoItems();
+        StateHasChanged();
+    }
+
+    private async Task RemoveFromCart(int itemId)
+    {
+        await carritoComprasService.RemoveFromCartAsync(itemId);
+        await LoadCarritoItems();
+        StateHasChanged();
+    }
+
+    private void ToggleSidebar()
+    {
+        sidebarOpen = !sidebarOpen;
+    }
+
+    private async Task Checkout()
+    {
+        await carritoComprasService.CheckoutAsync();
+        await LoadCarritoItems();
+        ToggleSidebar();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeSwipers");
+        }
+    }
+}

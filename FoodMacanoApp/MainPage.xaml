@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodMacanoApp.MainPage"
+             BackgroundColor="Black">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Barra superior -->
+        <Grid Grid.Row="0" Padding="20,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0" Source="menu_icon.png" HeightRequest="24"/>
+            <StackLayout Grid.Column="1" Orientation="Horizontal" HorizontalOptions="Center">
+                <Image Source="location_icon.png" HeightRequest="20"/>
+                <Label Text="Monticure" TextColor="Orange" VerticalOptions="Center"/>
+            </StackLayout>
+            <Image Grid.Column="2" Source="cart_icon.png" HeightRequest="24"/>
+        </Grid>
+
+        <!-- Contenido principal -->
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="20">
+                <!-- Barra de búsqueda -->
+                <Frame BackgroundColor="#2A2A2A" CornerRadius="20" Padding="15,5">
+                    <StackLayout Orientation="Horizontal">
+                        <Image Source="search_icon.png" HeightRequest="20"/>
+                        <Entry Placeholder="Enter your food's name" PlaceholderColor="Gray" TextColor="White"/>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Oferta especial -->
+                <Label Text="Special Offer" TextColor="White" FontSize="18" Margin="0,20,0,10"/>
+                <Frame BackgroundColor="#2A2A2A" CornerRadius="20" Padding="15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackLayout Grid.Column="0" Spacing="5">
+                            <Label Text="Double Smokey Burger" TextColor="White" FontSize="16"/>
+                            <StackLayout Orientation="Horizontal">
+                                <Image Source="star_icon.png" HeightRequest="15"/>
+                                <Label Text="4.8/5" TextColor="Gray" FontSize="12"/>
+                            </StackLayout>
+                            <Label Text="$15.99" TextColor="White" FontSize="16"/>
+                            <Button Text="Add to Cart" BackgroundColor="Orange" TextColor="Black" CornerRadius="20" Padding="10,5"/>
+                        </StackLayout>
+
+                        <Image Grid.Column="1" Source="burger_image.png" HeightRequest="100" WidthRequest="100"/>
+                    </Grid>
+                </Frame>
+
+                <!-- Categorías -->
+                <Label Text="Category" TextColor="White" FontSize="18" Margin="0,20,0,10"/>
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                    <StackLayout Orientation="Horizontal" Spacing="15">
+                        <StackLayout>
+                            <Frame BackgroundColor="#2A2A2A" CornerRadius="20" Padding="15">
+                                <Image Source="pizza_icon.png" HeightRequest="30" WidthRequest="30"/>
+                            </Frame>
+                            <Label Text="Pizza" TextColor="Gray" HorizontalOptions="Center"/>
+                        </StackLayout>
+                        <StackLayout>
+                            <Frame BackgroundColor="#2A2A2A" CornerRadius="20" Padding="15">
+                                <Image Source="burger_icon.png" HeightRequest="30" WidthRequest="30"/>
+                            </Frame>
+                            <Label Text="Burger" TextColor="White" HorizontalOptions="Center"/>
+                        </StackLayout>
+                        <!-- Añadir más categorías aquí -->
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Lista de hamburguesas -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="15">
+                    <Frame Grid.Column="0" Grid.Row="0" BackgroundColor="#2A2A2A" CornerRadius="20" Padding="10">
+                        <StackLayout>
+                            <Image Source="double_juicy_burger.png" Aspect="AspectFit" HeightRequest="100"/>
+                            <Label Text="Double Juicy Burger" TextColor="White" FontSize="14"/>
+                            <Label Text="$12.99" TextColor="Orange" FontSize="14"/>
+                        </StackLayout>
+                    </Frame>
+                    <Frame Grid.Column="1" Grid.Row="0" BackgroundColor="#2A2A2A" CornerRadius="20" Padding="10">
+                        <StackLayout>
+                            <Image Source="smokey_burger.png" Aspect="AspectFit" HeightRequest="100"/>
+                            <Label Text="Smokey Burger" TextColor="White" FontSize="14"/>
+                            <Label Text="$10.99" TextColor="Orange" FontSize="14"/>
+                        </StackLayout>
+                    </Frame>
+                </Grid>
+
+                <!-- Barra de navegación inferior -->
+                <Grid ColumnDefinitions="*,*,*,*,*" Margin="0,20,0,0">
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Image Source="home_icon.png" HeightRequest="24"/>
+                        <Label Text="Home" TextColor="Orange" FontSize="12"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Image Source="orders_icon.png" HeightRequest="24"/>
+                        <Label Text="Orders" TextColor="Gray" FontSize="12"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Image Source="favorites_icon.png" HeightRequest="24"/>
+                        <Label Text="Favorites" TextColor="Gray" FontSize="12"/>
+                    </StackLayout>
+                    <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                        <Image Source="profile_icon.png" HeightRequest="24"/>
+                        <Label Text="Profile" TextColor="Gray" FontSize="12"/>
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

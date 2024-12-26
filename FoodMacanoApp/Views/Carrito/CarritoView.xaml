@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodMacanoApp.Views.Carrito.CarritoView"
+             Title="CarritoView"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20" BackgroundColor="#1E1E1E">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
+            <Button Clicked="VolverClicked" FontFamily="FontAwesomeSolid" Text="&#xf060;" FontSize="20" BackgroundColor="Transparent" TextColor="White" Grid.Column="0" />
+            <Label Text="Carrito" HorizontalOptions="Center" VerticalOptions="Center" Grid.Column="1" TextColor="White" FontSize="20" FontAttributes="Bold" />
+            <Button FontFamily="FontAwesomeRegular" Text="&#xf2ed;" FontSize="20" BackgroundColor="Transparent" TextColor="White" Grid.Column="2" />
+        </Grid>
+
+        <!-- Mensaje de Estado -->
+        <Grid Grid.Row="1">
+            <Frame BackgroundColor="#FFC107" Padding="20" HeightRequest="80" CornerRadius="30" Margin="0,20,0,0">
+                <Label Text="{Binding MensajeEstado}" TextColor="Green" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Frame>
+        </Grid>
+
+        <!-- Productos del Carrito -->
+        <ScrollView Grid.Row="2" Margin="0,10,0,0" VerticalScrollBarVisibility="Always">
+            <StackLayout Spacing="20" Padding="8">
+                <CollectionView ItemsSource="{Binding ProductosCarrito}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#333333" CornerRadius="20" Padding="10" HeightRequest="130" Margin="0,0,0,10">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                                    <Image Source="{Binding Producto.ImagenUrl}" WidthRequest="130" HeightRequest="140" Grid.RowSpan="2" Margin="0,-15,0,0" />
+                                    <Label Text="{Binding Producto.Nombre}" TextColor="White" Grid.Column="1" FontSize="16" Margin="10,0,0,0"/>
+                                    <Label Text="{Binding Producto.Precio, StringFormat='${0:F2}'}" TextColor="White" Grid.Column="2" Margin="0,40,10,0" HorizontalOptions="End" FontSize="16" />
+                                    <StackLayout Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="20,0,0,30">
+                                        <Button FontFamily="FontAwesomeSolid" Text="&#xf068;" FontSize="12" WidthRequest="40" HeightRequest="35" CornerRadius="20" BackgroundColor="#555555" TextColor="White"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DisminuirCantidadCommand}"
+                                        CommandParameter="{Binding .}" />
+                                        <Label Text="{Binding Cantidad}" TextColor="White" VerticalOptions="Center" Margin="10,0" FontSize="20" />
+                                        <Button FontFamily="FontAwesomeSolid" Text="&#x2b;" FontSize="12" WidthRequest="40" HeightRequest="35" CornerRadius="15" BackgroundColor="#FFC107" TextColor="Black"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AumentarCantidadCommand}"
+                                        CommandParameter="{Binding .}" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
+
+
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,*" RowDefinitions="Auto" Margin="0,20,0,0">
+            <Button Text="Confirmar" BackgroundColor="#FFC107" TextColor="Black" CornerRadius="30" HeightRequest="50" WidthRequest="180"
+            Command="{Binding ConfirmarCommand}" HorizontalOptions="Start" />
+            <Label Text="{Binding TotalPrecio, StringFormat='Precio Total: ${0:F2}'}" TextColor="White" FontSize="16"
+           HorizontalOptions="End" VerticalOptions="Center" Margin="-180,0" />
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,220 @@
+﻿@page "/login"
+@using FoodMacanoServices.Enums
+@inject IJSRuntime JSRuntime
+@inject FirebaseAuthService AuthService
+@inject IUsuarioService UsuarioService
+
+<h3>Iniciar sesión</h3>
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger">@mensajeError</div>
+}
+
+@if (!EstaAutenticado)
+{
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" @bind="usuario.Email" />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" class="form-control" @bind="usuario.Password" />
+    </div>
+
+    <div>
+        @if (cargando)
+        {
+            <p>Cargando...</p>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="IniciarSesion">Ingresar</button>
+            <button class="btn btn-danger" @onclick="IniciarSesionConGoogle">Iniciar sesión con Google</button>
+            <button class="btn btn-primary" @onclick="IniciarSesionConFacebook">Iniciar sesión con Facebook</button>
+        }
+    </div>
+}
+else
+{
+    <p>Ya has iniciado sesión.</p>
+    <button class="btn btn-secondary" @onclick="CerrarSesion">Cerrar sesión</button>
+}
+<div>
+    <button class="btn btn-link" @onclick="NavegarARegistro">¿No tienes una cuenta? Regístrate aquí</button>
+</div>
+
+@code {
+    private Usuario usuario = new Usuario();
+    private bool EstaAutenticado = false;
+    private string mensajeError = string.Empty;
+    private bool cargando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        EstaAutenticado = await AuthService.IsUserAuthenticated();
+    }
+
+    private async Task IniciarSesion()
+    {
+        cargando = true;
+        mensajeError = string.Empty;
+
+        try
+        {
+            // Inicia sesión en Firebase y obtiene el FirebaseId y el estado de verificación del correo
+            var (firebaseId, isEmailVerified) = await AuthService.SignInWithEmailPassword(usuario.Email, usuario.Password);
+
+            if (!string.IsNullOrEmpty(firebaseId))
+            {
+                if (!isEmailVerified)
+                {
+                    mensajeError = "Por favor, verifica tu correo electrónico antes de iniciar sesión.";
+                    return;
+                }
+
+                EstaAutenticado = true;
+
+                // Verifica si el usuario ya existe en la base de datos mediante el FirebaseId
+                var usuarioExistente = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(firebaseId);
+
+                if (usuarioExistente == null)
+                {
+                    // Si el usuario no existe, lo creamos en la base de datos
+                    var nuevoUsuario = new Usuario
+                        {
+                            FirebaseId = firebaseId,
+                            User = usuario.User ?? "NombrePorDefecto",
+                            Email = usuario.Email
+                        };
+
+                    await UsuarioService.CrearUsuarioAsync(nuevoUsuario);
+                }
+
+                // Guarda el FirebaseId en el almacenamiento local
+                await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", new object[] { "firebaseUserId", firebaseId });
+                // Redirige a la página principal después del inicio de sesión exitoso
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                mensajeError = "Error al obtener FirebaseId.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private async Task IniciarSesionConGoogle()
+    {
+        cargando = true;
+        mensajeError = string.Empty;
+
+        try
+        {
+            var (firebaseId, email, displayName) = await AuthService.SignInWithGoogle();
+
+            if (!string.IsNullOrEmpty(firebaseId))
+            {
+                EstaAutenticado = true;
+
+                var usuarioExistente = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(firebaseId);
+
+                if (usuarioExistente == null)
+                {
+                    var nuevoUsuario = new Usuario
+                        {
+                            FirebaseId = firebaseId,
+                            User = displayName ?? "NombrePorDefecto",
+                            Email = email,
+                            Password = "defaultPassword", // Puedes generar una contraseña aleatoria o dejarla vacía
+                            TipoUsuario = TipoUsuarioEnum.Cliente // Puedes ajustar esto según tus necesidades
+                        };
+
+                    await UsuarioService.CrearUsuarioAsync(nuevoUsuario);
+                }
+
+                await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", new object[] { "firebaseUserId", firebaseId });
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                mensajeError = "Error al iniciar sesión con Google.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private async Task IniciarSesionConFacebook()
+    {
+        cargando = true;
+        mensajeError = string.Empty;
+
+        try
+        {
+            var (firebaseId, email, displayName) = await AuthService.SignInWithFacebook();
+
+            if (!string.IsNullOrEmpty(firebaseId))
+            {
+                EstaAutenticado = true;
+
+                var usuarioExistente = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(firebaseId);
+
+                if (usuarioExistente == null)
+                {
+                    var nuevoUsuario = new Usuario
+                        {
+                            FirebaseId = firebaseId,
+                            User = displayName ?? "NombrePorDefecto",
+                            Email = email,
+                            Password = "defaultPassword", // Puedes generar una contraseña aleatoria o dejarla vacía
+                            TipoUsuario = TipoUsuarioEnum.Cliente // Puedes ajustar esto según tus necesidades
+                        };
+
+                    await UsuarioService.CrearUsuarioAsync(nuevoUsuario);
+                }
+
+                await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", new object[] { "firebaseUserId", firebaseId });
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                mensajeError = "Error al iniciar sesión con Facebook.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private async Task CerrarSesion()
+    {
+        await AuthService.SignOut();
+        usuario = new Usuario();
+        EstaAutenticado = false;
+        NavigationManager.NavigateTo("/");
+    }
+    private void NavegarARegistro()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+}
