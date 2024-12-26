@@ -17,15 +17,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
-      - name: Build BackFoodMacano project
-        run: dotnet build BackFoodMacano/BackFoodMacano.csproj --configuration Release
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
 
-      - name: Publish BackFoodMacano project
-        run: dotnet publish BackFoodMacano/BackFoodMacano.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,9 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9EF1B0C0BFA9453694FA279E35620351 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AF8DFF2DBC9A45FEA1D073D457681644 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AF09BCA79B4241F8A6E5FEED9422CCAC }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CA678BB469114B0CBA55A2E1CEFF743A }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_12029026973640FE82E9C625617A0BF8 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_41E2D1E6357C44FCBD7D896126E56CC9 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
