@@ -1,6 +1,7 @@
 ﻿using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using System.Text.Json;
+
 namespace FoodMacanoServices.Services
 {
     public class CarritoComprasService
@@ -21,6 +22,7 @@ namespace FoodMacanoServices.Services
             _authService = authService;
             _usuarioMappingService = usuarioMappingService;
         }
+
         public async Task<List<CarritoCompra>> GetCartItemsAsync()
         {
             var firebaseId = await _authService.GetUserId();
@@ -28,42 +30,32 @@ namespace FoodMacanoServices.Services
 
             return await _carritoService.GetAllAsync(c => c.UsuarioId == userId) ?? new List<CarritoCompra>();
         }
+
         public async Task RemoveFromCartAsync(int itemId)
         {
             await _carritoService.DeleteAsync(itemId);
         }
+
         public async Task AddToCartAsync(Producto producto)
         {
-            // Obtén el ID del usuario autenticado
+            // Obtén el FirebaseId y el UsuarioId
             var firebaseId = await _authService.GetUserId();
-            var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
+            var usuario = await _usuarioMappingService.GetUsuarioByFirebaseId(firebaseId);
 
-            if (userId <= 0)
+            if (usuario == null)
             {
-                throw new InvalidOperationException("El ID de usuario no es válido.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
 
-            // Crear el objeto Usuario con los datos mínimos necesarios
-            var usuario = new Usuario
-            {
-                Id = userId,
-                FirebaseId = firebaseId
-            };
-
-            // Crea un objeto CarritoCompra con el Usuario incluido
+            // Crea un objeto con solo los campos necesarios
             var newItem = new CarritoCompra
             {
                 ProductoId = producto.Id,
-                Producto = producto,  // Incluir el producto también
                 Cantidad = 1,
-                UsuarioId = userId,
-                Usuario = usuario    // Agregar el objeto Usuario
+                UsuarioId = usuario.Id
             };
 
-            // Depuración: Imprime el objeto antes de enviarlo
-            Console.WriteLine($"Datos enviados: {JsonSerializer.Serialize(newItem)}");
-
-            // Llama a AddAsync para enviar el objeto a la API
+            // Enviar solo los datos requeridos
             await _carritoService.AddAsync(newItem);
         }
 
@@ -91,11 +83,13 @@ namespace FoodMacanoServices.Services
         {
             await _carritoService.UpdateAsync(carritoCompra);
         }
+
         public async Task<int> GetTotalItemCountAsync()
         {
             var cartItems = await GetCartItemsAsync();
             return cartItems.Sum(item => item.Cantidad);
         }
+
         public async Task<int> GetUniqueItemCountAsync()
         {
             var cartItems = await GetCartItemsAsync();
