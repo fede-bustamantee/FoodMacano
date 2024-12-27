@@ -12,12 +12,17 @@ namespace FoodMacanoServices.Services
 
         public UsuarioMappingService(IGenericService<Usuario> usuarioService)
         {
-            _usuarioService = usuarioService;
+            _usuarioService = usuarioService ?? throw new ArgumentNullException(nameof(usuarioService));
         }
 
         // Método para obtener el UsuarioId basado en el FirebaseId
         public async Task<int> GetUsuarioIdFromFirebaseId(string firebaseId)
         {
+            if (string.IsNullOrEmpty(firebaseId))
+            {
+                throw new ArgumentException("El FirebaseId no puede ser nulo o vacío.", nameof(firebaseId));
+            }
+
             var usuarios = await _usuarioService.GetAllAsync(u => u.FirebaseId == firebaseId);
             var usuario = usuarios.FirstOrDefault();
 
@@ -27,6 +32,18 @@ namespace FoodMacanoServices.Services
             }
 
             return usuario.Id;
+        }
+
+        // Método para obtener el objeto Usuario basado en el FirebaseId
+        public async Task<Usuario?> GetUsuarioByFirebaseIdAsync(string firebaseId)
+        {
+            if (string.IsNullOrEmpty(firebaseId))
+            {
+                throw new ArgumentException("El FirebaseId no puede ser nulo o vacío.", nameof(firebaseId));
+            }
+
+            var usuarios = await _usuarioService.GetAllAsync(u => u.FirebaseId == firebaseId);
+            return usuarios.FirstOrDefault();
         }
     }
 }

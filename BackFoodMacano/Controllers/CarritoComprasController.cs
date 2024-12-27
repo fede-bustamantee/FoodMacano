@@ -75,11 +75,20 @@ namespace BackFoodMacano.Controllers
         [HttpPost]
         public async Task<ActionResult<CarritoCompra>> PostCarritoCompra(CarritoCompra carritoCompra)
         {
+            // Validación de los datos recibidos
+            if (carritoCompra == null || carritoCompra.ProductoId <= 0 || carritoCompra.UsuarioId <= 0)
+            {
+                return BadRequest("Datos inválidos");
+            }
+
+            // Agrega el objeto al contexto y guarda los cambios
             _context.carritoCompra.Add(carritoCompra);
             await _context.SaveChangesAsync();
 
+            // Devuelve el recurso creado
             return CreatedAtAction("GetCarritoCompra", new { id = carritoCompra.Id }, carritoCompra);
         }
+
 
         // DELETE: api/CarritoCompras/5
         [HttpDelete("{id}")]

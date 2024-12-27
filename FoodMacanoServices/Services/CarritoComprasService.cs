@@ -1,5 +1,6 @@
 ﻿using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
+using System.Text.Json;
 namespace FoodMacanoServices.Services
 {
     public class CarritoComprasService
@@ -33,32 +34,30 @@ namespace FoodMacanoServices.Services
         }
         public async Task AddToCartAsync(Producto producto)
         {
-            var userIdString = await _authService.GetUserId();
+            // Obtén el ID del usuario autenticado
+            var firebaseId = await _authService.GetUserId();
+            var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
 
-            if (!int.TryParse(userIdString, out int userId))
+            if (userId <= 0)
             {
                 throw new InvalidOperationException("El ID de usuario no es válido.");
             }
 
-            var cartItems = await GetCartItemsAsync();
-            var existingItem = cartItems.FirstOrDefault(item => item.ProductoId == producto.Id);
+            // Crea un objeto simplificado con solo los campos necesarios
+            var newItem = new CarritoCompra
+            {
+                ProductoId = producto.Id,
+                Cantidad = 1,
+                UsuarioId = userId
+            };
 
-            if (existingItem != null)
-            {
-                existingItem.Cantidad++;
-                await _carritoService.UpdateAsync(existingItem);
-            }
-            else
-            {
-                var newItem = new CarritoCompra
-                {
-                    ProductoId = producto.Id,
-                    Cantidad = 1,
-                    UsuarioId = userId
-                };
-                await _carritoService.AddAsync(newItem);
-            }
+            // Depuración: Imprime el objeto antes de enviarlo
+            Console.WriteLine($"Datos enviados: {JsonSerializer.Serialize(newItem)}");
+
+            // Llama a AddAsync para enviar el objeto a la API
+            await _carritoService.AddAsync(newItem);
         }
+
         public async Task CheckoutAsync()
         {
             var userId = await _authService.GetUserId();

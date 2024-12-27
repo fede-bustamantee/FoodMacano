@@ -265,7 +265,7 @@ header{
     position: relative;
 }
 
-    .user-icon .circle {
+.user-icon .circle {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -279,13 +279,12 @@ header{
         text-transform: uppercase; /* Hace que la letra sea mayúscula */
         border: 2px solid #ddd; /* Borde opcional */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra opcional */
-    }
+    }    
 
 .user-icon-img {
-    background-color: white;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
+    background-color: aqua;
+    width: 30px;
+    height: 30px;
     border-radius: 50%; /* También círculo para la imagen */
     object-fit: cover; /* Asegura que la imagen se ajuste */
 }
