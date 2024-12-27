@@ -19,6 +19,8 @@ namespace FoodMacanoServices.Models
         public string Password { get; set; } = string.Empty;
 
         public TipoUsuarioEnum TipoUsuario { get; set; }
-        public string FirebaseId { get; set; }
+
+        [Required(ErrorMessage = "El FirebaseId es requerido")]
+        public string FirebaseId { get; set; } = string.Empty;
     }
 }

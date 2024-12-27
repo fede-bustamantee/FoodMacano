@@ -43,12 +43,21 @@ namespace FoodMacanoServices.Services
                 throw new InvalidOperationException("El ID de usuario no es válido.");
             }
 
-            // Crea un objeto simplificado con solo los campos necesarios
+            // Crear el objeto Usuario con los datos mínimos necesarios
+            var usuario = new Usuario
+            {
+                Id = userId,
+                FirebaseId = firebaseId
+            };
+
+            // Crea un objeto CarritoCompra con el Usuario incluido
             var newItem = new CarritoCompra
             {
                 ProductoId = producto.Id,
+                Producto = producto,  // Incluir el producto también
                 Cantidad = 1,
-                UsuarioId = userId
+                UsuarioId = userId,
+                Usuario = usuario    // Agregar el objeto Usuario
             };
 
             // Depuración: Imprime el objeto antes de enviarlo
