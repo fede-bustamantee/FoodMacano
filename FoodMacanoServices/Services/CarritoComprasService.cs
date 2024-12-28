@@ -22,41 +22,76 @@ namespace FoodMacanoServices.Services
             _authService = authService;
             _usuarioMappingService = usuarioMappingService;
         }
-
         public async Task<List<CarritoCompra>> GetCartItemsAsync()
         {
-            var firebaseId = await _authService.GetUserId();
-            var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
-
-            return await _carritoService.GetAllAsync(c => c.UsuarioId == userId) ?? new List<CarritoCompra>();
-        }
-
-        public async Task RemoveFromCartAsync(int itemId)
-        {
-            await _carritoService.DeleteAsync(itemId);
+            try
+            {
+                var firebaseId = await _authService.GetUserId();
+                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
+                var items = await _carritoService.GetAllAsync(c => c.UsuarioId == userId);
+                return items ?? new List<CarritoCompra>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en GetCartItemsAsync: {ex.Message}");
+                return new List<CarritoCompra>();
+            }
         }
 
         public async Task AddToCartAsync(Producto producto)
         {
-            // Obtén el FirebaseId y el UsuarioId
-            var firebaseId = await _authService.GetUserId();
-            var usuario = await _usuarioMappingService.GetUsuarioByFirebaseId(firebaseId);
-
-            if (usuario == null)
+            try
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                // Obtener el FirebaseId del usuario actual
+                var firebaseId = await _authService.GetUserId();
+                if (string.IsNullOrEmpty(firebaseId))
+                {
+                    throw new InvalidOperationException("Usuario no autenticado");
+                }
+
+                // Obtener el ID del usuario desde la base de datos
+                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
+
+                // Verificar si el producto ya existe en el carrito
+                var cartItems = await GetCartItemsAsync();
+                var existingItem = cartItems.FirstOrDefault(i => i.ProductoId == producto.Id);
+
+                if (existingItem != null)
+                {
+                    // Si el producto ya existe, incrementar la cantidad
+                    existingItem.Cantidad += 1;
+                    await _carritoService.UpdateAsync(existingItem);
+                }
+                else
+                {
+                    // Si el producto no existe, crear nuevo item
+                    var newItem = new CarritoCompra
+                    {
+                        ProductoId = producto.Id,
+                        Cantidad = 1,
+                        UsuarioId = userId
+                    };
+                    await _carritoService.AddAsync(newItem);
+                }
             }
-
-            // Crea un objeto con solo los campos necesarios
-            var newItem = new CarritoCompra
+            catch (Exception ex)
             {
-                ProductoId = producto.Id,
-                Cantidad = 1,
-                UsuarioId = usuario.Id
-            };
+                Console.WriteLine($"Error en AddToCartAsync: {ex.Message}");
+                throw new ApplicationException($"Error al agregar al carrito: {ex.Message}");
+            }
+        }
 
-            // Enviar solo los datos requeridos
-            await _carritoService.AddAsync(newItem);
+        public async Task RemoveFromCartAsync(int itemId)
+        {
+            try
+            {
+                await _carritoService.DeleteAsync(itemId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en RemoveFromCartAsync: {ex.Message}");
+                throw new ApplicationException($"Error al eliminar del carrito: {ex.Message}");
+            }
         }
 
         public async Task CheckoutAsync()
