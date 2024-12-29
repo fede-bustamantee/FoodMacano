@@ -63,14 +63,29 @@ namespace FoodMacanoServices.Services
 
         public async Task<T?> AddAsync(T? entity)
         {
-            var response = await client.PostAsJsonAsync(_endpoint, entity);
-            var content = await response.Content.ReadAsStreamAsync();
-            if (!response.IsSuccessStatusCode)
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "La entidad no puede ser nula.");
+
+            try
             {
-                throw new ApplicationException(content?.ToString());
+                var response = await client.PostAsJsonAsync(_endpoint, entity);
+                var content = await response.Content.ReadAsStreamAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorDetails = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"Error en AddAsync: {response.StatusCode}, Detalles: {errorDetails}");
+                }
+
+                return JsonSerializer.Deserialize<T>(content, options);
             }
-            return JsonSerializer.Deserialize<T>(content, options);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Excepción en AddAsync: {ex.Message}");
+                throw;
+            }
         }
+
 
         public async Task UpdateAsync(T? entity)
         {

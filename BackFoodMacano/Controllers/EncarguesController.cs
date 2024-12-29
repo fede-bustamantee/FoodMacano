@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackFoodMacano.DataContext;
 using FoodMacanoServices.Models;
@@ -80,25 +75,24 @@ namespace BackFoodMacano.Controllers
         [HttpPost]
         public async Task<ActionResult<Encargue>> PostEncargue(Encargue encargue)
         {
-            // Validar datos requeridos
-            if (encargue == null ||
-                encargue.ProductoId <= 0 ||
-                encargue.UsuarioId <= 0 ||
-                encargue.Cantidad <= 0)
+            if (encargue == null || encargue.UsuarioId <= 0 || encargue.ProductoId <= 0 || encargue.Cantidad <= 0)
             {
-                return BadRequest("Datos inválidos o incompletos");
+                return BadRequest(new
+                {
+                    Message = "Datos inválidos o incompletos.",
+                    Errors = new
+                    {
+                        Usuario = encargue.UsuarioId <= 0 ? "El campo Usuario es requerido." : null,
+                        Producto = encargue.ProductoId <= 0 ? "El campo Producto es requerido." : null,
+                    }
+                });
             }
 
             try
             {
                 _context.encargues.Add(encargue);
                 await _context.SaveChangesAsync();
-
-                return CreatedAtAction(
-                    nameof(GetEncargue),
-                    new { id = encargue.Id },
-                    encargue
-                );
+                return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
             }
             catch (Exception ex)
             {

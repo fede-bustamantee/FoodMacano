@@ -159,33 +159,25 @@ namespace FoodMacanoServices.Services
                 return 0;
             }
         }
-
         public async Task CheckoutAsync()
         {
             try
             {
-                // Obtén el FirebaseId del usuario autenticado
                 var firebaseId = await _authService.GetUserId();
                 if (string.IsNullOrEmpty(firebaseId))
-                {
-                    throw new InvalidOperationException("Usuario no autenticado");
-                }
+                    throw new InvalidOperationException("Usuario no autenticado.");
 
-                // Usa el UsuarioMappingService para obtener el UsuarioId
                 var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
 
-                // Obtén los ítems del carrito
                 var cartItems = await GetCartItemsAsync();
-
-                // Verifica si el carrito no está vacío
                 if (!cartItems.Any())
-                {
                     throw new InvalidOperationException("El carrito está vacío. No se puede realizar el checkout.");
-                }
 
-                // Procesa cada ítem del carrito
                 foreach (var item in cartItems)
                 {
+                    if (item.ProductoId <= 0 || string.IsNullOrEmpty(item.Producto?.Nombre))
+                        throw new InvalidOperationException($"El producto en el carrito no es válido: ID {item.ProductoId}");
+
                     var encargue = new Encargue
                     {
                         ProductoId = item.ProductoId,
@@ -194,7 +186,10 @@ namespace FoodMacanoServices.Services
                         FechaEncargue = DateTime.Now
                     };
 
-                    // Agregar el encargue y eliminar el ítem del carrito
+                    // Limpia propiedades de navegación si son nulas
+                    encargue.Producto = null;
+                    encargue.Usuario = null;
+
                     await _encargueService.AddAsync(encargue);
                     await _carritoService.DeleteAsync(item.Id);
                 }
@@ -205,6 +200,8 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
+
+
 
 
         public async Task<int> GetUniqueItemCountAsync()

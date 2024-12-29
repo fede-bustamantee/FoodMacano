@@ -22,7 +22,7 @@ builder.Services.AddScoped<IGenericService<CarritoCompra>, GenericService<Carrit
 builder.Services.AddScoped<IGenericService<Encargue>, GenericService<Encargue>>();
 builder.Services.AddScoped<IGenericService<Usuario>, GenericService<Usuario>>();
 builder.Services.AddScoped<ICarritoService, CarritoService>();
-builder.Services.AddScoped<EncarguesService>();
+builder.Services.AddScoped<IEncargueService, EncargueService>();
 builder.Services.AddScoped<IAleatorioService<Producto>, AleatorioService<Producto>>();
 builder.Services.AddScoped<FirebaseAuthService>();
 builder.Services.AddScoped<UsuarioMappingService>();
