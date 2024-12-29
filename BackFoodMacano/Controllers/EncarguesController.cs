@@ -16,7 +16,7 @@ public class EncarguesController : ControllerBase
 
     // GET: api/Encargues
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Encargue>>> Getencargues()
+    public async Task<ActionResult<IEnumerable<Encargue>>> GetEncargues()
     {
         return await _context.encargues
             .Include(e => e.Producto)
@@ -47,13 +47,11 @@ public class EncarguesController : ControllerBase
     {
         try
         {
-            // Validación básica
             if (encargue == null)
             {
                 return BadRequest("El encargue no puede ser nulo.");
             }
 
-            // Validar que exista el producto y el usuario
             var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
             var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargue.UsuarioId);
 
@@ -70,19 +68,16 @@ public class EncarguesController : ControllerBase
                 return BadRequest(new { errors });
             }
 
-            // Validar la cantidad
             if (encargue.Cantidad <= 0)
             {
                 return BadRequest(new { errors = new { Cantidad = new[] { "La cantidad debe ser mayor a 0." } } });
             }
 
-            // Establecer la fecha si no está establecida
             if (encargue.FechaEncargue == default)
             {
                 encargue.FechaEncargue = DateTime.UtcNow;
             }
 
-            // Limpiar las propiedades de navegación
             encargue.Producto = null;
             encargue.Usuario = null;
 
@@ -93,7 +88,6 @@ public class EncarguesController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log del error
             Console.WriteLine($"Error al crear encargue: {ex.Message}");
             return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
         }
@@ -108,7 +102,6 @@ public class EncarguesController : ControllerBase
             return BadRequest();
         }
 
-        // Limpiar las propiedades de navegación
         encargue.Producto = null;
         encargue.Usuario = null;
 
