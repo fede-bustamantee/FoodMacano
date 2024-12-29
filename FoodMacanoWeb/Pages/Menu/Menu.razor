@@ -185,7 +185,9 @@
     {
         try
         {
+            Console.WriteLine("Iniciando checkout...");
             await carritoComprasService.CheckoutAsync();
+            Console.WriteLine("Checkout completado exitosamente.");
             await LoadCarritoItems();
             ToggleSidebar();
         }
@@ -194,7 +196,6 @@
             Console.WriteLine($"Error durante el checkout: {ex.Message}");
         }
     }
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

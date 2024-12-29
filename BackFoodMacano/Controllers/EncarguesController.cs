@@ -1,123 +1,153 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BackFoodMacano.DataContext;
+﻿using BackFoodMacano.DataContext;
 using FoodMacanoServices.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace BackFoodMacano.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class EncarguesController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EncarguesController : ControllerBase
+    private readonly FoodMacanoContext _context;
+
+    public EncarguesController(FoodMacanoContext context)
     {
-        private readonly FoodMacanoContext _context;
+        _context = context;
+    }
 
-        public EncarguesController(FoodMacanoContext context)
+    // GET: api/Encargues
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Encargue>>> Getencargues()
+    {
+        return await _context.encargues
+            .Include(e => e.Producto)
+            .Include(e => e.Usuario)
+            .ToListAsync();
+    }
+
+    // GET: api/Encargues/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Encargue>> GetEncargue(int id)
+    {
+        var encargue = await _context.encargues
+            .Include(e => e.Producto)
+            .Include(e => e.Usuario)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (encargue == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        // GET: api/Encargues
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Encargue>>> Getencargues()
-        {
-            return await _context.encargues
-                         .ToListAsync();
-        }
+        return encargue;
+    }
 
-        // GET: api/Encargues/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Encargue>> GetEncargue(int id)
+    // POST: api/Encargues
+    [HttpPost]
+    public async Task<ActionResult<Encargue>> PostEncargue(Encargue encargue)
+    {
+        try
         {
-            var encargue = await _context.encargues
-                                 .FirstOrDefaultAsync(e => e.Id == id);
-
+            // Validación básica
             if (encargue == null)
             {
-                return NotFound();
+                return BadRequest("El encargue no puede ser nulo.");
             }
 
-            return encargue;
-        }
+            // Validar que exista el producto y el usuario
+            var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
+            var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargue.UsuarioId);
 
-        // PUT: api/Encargues/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEncargue(int id, Encargue encargue)
-        {
-            if (id != encargue.Id)
+            if (!productoExiste || !usuarioExiste)
             {
-                return BadRequest();
+                var errors = new Dictionary<string, string[]>();
+
+                if (!productoExiste)
+                    errors.Add("Producto", new[] { "El producto especificado no existe." });
+
+                if (!usuarioExiste)
+                    errors.Add("Usuario", new[] { "El usuario especificado no existe." });
+
+                return BadRequest(new { errors });
             }
 
-            _context.Entry(encargue).State = EntityState.Modified;
-
-            try
+            // Validar la cantidad
+            if (encargue.Cantidad <= 0)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EncargueExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new { errors = new { Cantidad = new[] { "La cantidad debe ser mayor a 0." } } });
             }
 
-            return NoContent();
-        }
-
-        // POST: api/Encargues
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Encargue>> PostEncargue(Encargue encargue)
-        {
-            if (encargue == null || encargue.UsuarioId <= 0 || encargue.ProductoId <= 0 || encargue.Cantidad <= 0)
+            // Establecer la fecha si no está establecida
+            if (encargue.FechaEncargue == default)
             {
-                return BadRequest(new
-                {
-                    Message = "Datos inválidos o incompletos.",
-                    Errors = new
-                    {
-                        Usuario = encargue.UsuarioId <= 0 ? "El campo Usuario es requerido." : null,
-                        Producto = encargue.ProductoId <= 0 ? "El campo Producto es requerido." : null,
-                    }
-                });
+                encargue.FechaEncargue = DateTime.UtcNow;
             }
 
-            try
-            {
-                _context.encargues.Add(encargue);
-                await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error interno: {ex.Message}");
-            }
-        }
-        // DELETE: api/Encargues/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEncargue(int id)
-        {
-            var encargue = await _context.encargues.FindAsync(id);
-            if (encargue == null)
-            {
-                return NotFound();
-            }
+            // Limpiar las propiedades de navegación
+            encargue.Producto = null;
+            encargue.Usuario = null;
 
-            _context.encargues.Remove(encargue);
+            _context.encargues.Add(encargue);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
+        }
+        catch (Exception ex)
+        {
+            // Log del error
+            Console.WriteLine($"Error al crear encargue: {ex.Message}");
+            return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
+        }
+    }
+
+    // PUT: api/Encargues/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutEncargue(int id, Encargue encargue)
+    {
+        if (id != encargue.Id)
+        {
+            return BadRequest();
         }
 
-        private bool EncargueExists(int id)
+        // Limpiar las propiedades de navegación
+        encargue.Producto = null;
+        encargue.Usuario = null;
+
+        _context.Entry(encargue).State = EntityState.Modified;
+
+        try
         {
-            return _context.encargues.Any(e => e.Id == id);
+            await _context.SaveChangesAsync();
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!EncargueExists(id))
+            {
+                return NotFound();
+            }
+            throw;
+        }
+
+        return NoContent();
+    }
+
+    // DELETE: api/Encargues/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteEncargue(int id)
+    {
+        var encargue = await _context.encargues.FindAsync(id);
+        if (encargue == null)
+        {
+            return NotFound();
+        }
+
+        _context.encargues.Remove(encargue);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    private bool EncargueExists(int id)
+    {
+        return _context.encargues.Any(e => e.Id == id);
     }
 }

@@ -14,25 +14,22 @@ namespace FoodMacanoServices.Services
         private readonly FirebaseAuthService _authService;
         private readonly UsuarioMappingService _usuarioMappingService;
         private readonly IGenericService<CarritoCompra> _carritoService;
-        private readonly IGenericService<Encargue> _encargueService;
+        private readonly string _encarguesEndpoint;
 
         public CarritoService(
             FirebaseAuthService authService,
             UsuarioMappingService usuarioMappingService,
             IGenericService<CarritoCompra> carritoService,
             IGenericService<Encargue> encargueService)
-
         {
             client = new HttpClient();
             options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
             var urlApi = Properties.Resources.UrlApi;
             _endpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(CarritoCompra));
+            _encarguesEndpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(Encargue));
             _authService = authService;
             _usuarioMappingService = usuarioMappingService;
             _carritoService = carritoService;
-            _encargueService = encargueService;
-
-
         }
 
         public async Task<List<CarritoCompra>> GetCartItemsAsync()
@@ -168,17 +165,17 @@ namespace FoodMacanoServices.Services
                     throw new InvalidOperationException("Usuario no autenticado.");
 
                 var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
-
                 var cartItems = await GetCartItemsAsync();
+
                 if (!cartItems.Any())
                     throw new InvalidOperationException("El carrito está vacío. No se puede realizar el checkout.");
 
                 foreach (var item in cartItems)
                 {
-                    if (item.ProductoId <= 0 || string.IsNullOrEmpty(item.Producto?.Nombre))
-                        throw new InvalidOperationException($"El producto en el carrito no es válido: ID {item.ProductoId}");
+                    if (item.ProductoId <= 0)
+                        throw new InvalidOperationException("El producto en el carrito no es válido.");
 
-                    var encargue = new Encargue
+                    var encargue = new
                     {
                         ProductoId = item.ProductoId,
                         UsuarioId = userId,
@@ -186,12 +183,24 @@ namespace FoodMacanoServices.Services
                         FechaEncargue = DateTime.Now
                     };
 
-                    // Limpia propiedades de navegación si son nulas
-                    encargue.Producto = null;
-                    encargue.Usuario = null;
+                    try
+                    {
+                        // Usar el endpoint de encargues y asegurar que se envían los campos requeridos
+                        var response = await client.PostAsJsonAsync(_encarguesEndpoint, encargue);
 
-                    await _encargueService.AddAsync(encargue);
-                    await _carritoService.DeleteAsync(item.Id);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            var errorContent = await response.Content.ReadAsStringAsync();
+                            throw new ApplicationException($"Error al crear el encargue: {response.StatusCode}, Detalles: {errorContent}");
+                        }
+
+                        // Si el encargue se creó exitosamente, eliminar el item del carrito
+                        await RemoveFromCartAsync(item.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ApplicationException($"Error procesando el item del carrito {item.Id}: {ex.Message}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -200,10 +209,6 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
-
-
-
-
         public async Task<int> GetUniqueItemCountAsync()
         {
             try

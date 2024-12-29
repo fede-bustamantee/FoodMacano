@@ -8,44 +8,41 @@ namespace FoodMacanoServices.Services
 {
     public class EncargueService : GenericService<Encargue>, IEncargueService
     {
-        private readonly HttpClient client;
-        private readonly JsonSerializerOptions options;
+        private readonly HttpClient _client;
+        private readonly JsonSerializerOptions _options;
         private readonly string _endpoint;
         private readonly FirebaseAuthService _authService;
         private readonly UsuarioMappingService _usuarioMappingService;
-        private readonly IGenericService<Encargue> _encargueService;
 
         public EncargueService(
+            HttpClient client,
             FirebaseAuthService authService,
-            UsuarioMappingService usuarioMappingService,
-            IGenericService<Encargue> encargueService)
+            UsuarioMappingService usuarioMappingService) : base(client)
         {
-            client = new HttpClient();
-            options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var urlApi = Properties.Resources.UrlApi;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _usuarioMappingService = usuarioMappingService ?? throw new ArgumentNullException(nameof(usuarioMappingService));
+            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            // Configuración del endpoint
+            var urlApi = Properties.Resources.UrlApi ?? throw new InvalidOperationException("UrlApi no configurado.");
             _endpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(Encargue));
-            _authService = authService;
-            _usuarioMappingService = usuarioMappingService;
-            _encargueService = encargueService;
         }
 
         public async Task<List<Encargue>> GetEncarguesAsync(string firebaseUserId)
         {
+            if (string.IsNullOrEmpty(firebaseUserId))
+                throw new ArgumentException("Firebase User ID no puede ser nulo o vacío.");
+
             try
             {
-                if (string.IsNullOrEmpty(firebaseUserId))
-                {
-                    throw new InvalidOperationException("Usuario no autenticado");
-                }
                 var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseUserId);
-                var response = await client.GetAsync($"{_endpoint}?usuarioId={userId}");
+                var response = await _client.GetAsync($"{_endpoint}?usuarioId={userId}");
+
+                response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
-                var encargues = JsonSerializer.Deserialize<List<Encargue>>(content, options);
-                return encargues ?? new List<Encargue>();
+
+                return JsonSerializer.Deserialize<List<Encargue>>(content, _options) ?? new List<Encargue>();
             }
             catch (Exception ex)
             {
@@ -56,29 +53,25 @@ namespace FoodMacanoServices.Services
 
         public async Task AddEncargueAsync(Encargue encargue)
         {
+            if (encargue == null)
+                throw new ArgumentNullException(nameof(encargue), "El encargue no puede ser nulo.");
+
             try
             {
                 var firebaseId = await _authService.GetUserId();
                 if (string.IsNullOrEmpty(firebaseId))
-                {
-                    throw new InvalidOperationException("Usuario no autenticado");
-                }
+                    throw new InvalidOperationException("Usuario no autenticado.");
 
                 var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
                 encargue.UsuarioId = userId;
-                encargue.FechaEncargue = DateTime.Now;
+                encargue.FechaEncargue = DateTime.UtcNow;
 
-                // Limpiar propiedades de navegación
+                // Limpiar propiedades innecesarias
                 encargue.Producto = null;
                 encargue.Usuario = null;
 
-                var response = await client.PostAsJsonAsync(_endpoint, encargue);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
+                var response = await _client.PostAsJsonAsync(_endpoint, encargue);
+                response.EnsureSuccessStatusCode(); // Lanza una excepción si el código HTTP no indica éxito
             }
             catch (Exception ex)
             {
@@ -89,17 +82,16 @@ namespace FoodMacanoServices.Services
 
         public async Task<Encargue> GetEncargueByIdAsync(int id)
         {
+            if (id <= 0)
+                throw new ArgumentException("El ID debe ser mayor a cero.");
+
             try
             {
-                var response = await client.GetAsync($"{_endpoint}/{id}");
+                var response = await _client.GetAsync($"{_endpoint}/{id}");
+                response.EnsureSuccessStatusCode();
+
                 var content = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
-
-                return JsonSerializer.Deserialize<Encargue>(content, options);
+                return JsonSerializer.Deserialize<Encargue>(content, _options);
             }
             catch (Exception ex)
             {
@@ -110,15 +102,13 @@ namespace FoodMacanoServices.Services
 
         public async Task UpdateEncargueAsync(Encargue encargue)
         {
+            if (encargue == null || encargue.Id <= 0)
+                throw new ArgumentException("Encargue inválido para actualizar.");
+
             try
             {
-                var response = await client.PutAsJsonAsync($"{_endpoint}/{encargue.Id}", encargue);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
+                var response = await _client.PutAsJsonAsync($"{_endpoint}/{encargue.Id}", encargue);
+                response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
@@ -129,15 +119,13 @@ namespace FoodMacanoServices.Services
 
         public async Task DeleteEncargueAsync(int id)
         {
+            if (id <= 0)
+                throw new ArgumentException("El ID debe ser mayor a cero.");
+
             try
             {
-                var response = await client.DeleteAsync($"{_endpoint}/{id}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
+                var response = await _client.DeleteAsync($"{_endpoint}/{id}");
+                response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
