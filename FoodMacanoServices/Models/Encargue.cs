@@ -17,6 +17,7 @@ public class Encargue
 
     public DateTime FechaEncargue { get; set; }
 
-    public virtual Producto Producto { get; set; }
-    public virtual Usuario Usuario { get; set; }
+    // Marcar las propiedades de navegación como opcionales
+    public virtual Producto? Producto { get; set; }
+    public virtual Usuario? Usuario { get; set; }
 }

@@ -54,20 +54,20 @@ namespace FoodMacanoServices.Services
         public async Task AddEncargueAsync(Encargue encargue)
         {
             if (encargue == null)
-                throw new ArgumentNullException(nameof(encargue), "El encargue no puede ser nulo.");
+                throw new ArgumentNullException(nameof(encargue));
 
             try
             {
-                var firebaseId = await _authService.GetUserId();
-                if (string.IsNullOrEmpty(firebaseId))
-                    throw new InvalidOperationException("Usuario no autenticado.");
+                // Asegurarnos de que tenemos todos los datos necesarios
+                var request = new
+                {
+                    ProductoId = encargue.ProductoId,
+                    UsuarioId = encargue.UsuarioId,
+                    Cantidad = encargue.Cantidad,
+                    FechaEncargue = DateTime.UtcNow
+                };
 
-                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
-                encargue.UsuarioId = userId;
-                encargue.FechaEncargue = DateTime.UtcNow;
-
-                // Ya no limpiamos las propiedades de navegación
-                var response = await _client.PostAsJsonAsync(_endpoint, encargue);
+                var response = await _client.PostAsJsonAsync(_endpoint, request);
 
                 if (!response.IsSuccessStatusCode)
                 {

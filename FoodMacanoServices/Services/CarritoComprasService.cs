@@ -173,19 +173,20 @@ namespace FoodMacanoServices.Services
 
                 foreach (var item in cartItems)
                 {
-                    if (item.ProductoId <= 0)
-                        throw new InvalidOperationException($"Datos inválidos en el ítem del carrito con ID {item.Id}.");
-
-                    var encargue = new Encargue
-                    {
-                        ProductoId = item.ProductoId,
-                        UsuarioId = userId, // Usamos el userId obtenido del servicio
-                        Cantidad = item.Cantidad,
-                        FechaEncargue = DateTime.UtcNow
-                    };
-
                     try
                     {
+                        Console.WriteLine($"Procesando ítem: ID={item.Id}, ProductoId={item.ProductoId}, Cantidad={item.Cantidad}");
+
+                        var encargue = new Encargue
+                        {
+                            ProductoId = item.ProductoId,
+                            UsuarioId = userId,
+                            Cantidad = item.Cantidad,
+                            FechaEncargue = DateTime.UtcNow
+                        };
+
+                        Console.WriteLine($"Creando Encargue: ProductoId={encargue.ProductoId}, UsuarioId={encargue.UsuarioId}, Cantidad={encargue.Cantidad}, FechaEncargue={encargue.FechaEncargue}");
+
                         await _encargueService.AddEncargueAsync(encargue);
                         await RemoveFromCartAsync(item.Id);
                     }

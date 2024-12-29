@@ -43,26 +43,13 @@ public class EncarguesController : ControllerBase
 
     // POST: api/Encargues
     [HttpPost]
-    public async Task<ActionResult<Encargue>> PostEncargue(Encargue encargue)
+    public async Task<ActionResult<Encargue>> PostEncargue([FromBody] Encargue encargue)
     {
         try
         {
-            // Validación básica del modelo
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            // Validación de IDs
-            if (encargue.ProductoId <= 0 || encargue.UsuarioId <= 0)
-            {
-                return BadRequest(new
-                {
-                    errors = new Dictionary<string, string[]>
-                    {
-                        { "Validacion", new[] { "ProductoId y UsuarioId deben ser valores positivos." } }
-                    }
-                });
             }
 
             // Verificar existencia de Producto y Usuario
@@ -71,47 +58,42 @@ public class EncarguesController : ControllerBase
 
             if (!productoExiste || !usuarioExiste)
             {
-                var errors = new Dictionary<string, string[]>();
-
-                if (!productoExiste)
-                    errors.Add("Producto", new[] { "El producto especificado no existe." });
-
-                if (!usuarioExiste)
-                    errors.Add("Usuario", new[] { "El usuario especificado no existe." });
-
-                return BadRequest(new { errors });
+                return BadRequest(new
+                {
+                    errors = new Dictionary<string, string[]>
+                {
+                    { productoExiste ? null : "Producto", new[] { "El producto especificado no existe." } },
+                    { usuarioExiste ? null : "Usuario", new[] { "El usuario especificado no existe." } }
+                }.Where(kvp => kvp.Key != null)
+                });
             }
 
-            // Establecer la fecha del encargue
-            encargue.FechaEncargue = DateTime.UtcNow;
+            // Crear nuevo encargue
+            var nuevoEncargue = new Encargue
+            {
+                ProductoId = encargue.ProductoId,
+                UsuarioId = encargue.UsuarioId,
+                Cantidad = encargue.Cantidad,
+                FechaEncargue = DateTime.UtcNow
+            };
 
-            // Crear el encargue
-            _context.encargues.Add(encargue);
+            _context.encargues.Add(nuevoEncargue);
             await _context.SaveChangesAsync();
 
-            // Cargar las relaciones para la respuesta
-            await _context.Entry(encargue)
+            // Cargar las relaciones después de guardar
+            await _context.Entry(nuevoEncargue)
                 .Reference(e => e.Producto)
                 .LoadAsync();
-
-            await _context.Entry(encargue)
+            await _context.Entry(nuevoEncargue)
                 .Reference(e => e.Usuario)
                 .LoadAsync();
 
-            return CreatedAtAction(
-                nameof(GetEncargue),
-                new { id = encargue.Id },
-                encargue
-            );
+            return CreatedAtAction(nameof(GetEncargue), new { id = nuevoEncargue.Id }, nuevoEncargue);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error al crear encargue: {ex.Message}");
-            return StatusCode(500, new
-            {
-                message = "Error interno al procesar el encargue.",
-                error = ex.Message
-            });
+            return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
         }
     }
 
