@@ -170,7 +170,8 @@ namespace FoodMacanoServices.Services
                     if (item.ProductoId <= 0 || item.UsuarioId <= 0)
                         throw new InvalidOperationException($"Datos inválidos en el ítem del carrito con ID {item.Id}.");
 
-                    var encargue = new Encargue
+                    // Construir el objeto Encargue solo con los campos necesarios
+                    var encargue = new
                     {
                         ProductoId = item.ProductoId,
                         UsuarioId = item.UsuarioId,
@@ -178,10 +179,11 @@ namespace FoodMacanoServices.Services
                         FechaEncargue = DateTime.UtcNow
                     };
 
-                    // Serializar el objeto encargue para depuración
+                    // Serializar y mostrar el JSON para depuración
                     var encargueJson = JsonSerializer.Serialize(encargue);
                     Console.WriteLine($"JSON enviado: {encargueJson}");
 
+                    // Enviar el JSON al servidor
                     var response = await client.PostAsJsonAsync(_encarguesEndpoint, encargue);
 
                     if (!response.IsSuccessStatusCode)

@@ -47,10 +47,14 @@ public class EncarguesController : ControllerBase
     {
         try
         {
-            if (encargue == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("El encargue no puede ser nulo.");
+                return BadRequest(ModelState);
             }
+
+            // Limpiar propiedades relacionadas para evitar conflictos
+            encargue.Producto = null;
+            encargue.Usuario = null;
 
             var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
             var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargue.UsuarioId);
@@ -68,18 +72,10 @@ public class EncarguesController : ControllerBase
                 return BadRequest(new { errors });
             }
 
-            if (encargue.Cantidad <= 0)
-            {
-                return BadRequest(new { errors = new { Cantidad = new[] { "La cantidad debe ser mayor a 0." } } });
-            }
-
             if (encargue.FechaEncargue == default)
             {
                 encargue.FechaEncargue = DateTime.UtcNow;
             }
-
-            encargue.Producto = null;
-            encargue.Usuario = null;
 
             _context.encargues.Add(encargue);
             await _context.SaveChangesAsync();
