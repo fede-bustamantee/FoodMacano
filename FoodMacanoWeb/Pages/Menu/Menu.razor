@@ -4,6 +4,7 @@
 @inject IGenericService<Producto> productoService
 @inject ICarritoService carritoComprasService
 @inject FirebaseAuthService firebaseAuthService
+@inject NavigationManager NavigationManager
 
 <main class="products">
     <div class="shopping-icon" @onclick="ToggleSidebar">
@@ -151,6 +152,7 @@
             await LoadCarritoItems();
         }
     }
+
     private async Task AddToCart(Producto producto)
     {
         if (producto == null || producto.Id <= 0)
@@ -167,7 +169,6 @@
     {
         carritoItems = await carritoComprasService.GetCartItemsAsync();
     }
-
 
     private async Task RemoveFromCart(int itemId)
     {

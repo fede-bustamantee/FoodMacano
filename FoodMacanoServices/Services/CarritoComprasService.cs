@@ -156,51 +156,42 @@ namespace FoodMacanoServices.Services
                 return 0;
             }
         }
+
         public async Task CheckoutAsync()
         {
             try
             {
-                var firebaseId = await _authService.GetUserId();
-                if (string.IsNullOrEmpty(firebaseId))
-                    throw new InvalidOperationException("Usuario no autenticado.");
-
-                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
                 var cartItems = await GetCartItemsAsync();
-
                 if (!cartItems.Any())
                     throw new InvalidOperationException("El carrito está vacío. No se puede realizar el checkout.");
 
                 foreach (var item in cartItems)
                 {
-                    if (item.ProductoId <= 0)
-                        throw new InvalidOperationException("El producto en el carrito no es válido.");
+                    if (item.ProductoId <= 0 || item.UsuarioId <= 0)
+                        throw new InvalidOperationException($"Datos inválidos en el ítem del carrito con ID {item.Id}.");
 
-                    var encargue = new
+                    var encargue = new Encargue
                     {
                         ProductoId = item.ProductoId,
-                        UsuarioId = userId,
+                        UsuarioId = item.UsuarioId,
                         Cantidad = item.Cantidad,
-                        FechaEncargue = DateTime.Now
+                        FechaEncargue = DateTime.UtcNow
                     };
 
-                    try
-                    {
-                        // Usar el endpoint de encargues y asegurar que se envían los campos requeridos
-                        var response = await client.PostAsJsonAsync(_encarguesEndpoint, encargue);
+                    // Serializar el objeto encargue para depuración
+                    var encargueJson = JsonSerializer.Serialize(encargue);
+                    Console.WriteLine($"JSON enviado: {encargueJson}");
 
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            var errorContent = await response.Content.ReadAsStringAsync();
-                            throw new ApplicationException($"Error al crear el encargue: {response.StatusCode}, Detalles: {errorContent}");
-                        }
+                    var response = await client.PostAsJsonAsync(_encarguesEndpoint, encargue);
 
-                        // Si el encargue se creó exitosamente, eliminar el item del carrito
-                        await RemoveFromCartAsync(item.Id);
-                    }
-                    catch (Exception ex)
+                    if (!response.IsSuccessStatusCode)
                     {
-                        throw new ApplicationException($"Error procesando el item del carrito {item.Id}: {ex.Message}");
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine($"Error al crear el encargue: {errorContent}");
+                        throw new ApplicationException($"Error al crear el encargue: {response.StatusCode}, Detalles: {errorContent}");
                     }
+
+                    await RemoveFromCartAsync(item.Id);
                 }
             }
             catch (Exception ex)
@@ -209,6 +200,8 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
+
+
         public async Task<int> GetUniqueItemCountAsync()
         {
             try
@@ -237,3 +230,4 @@ namespace FoodMacanoServices.Services
         }
     }
 }
+
