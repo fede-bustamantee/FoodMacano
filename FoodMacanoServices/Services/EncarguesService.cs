@@ -66,12 +66,14 @@ namespace FoodMacanoServices.Services
                 encargue.UsuarioId = userId;
                 encargue.FechaEncargue = DateTime.UtcNow;
 
-                // Limpiar propiedades innecesarias
-                encargue.Producto = null;
-                encargue.Usuario = null;
-
+                // Ya no limpiamos las propiedades de navegación
                 var response = await _client.PostAsJsonAsync(_endpoint, encargue);
-                response.EnsureSuccessStatusCode(); // Lanza una excepción si el código HTTP no indica éxito
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"Error del servidor: {response.StatusCode}, Detalles: {errorContent}");
+                }
             }
             catch (Exception ex)
             {

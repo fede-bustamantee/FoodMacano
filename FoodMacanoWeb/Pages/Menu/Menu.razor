@@ -164,7 +164,7 @@
         await carritoComprasService.AddToCartAsync(producto);
         await LoadCarritoItems();
     }
-
+        
     private async Task LoadCarritoItems()
     {
         carritoItems = await carritoComprasService.GetCartItemsAsync();
@@ -187,14 +187,34 @@
         try
         {
             Console.WriteLine("Iniciando checkout...");
+
+            // Mostrar loading o deshabilitar el botón
+            await InvokeAsync(() => StateHasChanged());
+
             await carritoComprasService.CheckoutAsync();
-            Console.WriteLine("Checkout completado exitosamente.");
+
             await LoadCarritoItems();
             ToggleSidebar();
+
+            // Mostrar mensaje de éxito
+            await JSRuntime.InvokeVoidAsync("alert", "Checkout completado exitosamente.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Errores esperados (carrito vacío, usuario no autenticado, etc.)
+            Console.WriteLine($"Error de validación durante el checkout: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", ex.Message);
         }
         catch (Exception ex)
         {
+            // Errores inesperados
             Console.WriteLine($"Error durante el checkout: {ex.Message}");
+            await JSRuntime.InvokeVoidAsync("alert", "Ocurrió un error al procesar su pedido. Por favor, intente nuevamente.");
+        }
+        finally
+        {
+            // Re-habilitar el botón si estaba deshabilitado
+            await InvokeAsync(() => StateHasChanged());
         }
     }
 

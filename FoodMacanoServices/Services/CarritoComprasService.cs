@@ -14,22 +14,22 @@ namespace FoodMacanoServices.Services
         private readonly FirebaseAuthService _authService;
         private readonly UsuarioMappingService _usuarioMappingService;
         private readonly IGenericService<CarritoCompra> _carritoService;
-        private readonly string _encarguesEndpoint;
+        private readonly IEncargueService _encargueService; // Cambiado a IEncargueService
 
         public CarritoService(
             FirebaseAuthService authService,
             UsuarioMappingService usuarioMappingService,
             IGenericService<CarritoCompra> carritoService,
-            IGenericService<Encargue> encargueService)
+            IEncargueService encargueService) // Cambiado a IEncargueService
         {
             client = new HttpClient();
             options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
             var urlApi = Properties.Resources.UrlApi;
             _endpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(CarritoCompra));
-            _encarguesEndpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(Encargue));
             _authService = authService;
             _usuarioMappingService = usuarioMappingService;
             _carritoService = carritoService;
+            _encargueService = encargueService;
         }
 
         public async Task<List<CarritoCompra>> GetCartItemsAsync()
@@ -165,35 +165,34 @@ namespace FoodMacanoServices.Services
                 if (!cartItems.Any())
                     throw new InvalidOperationException("El carrito está vacío. No se puede realizar el checkout.");
 
+                var firebaseId = await _authService.GetUserId();
+                if (string.IsNullOrEmpty(firebaseId))
+                    throw new InvalidOperationException("Usuario no autenticado.");
+
+                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
+
                 foreach (var item in cartItems)
                 {
-                    if (item.ProductoId <= 0 || item.UsuarioId <= 0)
+                    if (item.ProductoId <= 0)
                         throw new InvalidOperationException($"Datos inválidos en el ítem del carrito con ID {item.Id}.");
 
-                    // Construir el objeto Encargue solo con los campos necesarios
-                    var encargue = new
+                    var encargue = new Encargue
                     {
                         ProductoId = item.ProductoId,
-                        UsuarioId = item.UsuarioId,
+                        UsuarioId = userId, // Usamos el userId obtenido del servicio
                         Cantidad = item.Cantidad,
                         FechaEncargue = DateTime.UtcNow
                     };
 
-                    // Serializar y mostrar el JSON para depuración
-                    var encargueJson = JsonSerializer.Serialize(encargue);
-                    Console.WriteLine($"JSON enviado: {encargueJson}");
-
-                    // Enviar el JSON al servidor
-                    var response = await client.PostAsJsonAsync(_encarguesEndpoint, encargue);
-
-                    if (!response.IsSuccessStatusCode)
+                    try
                     {
-                        var errorContent = await response.Content.ReadAsStringAsync();
-                        Console.WriteLine($"Error al crear el encargue: {errorContent}");
-                        throw new ApplicationException($"Error al crear el encargue: {response.StatusCode}, Detalles: {errorContent}");
+                        await _encargueService.AddEncargueAsync(encargue);
+                        await RemoveFromCartAsync(item.Id);
                     }
-
-                    await RemoveFromCartAsync(item.Id);
+                    catch (Exception ex)
+                    {
+                        throw new ApplicationException($"Error al procesar el ítem {item.Id}: {ex.Message}");
+                    }
                 }
             }
             catch (Exception ex)
