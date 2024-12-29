@@ -80,12 +80,31 @@ namespace BackFoodMacano.Controllers
         [HttpPost]
         public async Task<ActionResult<Encargue>> PostEncargue(Encargue encargue)
         {
-            _context.encargues.Add(encargue);
-            await _context.SaveChangesAsync();
+            // Validar datos requeridos
+            if (encargue == null ||
+                encargue.ProductoId <= 0 ||
+                encargue.UsuarioId <= 0 ||
+                encargue.Cantidad <= 0)
+            {
+                return BadRequest("Datos inválidos o incompletos");
+            }
 
-            return CreatedAtAction("GetEncargue", new { id = encargue.Id }, encargue);
+            try
+            {
+                _context.encargues.Add(encargue);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(
+                    nameof(GetEncargue),
+                    new { id = encargue.Id },
+                    encargue
+                );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
         }
-
         // DELETE: api/Encargues/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEncargue(int id)

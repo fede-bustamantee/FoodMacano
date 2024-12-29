@@ -21,7 +21,7 @@ builder.Services.AddScoped<IGenericService<Negocio>, GenericService<Negocio>>();
 builder.Services.AddScoped<IGenericService<CarritoCompra>, GenericService<CarritoCompra>>();
 builder.Services.AddScoped<IGenericService<Encargue>, GenericService<Encargue>>();
 builder.Services.AddScoped<IGenericService<Usuario>, GenericService<Usuario>>();
-builder.Services.AddScoped<CarritoComprasService>();
+builder.Services.AddScoped<ICarritoService, CarritoService>();
 builder.Services.AddScoped<EncarguesService>();
 builder.Services.AddScoped<IAleatorioService<Producto>, AleatorioService<Producto>>();
 builder.Services.AddScoped<FirebaseAuthService>();
