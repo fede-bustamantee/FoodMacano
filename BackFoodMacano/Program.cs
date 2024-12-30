@@ -13,14 +13,14 @@ string cadenaConexion = configuration.GetConnectionString("mysqlremoto");
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-builder.Services.AddDbContext<FoodMacanoContext>(options => options.UseMySql(
-    cadenaConexion,
-    ServerVersion.AutoDetect(cadenaConexion),
-    options => options.EnableRetryOnFailure(
-        maxRetryCount: 5,
-        maxRetryDelay: System.TimeSpan.FromSeconds(30),
-        errorNumbersToAdd: null)
-));
+builder.Services.AddDbContext<FoodMacanoContext>(
+    options => options.UseMySql(cadenaConexion,
+                                ServerVersion.AutoDetect(cadenaConexion),
+                    options => options.EnableRetryOnFailure(
+                                        maxRetryCount: 5,
+                                        maxRetryDelay: System.TimeSpan.FromSeconds(30),
+                                       errorNumbersToAdd: null)
+                                )));
 
 // Configura el serializador JSON para manejar referencias cíclicas
 builder.Services.AddControllers()
@@ -45,14 +45,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configurar las cabeceras COOP y COEP
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
-    context.Response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
-    await next();
-});
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -63,6 +55,14 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+
+// Middleware para agregar las cabeceras COOP y COEP
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
+    context.Response.Headers.Add("Cross-Origin-Embedder-Policy", "require-corp");
+    await next();
+});
 
 app.UseAuthorization();
 
