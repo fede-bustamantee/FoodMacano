@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
 </head>
-
 <body>
     <div id="app">
         <svg class="loading-progress">
@@ -24,25 +22,16 @@
         </svg>
         <div class="loading-progress-text"></div>
     </div>
-
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
         navigator.serviceWorker.register('service-worker.js');
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
-    <!-- Firebase Core and Authentication -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-    <!-- Firebase Configuration -->
-    <script>
+        // Firebase Configuración
         const firebaseConfig = {
             apiKey: "AIzaSyDpXHQyD5bFCjGkuPklXEASuX0B7a-peTE",
             authDomain: "foodmacano.firebaseapp.com",
@@ -53,7 +42,7 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Firebase Auth Helpers
+        // Helper para autenticación
         window.firebaseAuth = {
             signInWithEmailPassword: async (email, password) => {
                 try {
@@ -70,48 +59,8 @@
                 } catch (error) {
                     console.error("Error al cerrar sesión:", error);
                 }
-            },z
-            signInWithGoogle: async () => {
-                try {
-                    const provider = new firebase.auth.GoogleAuthProvider();
-                    const result = await firebase.auth().signInWithPopup(provider);
-                    return {
-                        firebaseId: result.user.uid,
-                        email: result.user.email,
-                        displayName: result.user.displayName
-                    };
-                } catch (error) {
-                    console.error("Error al iniciar sesión con Google:", error);
-                    return null;
-                }
-            },
-            signInWithFacebook: async () => {
-                try {
-                    const provider = new firebase.auth.FacebookAuthProvider();
-                    const result = await firebase.auth().signInWithPopup(provider);
-                    return {
-                        firebaseId: result.user.uid,
-                        email: result.user.email,
-                        displayName: result.user.displayName
-                    };
-                } catch (error) {
-                    console.error("Error al iniciar sesión con Facebook:", error);
-                    return null;
-                }
-            },
-            isEmailVerified: async () => {
-                const user = firebase.auth().currentUser;
-                return user ? user.emailVerified : false;
             }
-        };
-
-        // Local Storage Helpers
-        window.localStorageHelper = {
-            setItem: (key, value) => localStorage.setItem(key, value),
-            getItem: (key) => localStorage.getItem(key),
-            removeItem: (key) => localStorage.removeItem(key)
         };
     </script>
 </body>
-
 </html>
