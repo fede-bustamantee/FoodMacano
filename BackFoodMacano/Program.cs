@@ -7,20 +7,20 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
-
 string cadenaConexion = configuration.GetConnectionString("mysqlremoto");
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Configuración del DBContext con MySQL
+// Configuración del DbContext
 builder.Services.AddDbContext<FoodMacanoContext>(options =>
     options.UseMySql(cadenaConexion,
         ServerVersion.AutoDetect(cadenaConexion),
         options => options.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: System.TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null)
+            errorNumbersToAdd: null
+        )
     ));
 
 // Configuración del serializador JSON para manejar referencias cíclicas
@@ -31,18 +31,23 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
-// Configuración de CORS con orígenes específicos permitidos
+// Configuración de Endpoints y Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Configuración de CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins", builder =>
-        builder.WithOrigins("https://tusitio.com", "http://localhost:5000") // Cambia los orígenes según tus necesidades
-               .AllowAnyHeader()
-               .AllowAnyMethod());
+    options.AddPolicy("AllowAll", builder =>
+        builder
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 });
 
 var app = builder.Build();
 
-// Middleware para añadir encabezados de seguridad
+// Middleware para agregar encabezados de seguridad
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin");
@@ -50,19 +55,16 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Configure the HTTP request pipeline.
+// Configuración del pipeline de la aplicación
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigins");
-
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
