@@ -15,7 +15,7 @@ namespace BackFoodMacano.DataContext
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            string cadenaConexion = configuration.GetConnectionString("mysqlremoto");
+            string cadenaConexion = configuration.GetConnectionString("mysqlremote");
 
             //optionsBuilder.UseSqlServer(cadenaConexion) ;
             optionsBuilder.UseMySql(cadenaConexion,

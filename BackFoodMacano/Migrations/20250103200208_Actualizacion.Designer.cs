@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackFoodMacano.Migrations
 {
     [DbContext(typeof(FoodMacanoContext))]
-    [Migration("20241111140655_iocm")]
-    partial class iocm
+    [Migration("20250103200208_Actualizacion")]
+    partial class Actualizacion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,35 @@ namespace BackFoodMacano.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("Encargue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaEncargue")
+                        .HasColumnType("datetime");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("encargues");
+                });
 
             modelBuilder.Entity("FoodMacanoServices.Models.CarritoCompra", b =>
                 {
@@ -203,35 +232,6 @@ namespace BackFoodMacano.Migrations
                             DescripcionCorta = "Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.",
                             DescripcionLarga = "Smoothie natural de frutas mixtas (frutilla, banana y naranja) sin azúcar añadida. Vaso de 400ml."
                         });
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.Encargue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaEncargue")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductoId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("encargues");
                 });
 
             modelBuilder.Entity("FoodMacanoServices.Models.Horario", b =>
@@ -595,7 +595,7 @@ namespace BackFoodMacano.Migrations
                         });
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.CarritoCompra", b =>
+            modelBuilder.Entity("Encargue", b =>
                 {
                     b.HasOne("FoodMacanoServices.Models.Producto", "Producto")
                         .WithMany()
@@ -614,7 +614,7 @@ namespace BackFoodMacano.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.Encargue", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.CarritoCompra", b =>
                 {
                     b.HasOne("FoodMacanoServices.Models.Producto", "Producto")
                         .WithMany()

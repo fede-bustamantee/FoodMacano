@@ -282,9 +282,9 @@ header{
     }    
 
 .user-icon-img {
-    background-color: white;
-    width: 30px;
-    height: 30px;
+    background-color: red;
+    width: 50px;
+    height: 50px;
     border-radius: 50%; /* También círculo para la imagen */
     object-fit: cover; /* Asegura que la imagen se ajuste */
 }

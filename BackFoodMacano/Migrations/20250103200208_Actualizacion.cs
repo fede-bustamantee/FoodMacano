@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BackFoodMacano.Migrations
 {
     /// <inheritdoc />
-    public partial class BASEM : Migration
+    public partial class Actualizacion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -190,9 +190,9 @@ namespace BackFoodMacano.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ProductoId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    FechaEncargue = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false)
+                    FechaEncargue = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -273,6 +273,11 @@ namespace BackFoodMacano.Migrations
                 table: "redesSociales",
                 columns: new[] { "Id", "Facebook", "Instagram", "Whatsapp" },
                 values: new object[] { 1, "https://www.facebook.com", "https://www.instagram.com", "https://wa.me/543498409675" });
+
+            migrationBuilder.InsertData(
+                table: "usuarios",
+                columns: new[] { "Id", "Email", "FirebaseId", "Password", "TipoUsuario", "User" },
+                values: new object[] { 1, "f@gmail.com", "t7DM46Nrb5VABqoCkOQPv40VZfj2", "123456", 0, "fede" });
 
             migrationBuilder.InsertData(
                 table: "negocios",
