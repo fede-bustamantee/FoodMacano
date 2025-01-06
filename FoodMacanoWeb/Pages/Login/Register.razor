@@ -1,5 +1,4 @@
 ﻿@page "/register"
-@inject NavigationManager Navigation
 @inject FirebaseAuthService AuthService
 @inject IUsuarioService UsuarioService
 
@@ -33,15 +32,13 @@
     private async Task Registe()
     {
         var firebaseId = await AuthService.RegisterWithEmailPassword(usuario.Email, usuario.Password);
-        if (!string.IsNullOrEmpty(firebaseId))
-        {
-            usuario.FirebaseId = firebaseId;
-            await UsuarioService.CrearUsuarioAsync(usuario);
-            Navigation.NavigateTo("/login");
-        }
-        else
-        {
-            // Manejar el error de registro
-        }
+
+            if (!string.IsNullOrEmpty(firebaseId))
+            {
+                usuario.FirebaseId = firebaseId;
+                await UsuarioService.CrearUsuarioAsync(usuario);
+
+                Navigation.NavigateTo("/login");
+            }
     }
 }

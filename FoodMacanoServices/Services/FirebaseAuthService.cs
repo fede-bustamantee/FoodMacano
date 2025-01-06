@@ -23,11 +23,17 @@ namespace FoodMacanoServices.Services
             {
                 var userId = await _jsRuntime.InvokeAsync<string>("firebaseAuth.signInWithEmailPassword", email, password);
                 var isEmailVerified = await _jsRuntime.InvokeAsync<bool>("firebaseAuth.isEmailVerified");
+
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    await _jsRuntime.InvokeVoidAsync("localStorageHelper.setItem", UserIdKey, userId);
+                }
+
                 return (userId, isEmailVerified);
             }
             catch (Exception error)
             {
-                Console.Error.WriteLine("Error al iniciar sesión:", error);
+                Console.Error.WriteLine($"Error al iniciar sesión: {error}");
                 return (null, false);
             }
         }
@@ -36,48 +42,60 @@ namespace FoodMacanoServices.Services
         {
             try
             {
+                // Registrar usuario en Firebase
                 var userId = await _jsRuntime.InvokeAsync<string>("firebaseAuth.registerWithEmailPassword", email, password);
-                if (!string.IsNullOrEmpty(userId))
+
+                if (string.IsNullOrEmpty(userId))
                 {
-                    await _jsRuntime.InvokeVoidAsync("firebaseAuth.sendEmailVerification");
+                    throw new Exception("No se pudo crear el usuario en Firebase");
                 }
+
+                // El correo de verificación se envía automáticamente en el método registerWithEmailPassword de JavaScript
                 return userId;
             }
             catch (Exception error)
             {
-                Console.Error.WriteLine("Error al registrar usuario:", error);
-                return null;
+                Console.Error.WriteLine($"Error al registrar usuario: {error}");
+                throw; // Relanzamos la excepción para manejarla en el componente
+            }
+        }
+
+        public async Task<bool> ResendVerificationEmail()
+        {
+            try
+            {
+                return await _jsRuntime.InvokeAsync<bool>("firebaseAuth.sendEmailVerification");
+            }
+            catch (Exception error)
+            {
+                Console.Error.WriteLine($"Error al reenviar correo de verificación: {error}");
+                return false;
+            }
+        }
+
+        public async Task<bool> CheckEmailVerification()
+        {
+            try
+            {
+                return await _jsRuntime.InvokeAsync<bool>("firebaseAuth.isEmailVerified");
+            }
+            catch (Exception error)
+            {
+                Console.Error.WriteLine($"Error al verificar estado del correo: {error}");
+                return false;
             }
         }
 
         public async Task<(string firebaseId, string email, string displayName)> SignInWithGoogle()
         {
-            try
-            {
-                var result = await _jsRuntime.InvokeAsync<Usuario>("firebaseAuth.signInWithGoogle");
+            var result = await _jsRuntime.InvokeAsync<Usuario>("firebaseAuth.signInWithGoogle");
+                if (result != null && !string.IsNullOrEmpty(result.FirebaseId))
+                {
+                    await _jsRuntime.InvokeVoidAsync("localStorageHelper.setItem", UserIdKey, result.FirebaseId);
+                }
                 return (result.FirebaseId, result.Email, result.User);
-            }
-            catch (Exception error)
-            {
-                Console.Error.WriteLine("Error al iniciar sesión con Google:", error);
-                return (null, null, null);
-            }
+            
         }
-
-        public async Task<(string firebaseId, string email, string displayName)> SignInWithFacebook()
-        {
-            try
-            {
-                var result = await _jsRuntime.InvokeAsync<Usuario>("firebaseAuth.signInWithFacebook");
-                return (result.FirebaseId, result.Email, result.User);
-            }
-            catch (Exception error)
-            {
-                Console.Error.WriteLine("Error al iniciar sesión con Facebook:", error);
-                return (null, null, null);
-            }
-        }
-
         public async Task SignOut()
         {
             await _jsRuntime.InvokeVoidAsync("firebaseAuth.signOut");
@@ -93,7 +111,12 @@ namespace FoodMacanoServices.Services
         public async Task<bool> IsUserAuthenticated()
         {
             var userId = await GetUserId();
-            return !string.IsNullOrEmpty(userId);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var isEmailVerified = await CheckEmailVerification();
+                return isEmailVerified;
+            }
+            return false;
         }
     }
 }

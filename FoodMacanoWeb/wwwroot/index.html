@@ -78,30 +78,40 @@
                     return {
                         firebaseId: result.user.uid,
                         email: result.user.email,
-                        displayName: result.user.displayName
+                        displayName: result.user.displayName || result.user.email.split('@')[0] // Fallback al username del email
                     };
                 } catch (error) {
                     console.error("Error al iniciar sesión con Google:", error);
                     return null;
                 }
             },
-            signInWithFacebook: async () => {
-                try {
-                    const provider = new firebase.auth.FacebookAuthProvider();
-                    const result = await firebase.auth().signInWithPopup(provider);
-                    return {
-                        firebaseId: result.user.uid,
-                        email: result.user.email,
-                        displayName: result.user.displayName
-                    };
-                } catch (error) {
-                    console.error("Error al iniciar sesión con Facebook:", error);
-                    return null;
-                }
-            },
             isEmailVerified: async () => {
                 const user = firebase.auth().currentUser;
                 return user ? user.emailVerified : false;
+            },
+            registerWithEmailPassword: async (email, password) => {
+                try {
+                    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.sendEmailVerification();
+                    return userCredential.user.uid;
+                } catch (error) {
+                    console.error("Error al registrar:", error);
+                    return null;
+                }
+            },
+
+            sendEmailVerification: async () => {
+                try {
+                    const user = firebase.auth().currentUser;
+                    if (user) {
+                        await user.sendEmailVerification();
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error("Error al enviar verificación:", error);
+                    return false;
+                }
             }
         };
 
