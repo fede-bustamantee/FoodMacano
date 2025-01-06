@@ -75,13 +75,18 @@
                 try {
                     const provider = new firebase.auth.GoogleAuthProvider();
                     const result = await firebase.auth().signInWithPopup(provider);
+
                     return {
                         firebaseId: result.user.uid,
                         email: result.user.email,
                         displayName: result.user.displayName || result.user.email.split('@')[0] // Fallback al username del email
                     };
                 } catch (error) {
-                    console.error("Error al iniciar sesión con Google:", error);
+                    if (error.code === 'auth/popup-closed-by-user') {
+                        console.warn("El usuario cerró el popup antes de completar la autenticación.");
+                    } else {
+                        console.error("Error al iniciar sesión con Google:", error);
+                    }
                     return null;
                 }
             },

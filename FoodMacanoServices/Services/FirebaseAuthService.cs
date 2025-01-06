@@ -88,14 +88,28 @@ namespace FoodMacanoServices.Services
 
         public async Task<(string firebaseId, string email, string displayName)> SignInWithGoogle()
         {
-            var result = await _jsRuntime.InvokeAsync<Usuario>("firebaseAuth.signInWithGoogle");
+            try
+            {
+                var result = await _jsRuntime.InvokeAsync<Usuario>("firebaseAuth.signInWithGoogle");
+
                 if (result != null && !string.IsNullOrEmpty(result.FirebaseId))
                 {
                     await _jsRuntime.InvokeVoidAsync("localStorageHelper.setItem", UserIdKey, result.FirebaseId);
+                    return (result.FirebaseId, result.Email, result.User);
                 }
-                return (result.FirebaseId, result.Email, result.User);
-            
+                else
+                {
+                    Console.WriteLine("No se obtuvo un resultado válido de la autenticación.");
+                    return (null, null, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error durante la autenticación con Google: {ex.Message}");
+                return (null, null, null);
+            }
         }
+
         public async Task SignOut()
         {
             await _jsRuntime.InvokeVoidAsync("firebaseAuth.signOut");
