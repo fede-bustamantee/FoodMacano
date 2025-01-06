@@ -1,7 +1,7 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy 
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - DataFoodMacano
+name: Build and deploy ASP.Net Core app to Azure Web App - FoodMacano
 
 on:
   push:
@@ -21,11 +21,11 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Build BackFoodMacano project
-        run: dotnet build BackFoodMacano/BackFoodMacano.csproj --configuration Release
+      - name: Build FoodMacanoWeb project
+        run: dotnet build FoodMacanoWeb/FoodMacanoWeb.csproj --configuration Release
 
-      - name: Publish BackFoodMacano project
-        run: dotnet publish BackFoodMacano/BackFoodMacano.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Publish FoodMacanoWeb project
+        run: dotnet publish FoodMacanoWeb/FoodMacanoWeb.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,14 +51,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CA678BB469114B0CBA55A2E1CEFF743A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_12029026973640FE82E9C625617A0BF8 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_41E2D1E6357C44FCBD7D896126E56CC9 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2E1BF2FD97904D67A59FABBAE4095E14 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_6A583797F583416E9B94DF656E88434E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F3C9047FB3AF48CEA9D2B2B7D4EC2E9E }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'DataFoodMacano'
+          app-name: 'FoodMacano'
           slot-name: 'Production'
           package: .
