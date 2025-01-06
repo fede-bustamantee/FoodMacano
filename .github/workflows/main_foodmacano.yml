@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'FoodMacanoWeb/**' # Solo ejecuta el flujo si hay cambios en esta carpeta
   workflow_dispatch:
 
 jobs:
@@ -17,15 +19,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Build FoodMacanoWeb project
+        run: dotnet build FoodMacanoWeb/FoodMacanoWeb.csproj --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: Publish FoodMacanoWeb project
+        run: dotnet publish FoodMacanoWeb/FoodMacanoWeb.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -40,7 +42,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # Esto es necesario para solicitar el JWT
 
     steps:
       - name: Download artifact from build job
@@ -62,4 +64,3 @@ jobs:
           app-name: 'FoodMacano'
           slot-name: 'Production'
           package: .
-          
