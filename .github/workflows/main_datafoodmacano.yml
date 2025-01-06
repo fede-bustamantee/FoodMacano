@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'BackFoodMacano/**' # Solo ejecuta el flujo si hay cambios en esta carpeta
   workflow_dispatch:
 
 jobs:
@@ -40,7 +42,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # Esto es necesario para solicitar el JWT
 
     steps:
       - name: Download artifact from build job
@@ -62,4 +64,3 @@ jobs:
           app-name: 'DataFoodMacano'
           slot-name: 'Production'
           package: .
-          
