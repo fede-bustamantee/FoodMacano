@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackFoodMacano.Migrations
 {
     [DbContext(typeof(FoodMacanoContext))]
-    [Migration("20250103200208_Actualizacion")]
-    partial class Actualizacion
+    [Migration("20250113154644_Actualizacionn")]
+    partial class Actualizacionn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace BackFoodMacano.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaEncargue")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("ProductoId")
                         .HasColumnType("int");
@@ -582,17 +582,6 @@ namespace BackFoodMacano.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("usuarios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "f@gmail.com",
-                            FirebaseId = "t7DM46Nrb5VABqoCkOQPv40VZfj2",
-                            Password = "123456",
-                            TipoUsuario = 0,
-                            User = "fede"
-                        });
                 });
 
             modelBuilder.Entity("Encargue", b =>

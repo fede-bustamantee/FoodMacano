@@ -4,6 +4,7 @@
 @inject IEncargueService encarguesService
 @inject FirebaseAuthService firebaseAuthService
 @inject IUsuarioService UsuarioService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Food Macano</PageTitle>
 
@@ -48,17 +49,34 @@
                         </a>
                     }
                 </div>
-                <div class="user-icon">
-                    <a href="login" class="nav-link">
-                        @if (isAuthenticated)
+                <div class="user-icon relative">
+                    @if (isAuthenticated)
+                    {
+                        <div @onclick="TogglePopup" class="circle cursor-pointer">@userInitial</div>
+                        @if (showPopup)
                         {
-                            <div class="circle">@userInitial</div>
+                            <div class="profile-popup">
+                                <div class="popup-content">
+                                    <div class="user-info">
+                                        <p class="email">@usuario?.Email</p>
+                                        <div class="large-circle">@userInitial</div>
+                                        <h2 class="saludo">¡Hola, @usuario?.User!</h2>
+                                    </div>
+                                    <div class="popup-actions">
+                                        <button class="logout-button" @onclick="SignOut">
+                                            <p>Cerrar Sesión</p>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         }
-                        else
-                        {
+                    }
+                    else
+                    {
+                        <a href="login" class="nav-link">
                             <img src="/img/userr.png" alt="Usuario" class="user-icon-img" />
-                        }
-                    </a>
+                        </a>
+                    }
                 </div>
             </div>
         </nav>
@@ -67,38 +85,29 @@
     <div class="header-content container">
         <div class="swiper mySwiper-1">
             <div class="swiper-wrapper">
-                @if (productos == null)
+                @foreach (var producto in productos ?? new List<Producto>())
                 {
                     <div class="swiper-slide">
-                        <p>Cargando...</p>
-                    </div>
-                }
-                else
-                {
-                    @foreach (var producto in productos)
-                    {
-                        <div class="swiper-slide">
-                            <div class="slider">
-                                <div class="slider-txt">
-                                    <h1>@producto.Nombre</h1>
-                                    <p>@producto.DescripcionProducto?.DescripcionCorta</p>
-                                    <div class="botones">
-                                        <a href="menu" class="btn-1">Encargar</a>
-                                        <a href="informacion/@producto.Id" class="btn-1">Información</a>
-                                    </div>
-                                </div>
-                                <div class="slider-img">
-                                    <img src="@producto.ImagenUrl" alt="@producto.Nombre" />
+                        <div class="slider">
+                            <div class="slider-txt">
+                                <h1>@producto.Nombre</h1>
+                                <p>@producto.DescripcionProducto?.DescripcionCorta</p>
+                                <div class="botones">
+                                    <a href="menu" class="btn-1">Encargar</a>
+                                    <a href="informacion/@producto.Id" class="btn-1">Información</a>
                                 </div>
                             </div>
+                            <div class="slider-img">
+                                <img src="@producto.ImagenUrl" alt="@producto.Nombre" />
+                            </div>
                         </div>
-                    }
+                    </div>
                 }
             </div>
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
-            <div class="swiper-pagination"></div>
         </div>
+        <div class="swiper-pagination"></div>
     </div>
 </header>
 
@@ -158,18 +167,30 @@
     document.getElementById('close-sidebar').addEventListener('click', () => {
         document.getElementById('sidebar').classList.remove('open');
     });
+
+        window.addClickOutsideHandler = (dotnetHelper) => {
+        document.addEventListener('click', (e) => {
+            const popup = document.querySelector('.profile-popup');
+            const circle = document.querySelector('.circle');
+            if (popup && !popup.contains(e.target) && !circle.contains(e.target)) {
+                dotnetHelper.invokeMethodAsync('ClosePopup');
+            }
+        });
+    };
 </script>
 <style>
+    .swiper-pagination{
+        margin-bottom: 50px;
+    }
     .swiper-pagination-bullet {
         background-color: gray; /* Cambia el color del indicador por defecto */
         opacity: 0.7; /* Ajusta la opacidad si es necesario */
     }
 
     .swiper-pagination-bullet-active {
-        background-color: white; /* Cambia el color del indicador activo */
+        background-color: #DB241B; /* Cambia el color del indicador activo */
         opacity: 1;
     }
-
 </style>
 
 @code {
@@ -178,28 +199,27 @@
     private Negocio? negocio;
     private bool isAuthenticated = false;
     private string userInitial = string.Empty;
+    private bool showPopup = false;
+    private Usuario? usuario;
 
     protected override async Task OnInitializedAsync()
     {
         productos = await aleatorioService.GetAleatoriosAsync();
         negocio = await negocioService.GetByIdAsync(1);
 
-        // Obtén el UserId del usuario autenticado
         var userId = await firebaseAuthService.GetUserId();
-
-        // Cargar encargues relacionados con el usuario
         if (!string.IsNullOrEmpty(userId))
         {
             encargues = await encarguesService.GetEncarguesAsync(userId);
+            usuario = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(userId);
             isAuthenticated = true;
 
-            // Obtener la inicial del usuario
-            var usuario = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(userId);
             if (usuario != null && !string.IsNullOrEmpty(usuario.User))
             {
                 userInitial = usuario.User.Substring(0, 1).ToUpper();
             }
         }
+        await JSRuntime.InvokeVoidAsync("addClickOutsideHandler", DotNetObjectReference.Create(this));
     }
 
     // Método para eliminar todos los encargues
@@ -213,5 +233,31 @@
 
         // Refresca la lista de encargues
         encargues = new List<Encargue>();
+    }
+
+    private void TogglePopup()
+    {
+        showPopup = !showPopup;
+    }
+
+    private async Task SignOut()
+    {
+        await firebaseAuthService.SignOut();
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void ManageAccount()
+    {
+        NavigationManager.NavigateTo("/profile");
+    }
+
+    [JSInvokable]
+    public void ClosePopup()
+    {
+        if (showPopup)
+        {
+            showPopup = false;
+            StateHasChanged();
+        }
     }
 }

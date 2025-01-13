@@ -9,18 +9,6 @@ namespace BackFoodMacano.DataContext
         public FoodMacanoContext(DbContextOptions<FoodMacanoContext> options) : base(options)
         {
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            string cadenaConexion = configuration.GetConnectionString("mysqlremote");
-
-            //optionsBuilder.UseSqlServer(cadenaConexion) ;
-            optionsBuilder.UseMySql(cadenaConexion,
-                                    ServerVersion.AutoDetect(cadenaConexion));
-        }
 
         #region DbSet
         public virtual DbSet<Producto> productos { get; set; }
@@ -98,18 +86,6 @@ namespace BackFoodMacano.DataContext
                     Telefono = "123456789",
                     MapaIframe = "<iframe class=\"map\" src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27541.325671616178!2d-60.439340636223776!3d-30.360449115325437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x944b0554d0eb3903%3A0x7b078fba72f704b!2sGdor.%20Crespo%2C%20Santa%20Fe!5e0!3m2!1ses!2sar!4v1725375616155!5m2!1ses!2sar\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
                     RedesSocialId = 1
-                }
-            );
-
-            modelBuilder.Entity<Usuario>().HasData(
-                new Usuario
-                {
-                    Id = 1,
-                    User = "fede",
-                    Email = "f@gmail.com",
-                    Password = "123456", // En producción, utiliza contraseñas encriptadas
-                    FirebaseId = "t7DM46Nrb5VABqoCkOQPv40VZfj2", // Simula un ID de Firebase
-                    TipoUsuario = TipoUsuarioEnum.Cliente // Usa el tipo adecuado según tus necesidades
                 }
             );
         }

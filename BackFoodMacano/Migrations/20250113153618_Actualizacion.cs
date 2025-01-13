@@ -192,7 +192,7 @@ namespace BackFoodMacano.Migrations
                     ProductoId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    FechaEncargue = table.Column<DateTime>(type: "datetime", nullable: false)
+                    FechaEncargue = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {

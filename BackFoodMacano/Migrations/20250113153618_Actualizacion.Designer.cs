@@ -4,6 +4,7 @@ using BackFoodMacano.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackFoodMacano.Migrations
 {
     [DbContext(typeof(FoodMacanoContext))]
-    partial class FoodMacanoContextModelSnapshot : ModelSnapshot
+    [Migration("20250113153618_Actualizacion")]
+    partial class Actualizacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -579,6 +582,17 @@ namespace BackFoodMacano.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "f@gmail.com",
+                            FirebaseId = "t7DM46Nrb5VABqoCkOQPv40VZfj2",
+                            Password = "123456",
+                            TipoUsuario = 0,
+                            User = "fede"
+                        });
                 });
 
             modelBuilder.Entity("Encargue", b =>
