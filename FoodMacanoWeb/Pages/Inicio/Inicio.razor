@@ -204,23 +204,47 @@
 
     protected override async Task OnInitializedAsync()
     {
-        productos = await aleatorioService.GetAleatoriosAsync();
-        negocio = await negocioService.GetByIdAsync(1);
-
-        var userId = await firebaseAuthService.GetUserId();
-        if (!string.IsNullOrEmpty(userId))
+        try
         {
-            encargues = await encarguesService.GetEncarguesAsync(userId);
-            usuario = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(userId);
-            isAuthenticated = true;
+            productos = await aleatorioService.GetAleatoriosAsync();
+            negocio = await negocioService.GetByIdAsync(1);
 
-            if (usuario != null && !string.IsNullOrEmpty(usuario.User))
+            var userId = await firebaseAuthService.GetUserId();
+
+            if (!string.IsNullOrEmpty(userId))
             {
-                userInitial = usuario.User.Substring(0, 1).ToUpper();
+                // Usuario autenticado
+                usuario = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(userId);
+                if (usuario == null)
+                {
+                    throw new InvalidOperationException($"No se encontró usuario con FirebaseId: {userId}");
+                }
+
+                encargues = await encarguesService.GetEncarguesAsync(userId);
+                isAuthenticated = true;
+
+                if (!string.IsNullOrEmpty(usuario.User))
+                {
+                    userInitial = usuario.User.Substring(0, 1).ToUpper();
+                }
             }
+            else
+            {
+                // Usuario no autenticado
+                isAuthenticated = false;
+                usuario = null;
+                encargues = new List<Encargue>();
+            }
+
+            await JSRuntime.InvokeVoidAsync("addClickOutsideHandler", DotNetObjectReference.Create(this));
         }
-        await JSRuntime.InvokeVoidAsync("addClickOutsideHandler", DotNetObjectReference.Create(this));
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al inicializar el componente: {ex.Message}");
+            // Maneja el error o muestra un mensaje al usuario
+        }
     }
+
 
     // Método para eliminar todos los encargues
     private async Task CancelarEncargues()
@@ -243,8 +267,20 @@
     private async Task SignOut()
     {
         await firebaseAuthService.SignOut();
+
+        // Restablecer variables relacionadas con el usuario
+        isAuthenticated = false;
+        usuario = null;
+        userInitial = string.Empty;
+        encargues = new List<Encargue>();
+
+        // Actualiza la vista para reflejar los cambios
+        StateHasChanged();
+
+        // Redirige al usuario a la página de inicio
         NavigationManager.NavigateTo("/");
     }
+
 
     private void ManageAccount()
     {
