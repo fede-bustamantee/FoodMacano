@@ -83,5 +83,10 @@ namespace FoodMacanoServices.Services
         {
             await _usuarioService.DeleteAsync(id);
         }
+        public async Task<Usuario> ObtenerUsuarioPorEmailAsync(string email)
+        {
+            var usuarios = await _usuarioService.GetAllAsync(u => u.Email == email);
+            return usuarios.FirstOrDefault();
+        }
     }
 }

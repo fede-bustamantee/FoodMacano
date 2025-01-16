@@ -16,6 +16,7 @@ namespace FoodMacanoServices.Interfaces
         Task<List<Usuario>> ObtenerTodosLosUsuariosAsync();
         Task ActualizarUsuarioAsync(Usuario usuario);
         Task EliminarUsuarioAsync(int id);
+        Task<Usuario> ObtenerUsuarioPorEmailAsync(string email);
     }
 
 

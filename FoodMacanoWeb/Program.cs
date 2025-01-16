@@ -1,3 +1,4 @@
+using CurrieTechnologies.Razor.SweetAlert2;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
@@ -28,6 +29,7 @@ builder.Services.AddScoped<FirebaseAuthService>();
 builder.Services.AddScoped<UsuarioMappingService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IGenericService<Usuario>, GenericService<Usuario>>();
+builder.Services.AddSweetAlert2();
 
 
 await builder.Build().RunAsync();

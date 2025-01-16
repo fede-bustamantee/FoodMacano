@@ -54,7 +54,7 @@
         </div>
     </div>
 </div>
-
+<link href="css/alert.css" rel="stylesheet" />
 @code {
     private Usuario usuario = new Usuario();
     private bool EstaAutenticado = false;
@@ -67,52 +67,83 @@
 
     private async Task IniciarSesion()
     {
-        mensajeError = string.Empty;
+        if (string.IsNullOrWhiteSpace(usuario.Email) || string.IsNullOrWhiteSpace(usuario.Password))
+        {
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Por favor, ingresa tu correo electrónico y contraseña",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar"
+                });
+            return;
+        }
 
         try
         {
-            // Inicia sesión en Firebase y obtiene el FirebaseId y el estado de verificación del correo
             var (firebaseId, isEmailVerified) = await AuthService.SignInWithEmailPassword(usuario.Email, usuario.Password);
 
-            if (!string.IsNullOrEmpty(firebaseId))
+            if (string.IsNullOrEmpty(firebaseId))
             {
-                if (!isEmailVerified)
-                {
-                    mensajeError = "Por favor, verifica tu correo electrónico antes de iniciar sesión.";
-                    return;
-                }
-
-                EstaAutenticado = true;
-
-                // Verifica si el usuario ya existe en la base de datos mediante el FirebaseId
-                var usuarioExistente = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(firebaseId);
-
-                if (usuarioExistente == null)
-                {
-                    // Si el usuario no existe, lo creamos en la base de datos
-                    var nuevoUsuario = new Usuario
-                        {
-                            FirebaseId = firebaseId,
-                            User = usuario.User ?? "NombrePorDefecto",
-                            Email = usuario.Email
-                        };
-
-                    await UsuarioService.CrearUsuarioAsync(nuevoUsuario);
-                }
-
-                // Guarda el FirebaseId en el almacenamiento local
-                await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", new object[] { "firebaseUserId", firebaseId });
-                // Redirige a la página principal después del inicio de sesión exitoso
-                NavigationManager.NavigateTo("/");
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Correo electrónico o contraseña incorrectos",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
             }
-            else
+
+            if (!isEmailVerified)
             {
-                mensajeError = "Error al obtener FirebaseId.";
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Por favor, verifica tu correo electrónico antes de iniciar sesión",
+                        Icon = SweetAlertIcon.Warning,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
             }
+
+            EstaAutenticado = true;
+            var usuarioExistente = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(firebaseId);
+
+            if (usuarioExistente == null)
+            {
+                var nuevoUsuario = new Usuario
+                    {
+                        FirebaseId = firebaseId,
+                        User = usuario.User ?? "NombrePorDefecto",
+                        Email = usuario.Email
+                    };
+                await UsuarioService.CrearUsuarioAsync(nuevoUsuario);
+            }
+
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "firebaseUserId", firebaseId);
+
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "¡Bienvenido!",
+                    Text = "Has iniciado sesión correctamente",
+                    Icon = SweetAlertIcon.Success,
+                    Timer = 2500,
+                    ShowConfirmButton = false
+                });
+
+            NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {
-            mensajeError = $"Error: {ex.Message}";
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Correo electrónico o contraseña incorrectos",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar"
+                });
+            Console.WriteLine($"Error en IniciarSesion: {ex.Message}");
         }
     }
 
@@ -134,7 +165,7 @@
                 {
                     string userName = !string.IsNullOrEmpty(displayName)
                         ? displayName
-                        : email.Split('@')[0]; // Usa la parte del email antes del @ como fallback
+                        : email.Split('@')[0];
 
                     var nuevoUsuario = new Usuario
                         {
@@ -149,12 +180,41 @@
                 }
 
                 await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", new object[] { "firebaseUserId", firebaseId });
+
+                // Mensaje de éxito
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "¡Bienvenido!",
+                        Text = "Has iniciado sesión con Google correctamente",
+                        Icon = SweetAlertIcon.Success,
+                        Timer = 2500,
+                        ShowConfirmButton = false
+                    });
+
                 NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                // Mensaje de error si no se obtiene el firebaseId
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Se cerro la pestaña y no se pudo completó el inicio de sesión con Google",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
             }
         }
         catch (Exception ex)
         {
-            mensajeError = "Ocurrió un error durante la autenticación. Inténtalo más tarde.";
+            // Mensaje de error en caso de excepción
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Ocurrió un error durante la autenticación. Inténtalo más tarde.",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar"
+                });
             Console.WriteLine($"Error en IniciarSesionConGoogle: {ex.Message}");
         }
     }

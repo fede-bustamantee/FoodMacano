@@ -18,6 +18,20 @@ namespace FoodMacanoServices.Controllers
         {
             _context = context;
         }
+        // GET: api/Usuarios/email/{email}
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<Usuario>> GetUsuarioByEmail(string email)
+        {
+            var usuario = await _context.usuarios
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return usuario;
+        }
 
         // GET: api/Usuarios
         [HttpGet]
