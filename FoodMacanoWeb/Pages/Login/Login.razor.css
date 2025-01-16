@@ -1,0 +1,196 @@
+﻿.auth-container {
+    background-color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: "Poppins", sans-serif;
+}
+
+.auth-content {
+    background-color: #121212;
+    padding: 3.5rem;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.brand-logo {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+}
+
+    .brand-logo img {
+        height: 35px;
+        display: block;
+        margin: 0px auto;
+    }
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    text-align: center;
+    width: 100%;
+}
+
+.social-login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.3rem;
+}
+
+.social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 500px;
+    border: 2px solid #727272;
+    background: transparent;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    width: 100%;
+    gap: 0.7rem;
+}
+
+    .social-button:hover {
+        border: 2px solid white;
+    }
+
+    .social-button img {
+        height: 20px;
+        width: 20px;
+    }
+    
+.divider {
+    margin: 0.5rem 0;
+    position: relative;
+    width: 100%;
+}
+
+    .divider hr {
+        border-color: #282828;
+    }
+
+.login-form {
+    text-align: left;
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 0.5rem;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: #fff;
+        font-size: 0.8rem;
+    }
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 2px solid #727272;
+    background-color: #121212;
+    color: white;
+    font-size: 0.9rem;
+    outline: none; /* Elimina el contorno por defecto */
+    transition: border-color 0.3s;
+}
+
+    .form-control:focus {
+        outline: none;
+        border: 2px solid white;
+        box-shadow: none; /* Elimina cualquier sombra */
+        -webkit-appearance: none; /* Para Safari */
+        background-color: #121212; /* Mantiene el fondo oscuro */
+    }
+
+    .form-control:hover {
+        border: 2px solid white;
+    }
+
+    /* Eliminar el autocompletado de fondo blanco */
+    .form-control:-webkit-autofill,
+    .form-control:-webkit-autofill:hover,
+    .form-control:-webkit-autofill:focus,
+    .form-control:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #121212 inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Eliminar el resaltado al seleccionar texto */
+    .form-control::selection {
+        background-color: #DB241B;
+        color: white;
+    }
+
+    .form-control::-moz-selection {
+        background-color: #DB241B;
+        color: white;
+    }
+
+.login-button {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 500px;
+    border: none;
+    background-color: #DB241B;
+    color: black;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background-color 0.3s;
+}
+
+    .login-button:hover {
+        background-color: #f53c33;
+    }
+
+.forgot-password {
+    display: block;
+    color: white;
+    text-decoration: underline;
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+}
+.forgot-password:hover {
+    color: #DB241B;
+}
+.register-link {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #282828;
+    width: 100%;
+    font-size: 0.8rem;
+}
+
+    .register-link span {
+        color: #727272;
+        margin-right: 0.3rem;
+    }
+
+    .register-link a {
+        color: white;
+        text-decoration: underline;
+    }
+    .register-link a:hover {
+        color: #DB241B;
+    }

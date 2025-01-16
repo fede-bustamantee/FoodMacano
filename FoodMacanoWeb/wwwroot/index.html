@@ -117,7 +117,17 @@
                     console.error("Error al enviar verificación:", error);
                     return false;
                 }
+            },
+            resetPassword: async (email) => {
+                try {
+                    await firebase.auth().sendPasswordResetEmail(email);
+                    console.log("Correo de restablecimiento de contraseña enviado con éxito");
+                } catch (error) {
+                    console.error("Error al enviar el correo de restablecimiento de contraseña:", error);
+                    throw error;
+                }
             }
+
         };
 
         // Local Storage Helpers

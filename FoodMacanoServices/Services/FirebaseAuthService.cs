@@ -132,5 +132,19 @@ namespace FoodMacanoServices.Services
             }
             return false;
         }
+        public async Task<bool> ResetPassword(string email)
+        {
+            try
+            {
+                await _jsRuntime.InvokeVoidAsync("firebaseAuth.resetPassword", email);
+                return true;
+            }
+            catch (Exception error)
+            {
+                Console.Error.WriteLine($"Error al enviar el correo de restablecimiento de contraseña: {error}");
+                return false;
+            }
+        }
+
     }
 }
