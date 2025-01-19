@@ -12,20 +12,17 @@
                         <h4>Dirección</h4>
                         <p>@negocio.Direccion</p>
                     </div>
-
                     <div class="txt">
                         <h4>Horarios</h4>
-                        @foreach (var horario in negocio.Horarios)
+                        @foreach (var horario in negocio.Horario.Split('\n'))
                         {
-                            <p>@horario.Dia: @horario.HoraApertura - @horario.HoraCierre</p>
+                            <p>@horario</p>
                         }
                     </div>
-
                     <div class="txt">
                         <h4>Teléfonos</h4>
                         <p>@negocio.Telefono</p>
                     </div>
-
                     <div class="txt">
                         <h4>Redes Sociales</h4>
                         <div class="redes">
@@ -46,14 +43,10 @@
                 </div>
             </div>
         </section>
-
         <section>
-            @if (negocio != null)
-            {
-                <div class="map">
-                    @((MarkupString)negocio.MapaIframe)
-                </div>
-            }
+            <div class="map">
+                @((MarkupString)negocio.MapaIframe)
+            </div>
         </section>
     }
     else
