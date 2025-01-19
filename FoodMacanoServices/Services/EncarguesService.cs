@@ -42,7 +42,12 @@ namespace FoodMacanoServices.Services
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
 
-                return JsonSerializer.Deserialize<List<Encargue>>(content, _options) ?? new List<Encargue>();
+                var encargues = JsonSerializer.Deserialize<List<Encargue>>(content, _options) ?? new List<Encargue>();
+
+                // Ordenar por fecha descendente y agrupar
+                return encargues
+                    .OrderByDescending(e => e.FechaEncargue)
+                    .ToList();
             }
             catch (Exception ex)
             {

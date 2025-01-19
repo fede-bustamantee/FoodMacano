@@ -1,15 +1,29 @@
 ﻿main {
     min-height: 100vh;
 }
+.brand-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:20px 0 20px 0; /* Reducido el padding inferior */
+}
+
+    .brand-logo img {
+        width: 20px; 
+        height: auto;
+        object-fit: contain;
+    }
+
+
 
 .shopping-icon {
     position: relative;
     display: inline-flex;
     align-items: center;
-    justify-content: flex-end; /* Coloca el icono en la esquina derecha */
-    width: 100%; /* Asegura que ocupe todo el ancho del contenedor */
+    justify-content: flex-end;
+    width: 100%;
     transform: translateX(-20px);
-    margin-top: 20px;
+    margin-top: 10px; /* Reducido de 20px a 10px */
 }
 
     .shopping-icon i {
@@ -18,8 +32,15 @@
         cursor: pointer;
         background-color: #DB241B;
         position: relative;
+        transition: all 0.3s ease;
     }
-
+        /* Agregado efecto hover */
+        .shopping-icon i:hover {
+            background-color: transparent !important;
+            border: 1px solid #ffffff; /* Cambia el borde a blanco en hover */
+            color: #ffffff;
+            transform: scale(1.1); /* Hace que el icono se agrande ligeramente */
+        }
 .fa-cart-shopping {
     background-color: transparent !important;
     border: 1px solid #DB241B;
@@ -69,7 +90,7 @@
 .tabs {
     display: flex;
     flex-wrap: wrap;
-    padding: 100px 0px;
+    padding: 30px 0px; /* Reducido de 100px a 20px */
 }
 
     .tabs label {
@@ -220,6 +241,7 @@
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     color: white;
+    border: solid 2px #DB241B;
 }
 
     .sidebar.open {
@@ -232,6 +254,9 @@
     top: 10px;
     cursor: pointer;
     color: white;
+}
+.sidebar-close:hover{
+    color:#DB241B;
 }
 
 .cart-tems {
@@ -253,7 +278,9 @@
 .cart.item.price {
     color: white;
 }
-
+.cart-menu h3{
+    color:#ff6f68;
+}
 .sidebar--footer {
     position: absolute;
     bottom: 10px;
@@ -278,14 +305,30 @@
 .checkout-btn {
     width: 100%;
     margin-top: 2rem;
-    background-color: #DB241B;
+    background-color: #ff473e;
     color: white;
     border-radius: 5px;
     cursor: pointer;
     padding: 10px;
     text-align: center;
+    border: solid 1px #A7A7A7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
 }
 
-    .checkout-btn :hover {
+    .checkout-btn:hover {
         background-color: #DB241B;
+        border: solid 1px white;
     }
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fa-spinner {
+    font-size: 18px;
+}

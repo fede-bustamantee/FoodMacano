@@ -20,4 +20,5 @@ public class Encargue
     // Marcar las propiedades de navegación como opcionales
     public virtual Producto? Producto { get; set; }
     public virtual Usuario? Usuario { get; set; }
+    public int NumeroEncargue { get; set; } // Nuevo campo para el número de encargue
 }

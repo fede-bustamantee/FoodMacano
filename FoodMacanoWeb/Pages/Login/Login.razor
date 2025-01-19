@@ -2,6 +2,7 @@
 @inject IJSRuntime JSRuntime
 @inject FirebaseAuthService AuthService
 @inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
 
 <div class="auth-container">
     <div class="auth-content">
@@ -39,7 +40,10 @@
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" class="form-control" @bind="usuario.Password" placeholder="Contraseña" />
                 </div>
-
+                <div class="form-group remember-me">
+                    <input type="checkbox" id="rememberMe" @bind="rememberMe" />
+                    <label for="rememberMe">Mantener sesión iniciada</label>
+                </div>
                 <button class="login-button" @onclick="IniciarSesion">
                     Iniciar sesión
                 </button>
@@ -54,15 +58,19 @@
         </div>
     </div>
 </div>
+
 <link href="css/alert.css" rel="stylesheet" />
+
 @code {
     private Usuario usuario = new Usuario();
     private bool EstaAutenticado = false;
     private string mensajeError = string.Empty;
+    private bool rememberMe = false;
 
     protected override async Task OnInitializedAsync()
     {
-        EstaAutenticado = await AuthService.IsUserAuthenticated();
+        var currentUser = await AuthService.GetCurrentUser();
+        EstaAutenticado = currentUser.UserId != null && currentUser.IsEmailVerified;
     }
 
     private async Task IniciarSesion()
@@ -81,7 +89,10 @@
 
         try
         {
-            var (firebaseId, isEmailVerified) = await AuthService.SignInWithEmailPassword(usuario.Email, usuario.Password);
+            // Establecer la persistencia antes de iniciar sesión
+            await AuthService.SetPersistence(rememberMe);
+
+            var (firebaseId, isEmailVerified) = await AuthService.SignInWithEmailPassword(usuario.Email, usuario.Password, rememberMe);
 
             if (string.IsNullOrEmpty(firebaseId))
             {
@@ -99,7 +110,7 @@
             {
                 await SweetAlert.FireAsync(new SweetAlertOptions
                     {
-                        Title = "Error",
+                        Title = "Advertencia",
                         Text = "Por favor, verifica tu correo electrónico antes de iniciar sesión",
                         Icon = SweetAlertIcon.Warning,
                         ConfirmButtonText = "Aceptar"
@@ -108,19 +119,6 @@
             }
 
             EstaAutenticado = true;
-            var usuarioExistente = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(firebaseId);
-
-            if (usuarioExistente == null)
-            {
-                var nuevoUsuario = new Usuario
-                    {
-                        FirebaseId = firebaseId,
-                        User = usuario.User ?? "NombrePorDefecto",
-                        Email = usuario.Email
-                    };
-                await UsuarioService.CrearUsuarioAsync(nuevoUsuario);
-            }
-
             await JSRuntime.InvokeVoidAsync("localStorage.setItem", "firebaseUserId", firebaseId);
 
             await SweetAlert.FireAsync(new SweetAlertOptions
@@ -134,16 +132,23 @@
 
             NavigationManager.NavigateTo("/");
         }
-        catch (Exception ex)
+        catch
         {
             await SweetAlert.FireAsync(new SweetAlertOptions
                 {
                     Title = "Error",
-                    Text = "Correo electrónico o contraseña incorrectos",
+                    Text = "Ha ocurrido un error al intentar iniciar sesión",
                     Icon = SweetAlertIcon.Error,
                     ConfirmButtonText = "Aceptar"
                 });
-            Console.WriteLine($"Error en IniciarSesion: {ex.Message}");
+
+            // Opcional: Limpiar los campos después de un error
+            usuario.Password = string.Empty;
+        }
+        finally
+        {
+            // Asegurar que la interfaz se actualice
+            StateHasChanged();
         }
     }
 
@@ -153,6 +158,9 @@
 
         try
         {
+            // Google siempre usa persistencia LOCAL
+            await AuthService.SetPersistence(true);
+
             var (firebaseId, email, displayName) = await AuthService.SignInWithGoogle();
 
             if (!string.IsNullOrEmpty(firebaseId))
@@ -181,7 +189,6 @@
 
                 await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", new object[] { "firebaseUserId", firebaseId });
 
-                // Mensaje de éxito
                 await SweetAlert.FireAsync(new SweetAlertOptions
                     {
                         Title = "¡Bienvenido!",
@@ -195,19 +202,17 @@
             }
             else
             {
-                // Mensaje de error si no se obtiene el firebaseId
                 await SweetAlert.FireAsync(new SweetAlertOptions
                     {
-                        Title = "Error",
-                        Text = "Se cerro la pestaña y no se pudo completó el inicio de sesión con Google",
-                        Icon = SweetAlertIcon.Error,
+                        Title = "Advertencia",
+                        Text = "Se cerró la pestaña y no se completó el inicio de sesión con Google",
+                        Icon = SweetAlertIcon.Warning,
                         ConfirmButtonText = "Aceptar"
                     });
             }
         }
         catch (Exception ex)
         {
-            // Mensaje de error en caso de excepción
             await SweetAlert.FireAsync(new SweetAlertOptions
                 {
                     Title = "Error",
@@ -226,6 +231,7 @@
         EstaAutenticado = false;
         NavigationManager.NavigateTo("/");
     }
+
     private void NavegarARegistro()
     {
         NavigationManager.NavigateTo("/register");

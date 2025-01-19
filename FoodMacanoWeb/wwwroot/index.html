@@ -55,13 +55,52 @@
 
         // Firebase Auth Helpers
         window.firebaseAuth = {
+            setPersistence: async (type) => {
+                try {
+                    const persistenceType = type === "local"
+                        ? firebase.auth.Auth.Persistence.LOCAL
+                        : firebase.auth.Auth.Persistence.SESSION;
+                    await firebase.auth().setPersistence(persistenceType);
+                    return true;
+                } catch (error) {
+                    console.error("Error setting persistence:", error);
+                    return false;
+                }
+            },
+
+            getCurrentUser: () => {
+                return new Promise((resolve) => {
+                    const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+                        unsubscribe();
+                        resolve(user ? {
+                            uid: user.uid,
+                            email: user.email,
+                            emailVerified: user.emailVerified
+                        } : null);
+                    });
+                });
+            },
+
             signInWithEmailPassword: async (email, password) => {
                 try {
                     const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-                    return userCredential.user.uid;
+                    // Si la autenticación es exitosa, retornamos un objeto con el formato esperado
+                    if (userCredential && userCredential.user) {
+                        return {
+                            success: true,
+                            userId: userCredential.user.uid,
+                            emailVerified: userCredential.user.emailVerified
+                        };
+                    }
+                    return {
+                        success: false,
+                        error: "No se pudo obtener la información del usuario"
+                    };
                 } catch (error) {
-                    console.error("Error al iniciar sesión:", error);
-                    return null;
+                    return {
+                        success: false,
+                        error: error.message
+                    };
                 }
             },
             signOut: async () => {
@@ -136,6 +175,15 @@
             getItem: (key) => localStorage.getItem(key),
             removeItem: (key) => localStorage.removeItem(key)
         };
+        window.addEventListener('load', () => {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    localStorage.setItem('firebaseUserId', user.uid);
+                } else {
+                    localStorage.removeItem('firebaseUserId');
+                }
+            });
+        });
     </script>
     <script src="_content/CurrieTechnologies.Razor.SweetAlert2/sweetAlert2.min.js"></script>
 </body>

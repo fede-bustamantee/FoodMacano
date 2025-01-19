@@ -1,0 +1,70 @@
+﻿@using System.Linq
+@using System.Collections.Generic
+
+<div class="encargues-container">
+    @{
+        var groupedEncargues = Encargues
+        .GroupBy(e => new DateTime(
+        e.FechaEncargue.Year,
+        e.FechaEncargue.Month,
+        e.FechaEncargue.Day,
+        e.FechaEncargue.Hour,
+        e.FechaEncargue.Minute,
+        0)) // Trunca a minutos
+        .OrderByDescending(g => g.Key)
+        .Select((group, index) => new
+        {
+            NumeroEncargue = index + 1,
+            FechaCompleta = group.Key,
+            Items = group.ToList()
+        })
+        .ToList();
+    }
+    @foreach (var grupo in groupedEncargues)
+    {
+        <div class="encargue-grupo @(expandedGroups.Contains(grupo.NumeroEncargue) ? "expanded" : "")">
+            <div class="encargue-header" @onclick="() => ToggleGroup(grupo.NumeroEncargue)">
+                <div class="encargue-titulo">
+                    <h4>Encargue @grupo.NumeroEncargue</h4>
+                    <span class="fecha">
+                        @grupo.FechaCompleta.ToString("dd/MM/yyyy HH:mm")
+                    </span>
+                </div>
+                <i class="@(expandedGroups.Contains(grupo.NumeroEncargue) ? "fas fa-chevron-up" : "fas fa-chevron-down")"></i>
+            </div>
+            @if (expandedGroups.Contains(grupo.NumeroEncargue))
+            {
+                <div class="encargue-detalles">
+                    @foreach (var item in grupo.Items)
+                    {
+                        <div class="encargue-item">
+                            <div class="producto-info">
+                                <span class="producto-nombre">@item.Producto.Nombre</span>
+                                <span class="cantidad">Cantidad: @item.Cantidad</span>
+                            </div>
+                            <span class="precio">$@((item.Producto.Precio * item.Cantidad).ToString("F2"))</span>
+                        </div>
+                    }
+                    <div class="encargue-total">
+                        <span>Total:</span>
+                        <span>$@(grupo.Items.Sum(i => i.Producto.Precio * i.Cantidad).ToString("F2"))</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<Encargue> Encargues { get; set; } = new List<Encargue>();
+    private HashSet<int> expandedGroups = new HashSet<int>();
+
+    private void ToggleGroup(int numeroEncargue)
+    {
+        if (expandedGroups.Contains(numeroEncargue))
+            expandedGroups.Remove(numeroEncargue);
+        else
+            expandedGroups.Add(numeroEncargue);
+    }
+}

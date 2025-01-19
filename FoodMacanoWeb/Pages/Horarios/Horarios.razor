@@ -18,8 +18,6 @@
                         @foreach (var horario in negocio.Horarios)
                         {
                             <p>@horario.Dia: @horario.HoraApertura - @horario.HoraCierre</p>
-                            <button @onclick="() => EditHorario(horario)">Editar</button>
-                            <button @onclick="() => DeleteHorario(horario)">Eliminar</button>
                         }
                     </div>
 
@@ -52,19 +50,10 @@
         <section>
             @if (negocio != null)
             {
-                <div class="map" style="width: 100px; height: 275px;">
+                <div class="map">
                     @((MarkupString)negocio.MapaIframe)
                 </div>
             }
-        </section>
-
-        <section>
-            <h3>@(isEditing ? "Editar Horario" : "Agregar Horario")</h3>
-            <input type="text" @bind="newHorario.Dia" placeholder="Día" />
-            <input type="text" @bind="newHorario.HoraApertura" placeholder="Hora de Apertura" />
-            <input type="text" @bind="newHorario.HoraCierre" placeholder="Hora de Cierre" />
-            <button @onclick="SaveHorario">@((isEditing ? "Actualizar" : "Agregar") + " Horario")</button>
-            <button @onclick="CancelEdit" style="display:@(isEditing ? "inline" : "none")">Cancelar</button>
         </section>
     }
     else
@@ -75,71 +64,10 @@
 
 @code {
     private Negocio? negocio;
-    private Horario newHorario = new Horario();
-    private bool isEditing = false;
-    private Horario? horarioToEdit;
 
     protected override async Task OnInitializedAsync()
     {
-        // Obtener el negocio
         var negocios = await negocioService.GetAllAsync();
-        negocio = negocios?.FirstOrDefault(); // Asume que solo hay un negocio por ahora
-    }
-
-    private void EditHorario(Horario horario)
-    {
-        newHorario = new Horario
-            {
-                Dia = horario.Dia,
-                HoraApertura = horario.HoraApertura,
-                HoraCierre = horario.HoraCierre
-            };
-        isEditing = true;
-        horarioToEdit = horario;
-    }
-
-    private async Task DeleteHorario(Horario horario)
-    {
-        if (negocio != null)
-        {
-            negocio.Horarios.Remove(horario);
-            await negocioService.UpdateAsync(negocio);
-        }
-    }
-
-    private async Task SaveHorario()
-    {
-        if (negocio != null)
-        {
-            if (isEditing && horarioToEdit != null)
-            {
-                var index = negocio.Horarios.IndexOf(horarioToEdit);
-                if (index >= 0)
-                {
-                    negocio.Horarios[index] = newHorario;
-                }
-            }
-            else
-            {
-                negocio.Horarios.Add(new Horario
-                    {
-                        Dia = newHorario.Dia,
-                        HoraApertura = newHorario.HoraApertura,
-                        HoraCierre = newHorario.HoraCierre
-                    });
-            }
-
-            await negocioService.UpdateAsync(negocio);
-            newHorario = new Horario();
-            isEditing = false;
-            horarioToEdit = null;
-        }
-    }
-
-    private void CancelEdit()
-    {
-        isEditing = false;
-        newHorario = new Horario();
-        horarioToEdit = null;
+        negocio = negocios?.FirstOrDefault();
     }
 }

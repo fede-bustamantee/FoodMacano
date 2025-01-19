@@ -117,25 +117,13 @@
     </div>
     <div class="cart-menu">
         <h3>Mis ENCARGUES</h3>
-        <h2>Bienvenido</h2>
         <div id="cart-items">
-            @foreach (var encargue in encargues)
-            {
-                <div class="cart-item">
-                    <span>(@encargue.Cantidad x) @encargue.Producto.Nombre</span>
-                    <span>$@((encargue.Producto.Precio * encargue.Cantidad).ToString("F2"))</span>
-                    <span>@encargue.FechaEncargue.ToString("dd/MM/yyyy HH:mm")</span> <!-- Muestra la fecha y hora -->
-                </div>
-            }
+            <DynamicComponent Type="typeof(DetalleEncargue)"
+                              Parameters="@(new Dictionary<string, object> { { "encargues", encargues } })" />
         </div>
     </div>
     <div class="sidebar--footer">
-        <div class="total--amount">
-            <h5>Total</h5>
-            <div class="cart-total">$@(encargues.Sum(e => e.Producto.Precio * e.Cantidad).ToString("F2"))</div>
-        </div>
-        <div class="checkout-btn" @onclick="CancelarEncargues">Cancelar Encargue</div>
-
+        <div class="checkout-btn" @onclick="CancelarEncargues">Cancelar Encargues</div>
     </div>
 </div>
 
@@ -213,7 +201,6 @@
 
             if (!string.IsNullOrEmpty(userId))
             {
-                // Usuario autenticado
                 usuario = await UsuarioService.ObtenerUsuarioPorFirebaseIdAsync(userId);
                 if (usuario == null)
                 {
@@ -230,18 +217,14 @@
             }
             else
             {
-                // Usuario no autenticado
                 isAuthenticated = false;
                 usuario = null;
                 encargues = new List<Encargue>();
             }
-
-            await JSRuntime.InvokeVoidAsync("addClickOutsideHandler", DotNetObjectReference.Create(this));
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error al inicializar el componente: {ex.Message}");
-            // Maneja el error o muestra un mensaje al usuario
         }
     }
 

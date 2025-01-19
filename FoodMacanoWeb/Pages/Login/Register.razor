@@ -1,6 +1,7 @@
 ﻿@page "/register"
 @inject FirebaseAuthService AuthService
 @inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
 
 <div class="auth-container">
     <div class="auth-content">
@@ -8,7 +9,6 @@
             <img src="/img/logoo1.png" alt="Logo" />
         </div>
         <h1>Registrate para probar nuestros platillos</h1>
-
         <div class="login-form">
             <div class="form-group">
                 <label for="email">Correo electrónico</label>
@@ -31,7 +31,6 @@
                 </select>
             </div>
             <button @onclick="Registe" class="login-button">Registrarse</button>
-
             <div class="register-link">
                 <span>¿Ya tienes una cuenta?</span>
                 <a href="/login">Inicia sesión aquí</a>
@@ -39,20 +38,134 @@
         </div>
     </div>
 </div>
-
+<link href="css/alert.css" rel="stylesheet" />
 @code {
     private Usuario usuario = new Usuario();
 
     private async Task Registe()
     {
-        var firebaseId = await AuthService.RegisterWithEmailPassword(usuario.Email, usuario.Password);
+        try
+        {
+            // Validaciones
+            if (string.IsNullOrWhiteSpace(usuario.Email))
+            {
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Por favor, ingresa un correo electrónico",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(usuario.Password))
+            {
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Por favor, ingresa una contraseña",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
+            }
+
+            if (usuario.Password.Length < 6)
+            {
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "La contraseña debe tener al menos 6 caracteres",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(usuario.User))
+            {
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Por favor, ingresa un nombre de usuario",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
+            }
+
+            // Verificar si el correo ya está registrado
+            var usuarioExistente = await UsuarioService.ObtenerUsuarioPorEmailAsync(usuario.Email);
+            if (usuarioExistente != null)
+            {
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "Este correo electrónico ya está registrado",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+                return;
+            }
+
+            // Intentar crear el usuario en Firebase
+            var firebaseId = await AuthService.RegisterWithEmailPassword(usuario.Email, usuario.Password);
 
             if (!string.IsNullOrEmpty(firebaseId))
             {
                 usuario.FirebaseId = firebaseId;
                 await UsuarioService.CrearUsuarioAsync(usuario);
 
-                Navigation.NavigateTo("/login");
+                // Mostrar mensaje de éxito sin mencionar la verificación de email
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "¡Registro exitoso!",
+                        Text = "Tu cuenta ha sido creada correctamente.",
+                        Icon = SweetAlertIcon.Success,
+                        Timer = 2500,
+                        ShowConfirmButton = false
+                    });
+
+                NavigationManager.NavigateTo("/login");
             }
+            else
+            {
+                await SweetAlert.FireAsync(new SweetAlertOptions
+                    {
+                        Title = "Error",
+                        Text = "No se pudo completar el registro. Por favor, intenta nuevamente.",
+                        Icon = SweetAlertIcon.Error,
+                        ConfirmButtonText = "Aceptar"
+                    });
+            }
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = "Ocurrió un error durante el registro.";
+
+            // Personalizar mensajes según el error
+            if (ex.Message.Contains("email-already-in-use"))
+            {
+                errorMessage = "Este correo electrónico ya está registrado.";
+            }
+            else if (ex.Message.Contains("invalid-email"))
+            {
+                errorMessage = "El formato del correo electrónico no es válido.";
+            }
+            else if (ex.Message.Contains("weak-password"))
+            {
+                errorMessage = "La contraseña es demasiado débil.";
+            }
+
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = errorMessage,
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar"
+                });
+            Console.WriteLine($"Error en registro: {ex.Message}");
+        }
     }
 }

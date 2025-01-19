@@ -1,6 +1,7 @@
 ﻿using FoodMacanoServices.Models;
 using Microsoft.JSInterop;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FoodMacanoServices.Services
@@ -17,23 +18,77 @@ namespace FoodMacanoServices.Services
             _jsRuntime = jsRuntime;
         }
 
-        public async Task<(string userId, bool isEmailVerified)> SignInWithEmailPassword(string email, string password)
+        public async Task<bool> SetPersistence(bool rememberMe)
         {
             try
             {
-                var userId = await _jsRuntime.InvokeAsync<string>("firebaseAuth.signInWithEmailPassword", email, password);
-                var isEmailVerified = await _jsRuntime.InvokeAsync<bool>("firebaseAuth.isEmailVerified");
-
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    await _jsRuntime.InvokeVoidAsync("localStorageHelper.setItem", UserIdKey, userId);
-                }
-
-                return (userId, isEmailVerified);
+                return await _jsRuntime.InvokeAsync<bool>("firebaseAuth.setPersistence", rememberMe ? "local" : "session");
             }
             catch (Exception error)
             {
-                Console.Error.WriteLine($"Error al iniciar sesión: {error}");
+                Console.Error.WriteLine($"Error setting persistence: {error}");
+                return false;
+            }
+        }
+
+        public async Task<(string userId, bool isEmailVerified)> SignInWithEmailPassword(string email, string password, bool rememberMe)
+        {
+            try
+            {
+                await SetPersistence(rememberMe);
+                var result = await _jsRuntime.InvokeAsync<JsonElement>("firebaseAuth.signInWithEmailPassword", email, password);
+
+                // Deserializar la respuesta
+                if (result.TryGetProperty("success", out JsonElement successElement))
+                {
+                    bool success = successElement.GetBoolean();
+
+                    if (success)
+                    {
+                        string userId = result.GetProperty("userId").GetString();
+                        bool emailVerified = result.GetProperty("emailVerified").GetBoolean();
+
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            await _jsRuntime.InvokeVoidAsync("localStorageHelper.setItem", UserIdKey, userId);
+                            return (userId, emailVerified);
+                        }
+                    }
+                }
+
+                // Si llegamos aquí, algo falló
+                string errorMessage = result.TryGetProperty("error", out JsonElement errorElement)
+                    ? errorElement.GetString()
+                    : "Error desconocido durante la autenticación";
+
+                Console.WriteLine($"Error de autenticación: {errorMessage}");
+                return (null, false);
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine($"Error durante la autenticación: {error.Message}");
+                return (null, false);
+            }
+        }
+
+        public async Task<(string UserId, bool IsEmailVerified)> GetCurrentUser()
+        {
+            try
+            {
+                var result = await _jsRuntime.InvokeAsync<object>("firebaseAuth.getCurrentUser");
+                if (result != null)
+                {
+                    var userDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(result.ToString());
+                    return (
+                        userDict["uid"].ToString(),
+                        Convert.ToBoolean(userDict["emailVerified"])
+                    );
+                }
+                return (null, false);
+            }
+            catch (Exception error)
+            {
+                Console.Error.WriteLine($"Error getting current user: {error}");
                 return (null, false);
             }
         }

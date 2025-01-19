@@ -78,14 +78,66 @@ namespace BackFoodMacano.DataContext
 
             // Semilla para Negocio
             modelBuilder.Entity<Negocio>().HasData(
-                new Negocio
+    new Negocio
+    {
+        Id = 1,
+        Nombre = "Food Macano",
+        Direccion = "Calle Falsa 123, Ciudad Ejemplo",
+        Telefono = "123456789",
+        MapaIframe = "<iframe class=\"map\" src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27541.325671616178!2d-60.439340636223776!3d-30.360449115325437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x944b0554d0eb3903%3A0x7b078fba72f704b!2sGdor.%20Crespo%2C%20Santa%20Fe!5e0!3m2!1ses!2sar!4v1725375616155!5m2!1ses!2sar\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        RedesSocialId = 1
+    }
+);
+
+            modelBuilder.Entity<Horario>().HasData(
+                new Horario
                 {
                     Id = 1,
-                    Nombre = "Food Macano",
-                    Direccion = "Calle Falsa 123, Ciudad Ejemplo",
-                    Telefono = "123456789",
-                    MapaIframe = "<iframe class=\"map\" src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27541.325671616178!2d-60.439340636223776!3d-30.360449115325437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x944b0554d0eb3903%3A0x7b078fba72f704b!2sGdor.%20Crespo%2C%20Santa%20Fe!5e0!3m2!1ses!2sar!4v1725375616155!5m2!1ses!2sar\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
-                    RedesSocialId = 1
+                    Dia = "Lunes",
+                    HoraApertura = "11:00",
+                    HoraCierre = "23:00"
+                },
+                new Horario
+                {
+                    Id = 2,
+                    Dia = "Martes",
+                    HoraApertura = "11:00",
+                    HoraCierre = "23:00"
+                },
+                new Horario
+                {
+                    Id = 3,
+                    Dia = "Miércoles",
+                    HoraApertura = "11:00",
+                    HoraCierre = "23:00"
+                },
+                new Horario
+                {
+                    Id = 4,
+                    Dia = "Jueves",
+                    HoraApertura = "11:00",
+                    HoraCierre = "23:00"
+                },
+                new Horario
+                {
+                    Id = 5,
+                    Dia = "Viernes",
+                    HoraApertura = "11:00",
+                    HoraCierre = "00:00"
+                },
+                new Horario
+                {
+                    Id = 6,
+                    Dia = "Sábado",
+                    HoraApertura = "11:00",
+                    HoraCierre = "00:00"
+                },
+                new Horario
+                {
+                    Id = 7,
+                    Dia = "Domingo",
+                    HoraApertura = "11:00",
+                    HoraCierre = "22:00"
                 }
             );
         }

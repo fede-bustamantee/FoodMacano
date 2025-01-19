@@ -11,7 +11,10 @@
         <i class="fa-solid fa-cart-shopping"></i>
         <span>@carritoItems.Count</span>
     </div>
-
+    <!--Logo-->
+    <div class="brand-logo">
+        <img src="/img/logoo1.png" alt="" />
+    </div>
     <div class="tabs container">
         @foreach (var categoria in categorias)
         {
@@ -74,7 +77,20 @@
                 <h5>Total</h5>
                 <div class="cart-total">$@(carritoItems.Sum(item => item.Producto?.Precio * item.Cantidad ?? 0).ToString("F2"))</div>
             </div>
-            <div class="checkout-btn" @onclick="Checkout">Encargar</div>
+            <div class="checkout-btn" @onclick="Checkout">
+                @if (isLoading)
+                {
+                    <span class="btn-content">
+                        <i class="fa fa-spinner fa-spin"></i>
+                    </span>
+                }
+                else
+                {
+                    <span class="btn-content">Encargar</span>
+                }
+            </div>
+
+
         </div>
     </div>
 </main>
@@ -132,11 +148,14 @@
             }
 </style>
 
+<link href="css/alert.css" rel="stylesheet" />
+
 @code {
     private List<Categoria> categorias = new List<Categoria>();
     private List<Producto> productos = new List<Producto>();
     private List<CarritoCompra> carritoItems = new List<CarritoCompra>();
     private bool sidebarOpen = false;
+    private bool isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -184,37 +203,58 @@
 
     private async Task Checkout()
     {
+        if (isLoading) return; // Evitar múltiples clics
+
+        isLoading = true;
+        StateHasChanged();
+
         try
         {
-            Console.WriteLine("Iniciando checkout...");
-
-            // Mostrar loading o deshabilitar el botón
-            await InvokeAsync(() => StateHasChanged());
+            if (!await firebaseAuthService.IsUserAuthenticated())
+            {
+                NavigationManager.NavigateTo("/");
+                return;
+            }
 
             await carritoComprasService.CheckoutAsync();
-
             await LoadCarritoItems();
             ToggleSidebar();
 
-            // Mostrar mensaje de éxito
-            await JSRuntime.InvokeVoidAsync("alert", "Checkout completado exitosamente.");
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "¡Éxito!",
+                    Text = "Tu pedido se ha realizado correctamente",
+                    Icon = SweetAlertIcon.Success,
+                    ConfirmButtonText = "Aceptar"
+                });
+
+            NavigationManager.NavigateTo("/");
         }
         catch (InvalidOperationException ex)
         {
-            // Errores esperados (carrito vacío, usuario no autenticado, etc.)
-            Console.WriteLine($"Error de validación durante el checkout: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", ex.Message);
+            string mensaje = ex.Message.Contains("vacío") ? "No puedes realizar un pedido con el carrito vacío" : "Error desconocido";
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = mensaje,
+                    Icon = SweetAlertIcon.Warning,
+                    ConfirmButtonText = "Aceptar"
+                });
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // Errores inesperados
-            Console.WriteLine($"Error durante el checkout: {ex.Message}");
-            await JSRuntime.InvokeVoidAsync("alert", "Ocurrió un error al procesar su pedido. Por favor, intente nuevamente.");
+            await SweetAlert.FireAsync(new SweetAlertOptions
+                {
+                    Title = "Error",
+                    Text = "Ocurrió un error al procesar tu pedido",
+                    Icon = SweetAlertIcon.Error,
+                    ConfirmButtonText = "Aceptar"
+                });
         }
         finally
         {
-            // Re-habilitar el botón si estaba deshabilitado
-            await InvokeAsync(() => StateHasChanged());
+            isLoading = false;
+            StateHasChanged();
         }
     }
 

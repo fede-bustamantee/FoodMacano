@@ -194,3 +194,68 @@ h1 {
     .register-link a:hover {
         color: #DB241B;
     }
+
+/* Estilo específico para el grupo del checkbox */
+.form-group.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+}
+
+    /* Estilo para el checkbox */
+    .form-group.remember-me input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 1.5px solid #727272;
+        border-radius: 3px;
+        background-color: #121212;
+        cursor: pointer;
+        position: relative;
+        margin: 0;
+        transition: all 0.3s ease;
+    }
+
+        /* Efecto hover en el checkbox */
+        .form-group.remember-me input[type="checkbox"]:hover {
+            border-color: white;
+        }
+
+        /* Estilo cuando el checkbox está marcado */
+        .form-group.remember-me input[type="checkbox"]:checked {
+            background-color: #DB241B;
+            border-color: #DB241B;
+        }
+
+            /* Crear el símbolo de check */
+            .form-group.remember-me input[type="checkbox"]:checked::after {
+                content: '✓';
+                position: absolute;
+                color: white;
+                font-size: 12px;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+    /* Estilo para el label */
+    .form-group.remember-me label {
+        margin: 0;
+        display: inline;
+        color: #a0a0a0;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+        /* Efecto hover en el label */
+        .form-group.remember-me label:hover {
+            color: white;
+        }
+
+    /* Efecto cuando el checkbox está marcado */
+    .form-group.remember-me input[type="checkbox"]:checked + label {
+        color: white;
+    }
