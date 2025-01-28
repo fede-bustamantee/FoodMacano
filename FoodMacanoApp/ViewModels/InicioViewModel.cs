@@ -1,176 +1,246 @@
-﻿//using FoodMacanoApp.Class;
-//using FoodMacanoServices.Models;
-//using FoodMacanoServices.Services;
-//using System.Collections.ObjectModel;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using FoodMacanoApp.Class;
+using FoodMacanoServices.Models;
+using FoodMacanoServices.Services;
+using FoodMacanoServices.Interfaces;
+using System.Collections.ObjectModel;
+using System.Net.Http;
 
-//namespace FoodMacanoApp.ViewModels
-//{
-//    public class InicioViewModel : NotificationObject
-//    {
-//        private GenericService<Producto> _productoService;
-//        private GenericService<Categoria> _categoriaService;
-//        private CarritoComprasService _carritoComprasService;
-//        private ObservableCollection<Producto> _todosLosProductos;
-//        public event EventHandler DatosCargados;
+namespace FoodMacanoApp.ViewModels
+{
+	public class InicioViewModel : NotificationObject
+	{
+		private readonly IGenericService<Producto> _productoService;
+		private readonly IGenericService<Categoria> _categoriaService;
+		private readonly MauiCarritoService _carritoService;
+		private ObservableCollection<Producto> _todosLosProductos;
+		public event EventHandler DatosCargados;
 
-//        private int _cantidadEnCarrito;
-//        public int CantidadEnCarrito
-//        {
-//            get => _cantidadEnCarrito;
-//            set
-//            {
-//                _cantidadEnCarrito = value;
-//                OnPropertyChanged();
-//            }
-//        }
-//        public ObservableCollection<Producto> TodosLosProductos
-//        {
-//            get => _todosLosProductos;
-//            set
-//            {
-//                _todosLosProductos = value;
-//                OnPropertyChanged();
-//            }
-//        }
+		private int _cantidadEnCarrito;
+		public int CantidadEnCarrito
+		{
+			get => _cantidadEnCarrito;
+			set
+			{
+				if (_cantidadEnCarrito != value)
+				{
+					_cantidadEnCarrito = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-//        private ObservableCollection<Producto> _ofertasEspeciales;
-//        public ObservableCollection<Producto> OfertasEspeciales
-//        {
-//            get => _ofertasEspeciales;
-//            set
-//            {
-//                _ofertasEspeciales = value;
-//                OnPropertyChanged();
-//            }
-//        }
+		public ObservableCollection<Producto> TodosLosProductos
+		{
+			get => _todosLosProductos;
+			set
+			{
+				if (_todosLosProductos != value)
+				{
+					_todosLosProductos = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-//        private ObservableCollection<Producto> _productosFiltrados;
-//        public ObservableCollection<Producto> ProductosFiltrados
-//        {
-//            get => _productosFiltrados;
-//            set
-//            {
-//                _productosFiltrados = value;
-//                OnPropertyChanged();
-//            }
-//        }
+		private ObservableCollection<Producto> _ofertasEspeciales;
+		public ObservableCollection<Producto> OfertasEspeciales
+		{
+			get => _ofertasEspeciales;
+			set
+			{
+				if (_ofertasEspeciales != value)
+				{
+					_ofertasEspeciales = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-//        private ObservableCollection<Categoria> _categorias;
-//        public ObservableCollection<Categoria> Categorias
-//        {
-//            get => _categorias;
-//            set
-//            {
-//                _categorias = value;
-//                OnPropertyChanged();
-//            }
-//        }
+		private ObservableCollection<Producto> _productosFiltrados;
+		public ObservableCollection<Producto> ProductosFiltrados
+		{
+			get => _productosFiltrados;
+			set
+			{
+				if (_productosFiltrados != value)
+				{
+					_productosFiltrados = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-//        public InicioViewModel()
-//        {
-//            _productoService = new GenericService<Producto>();
-//            _categoriaService = new GenericService<Categoria>();
-//            _carritoComprasService = new CarritoComprasService(
-//                new GenericService<CarritoCompra>(),
-//                new GenericService<Encargue>(),
-//                new HttpClient(),
-//                null
-//            );
+		private ObservableCollection<Categoria> _categorias;
+		public ObservableCollection<Categoria> Categorias
+		{
+			get => _categorias;
+			set
+			{
+				if (_categorias != value)
+				{
+					_categorias = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-//            OfertasEspeciales = new ObservableCollection<Producto>();
-//            ProductosFiltrados = new ObservableCollection<Producto>();
-//            Categorias = new ObservableCollection<Categoria>();
-//            TodosLosProductos = new ObservableCollection<Producto>();
+		private string _mensajeError;
+		public string MensajeError
+		{
+			get => _mensajeError;
+			set
+			{
+				if (_mensajeError != value)
+				{
+					_mensajeError = value;
+					OnPropertyChanged();
+				}
+			}
+		}
 
-//            CargarDatosIniciales();
-//        }
+		public InicioViewModel(
+			IGenericService<Producto> productoService,
+			IGenericService<Categoria> categoriaService,
+			MauiCarritoService carritoService)
+		{
+			_productoService = productoService;
+			_categoriaService = categoriaService;
+			_carritoService = carritoService;
 
-//        private async Task CargarDatosIniciales()
-//        {
-//            await CargarOfertasAleatorias();
-//            await CargarCategorias();
-//            await CargarTodosLosProductos();
+			OfertasEspeciales = new ObservableCollection<Producto>();
+			ProductosFiltrados = new ObservableCollection<Producto>();
+			Categorias = new ObservableCollection<Categoria>();
+			TodosLosProductos = new ObservableCollection<Producto>();
 
-//            // Filtrar productos por la primera categoría cargada
-//            if (Categorias.Count > 0)
-//            {
-//                var primeraCategoria = Categorias.FirstOrDefault();
-//                FiltrarProductosPorCategoria(primeraCategoria);
-//            }
-//            CantidadEnCarrito = await _carritoComprasService.GetUniqueItemCountAsync();
+			Task.Run(async () => await CargarDatosIniciales());
+		}
 
-//            // Notificar que los datos han sido cargados
-//            DatosCargados?.Invoke(this, EventArgs.Empty);
-//        }
+		private async Task CargarDatosIniciales()
+		{
+			try
+			{
+				await CargarOfertasAleatorias();
+				await CargarCategorias();
+				await CargarTodosLosProductos();
 
-//        private async Task CargarTodosLosProductos()
-//        {
-//            var productos = await _productoService.GetAllAsync();
-//            if (productos != null)
-//            {
-//                TodosLosProductos.Clear();
-//                foreach (var producto in productos)
-//                {
-//                    TodosLosProductos.Add(producto);
-//                }
-//            }
-//        }
+				if (Categorias.Count > 0)
+				{
+					var primeraCategoria = Categorias.FirstOrDefault();
+					FiltrarProductosPorCategoria(primeraCategoria);
+				}
 
-//        private async Task CargarOfertasAleatorias()
-//        {
-//            var ofertas = await _productoService.GetRandomAsync(8);
-//            if (ofertas != null)
-//            {
-//                OfertasEspeciales.Clear();
-//                foreach (var oferta in ofertas)
-//                {
-//                    OfertasEspeciales.Add(oferta);
-//                }
-//            }
-//        }
+				CantidadEnCarrito = await _carritoService.GetUniqueItemCountAsync();
+				DatosCargados?.Invoke(this, EventArgs.Empty);
+				MensajeError = string.Empty;
+			}
+			catch (Exception ex)
+			{
+				MensajeError = $"Error al cargar datos iniciales: {ex.Message}";
+				Console.WriteLine($"Error en CargarDatosIniciales: {ex}");
+			}
+		}
 
-//        private async Task CargarCategorias()
-//        {
-//            var categorias = await _categoriaService.GetAllAsync();
-//            if (categorias != null)
-//            {
-//                Categorias.Clear();
-//                foreach (var categoria in categorias)
-//                {
-//                    Categorias.Add(categoria);
-//                }
-//            }
-//        }
+		private async Task CargarTodosLosProductos()
+		{
+			try
+			{
+				var productos = await _productoService.GetAllAsync();
+				if (productos != null)
+				{
+					TodosLosProductos.Clear();
+					foreach (var producto in productos)
+					{
+						TodosLosProductos.Add(producto);
+					}
+				}
+				MensajeError = string.Empty;
+			}
+			catch (Exception ex)
+			{
+				MensajeError = $"Error al cargar productos: {ex.Message}";
+				Console.WriteLine($"Error en CargarTodosLosProductos: {ex}");
+			}
+		}
 
-//        public void FiltrarProductosPorCategoria(Categoria categoria)
-//        {
-//            if (categoria == null) return;
+		private async Task CargarOfertasAleatorias()
+		{
+			try
+			{
+				var ofertas = await _productoService.GetRandomAsync(8);
+				if (ofertas != null)
+				{
+					OfertasEspeciales.Clear();
+					foreach (var oferta in ofertas)
+					{
+						OfertasEspeciales.Add(oferta);
+					}
+				}
+				MensajeError = string.Empty;
+			}
+			catch (Exception ex)
+			{
+				MensajeError = $"Error al cargar ofertas: {ex.Message}";
+				Console.WriteLine($"Error en CargarOfertasAleatorias: {ex}");
+			}
+		}
 
-//            ProductosFiltrados.Clear();
+		private async Task CargarCategorias()
+		{
+			try
+			{
+				var categorias = await _categoriaService.GetAllAsync();
+				if (categorias != null)
+				{
+					Categorias.Clear();
+					foreach (var categoria in categorias)
+					{
+						Categorias.Add(categoria);
+					}
+				}
+				MensajeError = string.Empty;
+			}
+			catch (Exception ex)
+			{
+				MensajeError = $"Error al cargar categorías: {ex.Message}";
+				Console.WriteLine($"Error en CargarCategorias: {ex}");
+			}
+		}
 
-//            foreach (var producto in TodosLosProductos)
-//            {
-//                if (producto.CategoriaId == categoria.Id)
-//                {
-//                    ProductosFiltrados.Add(producto);
-//                }
-//            }
-//        }
+		public void FiltrarProductosPorCategoria(Categoria categoria)
+		{
+			try
+			{
+				if (categoria == null) return;
 
-//        public async Task AgregarAlCarrito(Producto producto)
-//        {
-//            try
-//            {
-//                await _carritoComprasService.AddToCartAsync(producto);
-//                CantidadEnCarrito = await _carritoComprasService.GetUniqueItemCountAsync();
-//            }
-//            catch (Exception ex)
-//            {
-//                throw; 
-//            }
-//        }
+				ProductosFiltrados.Clear();
+				var productosFiltrados = TodosLosProductos.Where(p => p.CategoriaId == categoria.Id);
+				foreach (var producto in productosFiltrados)
+				{
+					ProductosFiltrados.Add(producto);
+				}
+				MensajeError = string.Empty;
+			}
+			catch (Exception ex)
+			{
+				MensajeError = $"Error al filtrar productos: {ex.Message}";
+				Console.WriteLine($"Error en FiltrarProductosPorCategoria: {ex}");
+			}
+		}
 
-//    }
-//}
+		public async Task AgregarAlCarrito(Producto producto)
+		{
+			try
+			{
+				await _carritoService.AddToCartAsync(producto);
+				CantidadEnCarrito = await _carritoService.GetUniqueItemCountAsync();
+				MensajeError = string.Empty;
+			}
+			catch (Exception ex)
+			{
+				MensajeError = $"Error al agregar al carrito: {ex.Message}";
+				Console.WriteLine($"Error en AgregarAlCarrito: {ex}");
+				throw;
+			}
+		}
+	}
+}

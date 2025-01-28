@@ -11,6 +11,7 @@
         public static string CarritoCompra { get; set; } = "carritocompras";
         public static string Encargue { get; set; } = "encargues";
         public static string Usuario { get; set; } = "usuarios";
+        public static string MauiEncargue { get; set; } = "mauiencargues";
 
 
 
@@ -27,6 +28,7 @@
                 nameof(CarritoCompra) => CarritoCompra,
                 nameof(Encargue) => Encargue,
                 nameof(Usuario) => Usuario,
+                nameof(MauiEncargue) => MauiEncargue,
 
 
                 _ => throw new ArgumentException($"Endpoint '{name}' no está definido.")

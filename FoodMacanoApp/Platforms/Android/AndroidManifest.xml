@@ -1,6 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+	<application android:allowBackup="true"
+                 android:icon="@mipmap/appicon"
+                 android:roundIcon="@mipmap/appicon_round"
+                 android:supportsRtl="true">
+
+		<!-- Agregar esta actividad para el callback de OAuth -->
+		<activity android:name=".WebAuthenticationCallbackActivity"
+                  android:exported="true"
+                  android:noHistory="true">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="com.googleusercontent.apps.112810612683-6ppus9qlp78lq6sf31v4c5cf122tj8rp"
+                      android:host="oauth2redirect" />
+			</intent-filter>
+		</activity>
+	</application>
+
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+
+	<!-- Agregar esta sección para CustomTabs -->
+	<queries>
+		<intent>
+			<action android:name="android.support.customtabs.action.CustomTabsService" />
+		</intent>
+	</queries>
 </manifest>

@@ -61,6 +61,51 @@ namespace FoodMacanoApp.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a AIzaSyDpXHQyD5bFCjGkuPklXEASuX0B7a-peTE.
+        /// </summary>
+        internal static string ApiKeyFirebase {
+            get {
+                return ResourceManager.GetString("ApiKeyFirebase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a AIzaSyBslOLol99i8Lx_ufUxjwqiSyecJUovi28.
+        /// </summary>
+        internal static string ApiKeyGoogleCloud {
+            get {
+                return ResourceManager.GetString("ApiKeyGoogleCloud", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a foodmacano.firebaseapp.com.
+        /// </summary>
+        internal static string AuthDomainFirebase {
+            get {
+                return ResourceManager.GetString("AuthDomainFirebase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 112810612683-6ppus9qlp78lq6sf31v4c5cf122tj8rp.
+        /// </summary>
+        internal static string client_id {
+            get {
+                return ResourceManager.GetString("client_id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a false.
+        /// </summary>
+        internal static string Remoto {
+            get {
+                return ResourceManager.GetString("Remoto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a https://datafoodmacano.azurewebsites.net/api/.
         /// </summary>
         internal static string UrlApi {

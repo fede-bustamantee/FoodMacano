@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "112810612683",
+    "project_id": "foodmacano",
+    "storage_bucket": "foodmacano.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112810612683:android:2b107e7369ca1265d9084e",
+        "android_client_info": {
+          "package_name": "com.fede.foodmacano"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112810612683-6ppus9qlp78lq6sf31v4c5cf122tj8rp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fede.foodmacano",
+            "certificate_hash": "aced1bc3e320e9c68fdd8f3993c6e19dde4f2ce0"
+          }
+        },
+        {
+          "client_id": "112810612683-9uqbsqqeqk28km5bstldbkihm0uq57ul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBslOLol99i8Lx_ufUxjwqiSyecJUovi28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112810612683-9uqbsqqeqk28km5bstldbkihm0uq57ul.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

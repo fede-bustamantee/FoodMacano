@@ -1,14 +1,18 @@
 ﻿using FoodMacanoApp.Views.Inicio;
+using FoodMacanoApp.Views.Login;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 
-namespace FoodMacanoApp
+namespace FoodMacanoApp;
+
+public partial class App : Application
 {
-    public partial class App : Application
+    public App()
     {
-        public App()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            MainPage = new NavigationPage(new Inicio());
-        }
+        MainPage = new AppShell();
     }
+
 }

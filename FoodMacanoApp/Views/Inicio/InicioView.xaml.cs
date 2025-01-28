@@ -1,27 +1,27 @@
 using FoodMacanoApp.ViewModels;
 using FoodMacanoApp.Views.Carrito;
+using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
+using FoodMacanoServices.Services;
 using Microsoft.Maui.Graphics;
 using System.Globalization;
 
-
 namespace FoodMacanoApp.Views.Inicio;
 
-public partial class Inicio : ContentPage
+public partial class InicioView : ContentPage
 {
-    private Frame _marcoSeleccionadoActualmente;
-    private InicioViewModel _viewModel;
-
-    public Inicio()
-    {
-        InitializeComponent();
-        _viewModel = new InicioViewModel();
+    private Frame? _marcoSeleccionadoActualmente;
+    private readonly InicioViewModel _viewModel;
+    public InicioView(IGenericService<Producto> productoService, IGenericService<Categoria> categoriaService, MauiCarritoService carritoService)
+	{
+		InitializeComponent();
+        _viewModel = new InicioViewModel(productoService, categoriaService, carritoService);
         BindingContext = _viewModel;
         _viewModel.DatosCargados += OnDatosCargados;
     }
     public class IntToBoolConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             if (value is int intValue)
             {
@@ -30,11 +30,12 @@ public partial class Inicio : ContentPage
             return false;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
+
     private async void OnAgregarAlCarritoClicked(object sender, EventArgs e)
     {
         try
@@ -54,7 +55,8 @@ public partial class Inicio : ContentPage
             await DisplayAlert("Error", $"No se pudo agregar el producto al carrito: {ex.Message}", "OK");
         }
     }
-    private async void OnDatosCargados(object sender, EventArgs e)
+
+    private async void OnDatosCargados(object? sender, EventArgs e)
     {
         // Asegurarse de que este código se ejecute en el hilo principal
         await MainThread.InvokeOnMainThreadAsync(() =>
@@ -105,9 +107,16 @@ public partial class Inicio : ContentPage
             _viewModel.FiltrarProductosPorCategoria(categoria);
         }
     }
-
     private async void CarritoClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new CarritoView());
+        try
+        {
+            await Shell.Current.GoToAsync("CarritoView");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo acceder al carrito: {ex.Message}", "OK");
+        }
     }
+
 }

@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Shell
-    x:Class="FoodMacanoApp.AppShell"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:FoodMacanoApp"
-    Shell.FlyoutBehavior="Disabled"
-    Title="FoodMacanoApp">
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:FoodMacanoApp.Views.Login"
+       xmlns:inicio="clr-namespace:FoodMacanoApp.Views.Inicio"
+       xmlns:carrito="clr-namespace:FoodMacanoApp.Views.Carrito"
+       x:Class="FoodMacanoApp.AppShell"
+       Shell.FlyoutBehavior="Disabled"
+       Shell.NavBarIsVisible="False"
+       NavigationPage.HasNavigationBar="False">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        ContentTemplate="{DataTemplate views:LoginView}"
+        Route="Login"/>
+
+    <ShellContent
+        ContentTemplate="{DataTemplate inicio:InicioView}"
+        Route="InicioView"/>
+    
+    <ShellContent
+    ContentTemplate="{DataTemplate carrito:CarritoView}"
+    Route="CarritoView"/>
 
 </Shell>
