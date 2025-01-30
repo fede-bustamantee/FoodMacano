@@ -97,60 +97,32 @@ public class MauiEncarguesController : ControllerBase
 
         try
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            // Verificar y asignar datos de productos en los detalles
+            foreach (var detalle in mauiEncargue.Detalles)
             {
-                // Verificar y cargar datos de productos
-                foreach (var detalle in mauiEncargue.Detalles)
+                var producto = await _context.productos.FindAsync(detalle.ProductoId);
+                if (producto == null)
                 {
-                    var producto = await _context.productos.FindAsync(detalle.ProductoId);
-                    if (producto == null)
-                    {
-                        throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
-                    }
-                    detalle.Producto = producto;
-                    detalle.NombreProducto = producto.Nombre;
-                    detalle.PrecioUnitario = producto.Precio;
+                    return BadRequest($"Producto no encontrado: {detalle.ProductoId}");
                 }
 
-                _context.mauiEncargue.Add(mauiEncargue);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                // Cargar el encargue completo para la respuesta
-                var encargueCompleto = await _context.mauiEncargue
-                    .Include(e => e.Detalles)
-                    .Select(e => new MauiEncargue
-                    {
-                        Id = e.Id,
-                        FechaEncargue = e.FechaEncargue,
-                        Estado = e.Estado,
-                        Total = e.Total,
-                        UserId = e.UserId,
-                        Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
-                        {
-                            Id = d.Id,
-                            EncargueId = d.EncargueId,
-                            ProductoId = d.ProductoId,
-                            NombreProducto = d.NombreProducto,
-                            PrecioUnitario = d.PrecioUnitario,
-                            Cantidad = d.Cantidad,
-                            Producto = _context.productos.FirstOrDefault(p => p.Id == d.ProductoId)
-                        }).ToList()
-                    })
-                    .FirstOrDefaultAsync(e => e.Id == mauiEncargue.Id);
-
-                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueCompleto);
+                // Asegurar que cada detalle está vinculado con el encargue
+                detalle.Encargue = mauiEncargue;
+                detalle.EncargueId = mauiEncargue.Id; // EF Core lo actualizará automáticamente
+                detalle.NombreProducto = producto.Nombre;
+                detalle.PrecioUnitario = producto.Precio;
             }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+
+            _context.mauiEncargue.Add(mauiEncargue);
+            await _context.SaveChangesAsync(); // EF Core maneja la transacción automáticamente
+
+            return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, mauiEncargue);
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Error en PostMauiEncargue: {ex}");
             return StatusCode(500, $"Error interno del servidor: {ex.Message}");
         }
     }
+
 }
