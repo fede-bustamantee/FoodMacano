@@ -132,21 +132,48 @@ namespace BackFoodMacano.Controllers
 
             try
             {
-                // Asociar cada detalle con el encargue
+                // Verificar que todos los productos existan
                 foreach (var detalle in mauiEncargue.Detalles)
                 {
-                    detalle.Encargue = mauiEncargue;
+                    var producto = await _context.productos.FindAsync(detalle.ProductoId);
+                    if (producto == null)
+                    {
+                        return BadRequest($"Producto con ID {detalle.ProductoId} no encontrado.");
+                    }
+                    detalle.Producto = producto;
+                }
+
+                // Calcular el total correctamente
+                mauiEncargue.Total = mauiEncargue.Detalles.Sum(d => d.Cantidad * d.Producto.Precio);
+
+                // Establecer la fecha si no está establecida
+                if (mauiEncargue.FechaEncargue == default)
+                {
+                    mauiEncargue.FechaEncargue = DateTime.UtcNow;
                 }
 
                 _context.mauiEncargue.Add(mauiEncargue);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction("GetMauiEncargue", new { id = mauiEncargue.Id }, mauiEncargue);
+                // Cargar los detalles relacionados antes de devolver
+                await _context.Entry(mauiEncargue)
+                    .Collection(e => e.Detalles)
+                    .LoadAsync();
+
+                return CreatedAtAction(
+                    nameof(GetMauiEncargue),
+                    new { id = mauiEncargue.Id },
+                    mauiEncargue);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"Error de base de datos: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(500, $"Error al guardar en la base de datos: {ex.InnerException?.Message ?? ex.Message}");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en PostMauiEncargue: {ex}");
-                return StatusCode(500, "Error interno del servidor.");
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }
 
