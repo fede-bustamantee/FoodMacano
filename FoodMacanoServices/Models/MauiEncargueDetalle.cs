@@ -11,9 +11,12 @@ namespace FoodMacanoServices.Models
         public MauiEncargue? Encargue { get; set; }
 
         public int ProductoId { get; set; }
-        public Producto? Producto { get; set; }  // Vinculado a Producto
-
+        public string NombreProducto { get; set; } = string.Empty;
+        public decimal PrecioUnitario { get; set; }
         public int Cantidad { get; set; }
-        public decimal Subtotal => Producto != null ? Cantidad * Producto.Precio : 0; // Calculado a partir del Producto
+
+        public decimal Subtotal => Cantidad * PrecioUnitario; // Se calcula automáticamente
+
+        public Producto? Producto { get; set; }
     }
 }

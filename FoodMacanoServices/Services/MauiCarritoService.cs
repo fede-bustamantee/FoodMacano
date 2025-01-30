@@ -80,7 +80,7 @@ namespace FoodMacanoServices.Services
         {
             if (!_carrito.Any())
             {
-                throw new InvalidOperationException("El carrito está vacío. No se puede procesar el pedido.");
+                throw new InvalidOperationException("El carrito está vacío.");
             }
 
             try
@@ -88,38 +88,32 @@ namespace FoodMacanoServices.Services
                 var userId = _authService.GetCurrentUserId();
                 if (string.IsNullOrEmpty(userId))
                 {
-                    throw new InvalidOperationException("No se puede procesar el pedido. Usuario no autenticado.");
+                    throw new InvalidOperationException("Usuario no autenticado.");
                 }
 
-                // Crear los detalles del encargue a partir del carrito
                 var detalles = _carrito.Select(item => new MauiEncargueDetalle
                 {
                     ProductoId = item.ProductoId,
-                    Producto = item.Producto ?? new Producto { Id = item.ProductoId }, // Evita null
-                    Cantidad = item.Cantidad
+                    NombreProducto = item.Producto?.Nombre ?? "Producto Desconocido",
+                    PrecioUnitario = item.Producto?.Precio ?? 0,
+                    Cantidad = item.Cantidad,
+                    Producto = item.Producto
                 }).ToList();
 
-                // Crear el nuevo encargue con sus detalles
                 var nuevoEncargue = new MauiEncargue
                 {
-                    FechaEncargue = DateTime.Now,
+                    FechaEncargue = DateTime.UtcNow,
                     Estado = "Pendiente",
-                    Total = detalles.Sum(d => d.Producto.Precio * d.Cantidad), // Se usa Producto.Precio directamente
+                    Total = detalles.Sum(d => d.Subtotal),
                     UserId = userId,
                     Detalles = detalles
                 };
 
-                // Registrar el pedido usando MauiEncargueService
                 await _encargueService.AddAsync(nuevoEncargue);
-
-                // Limpiar el carrito después de procesar el pedido
                 await ClearCartAsync();
-
-                Console.WriteLine($"Pedido procesado exitosamente. Total: {nuevoEncargue.Total}, Productos: {detalles.Count}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en checkout: {ex.Message}");
                 throw new Exception($"Error al procesar el pedido: {ex.Message}", ex);
             }
         }

@@ -19,7 +19,6 @@ namespace BackFoodMacano.Controllers
             _context = context;
         }
 
-        // GET: api/MauiEncargues/user/{userId}
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesByUser(string userId)
         {
@@ -29,6 +28,8 @@ namespace BackFoodMacano.Controllers
             }
 
             var encargues = await _context.mauiEncargue
+                .Include(e => e.Detalles)
+                    .ThenInclude(d => d.Producto)
                 .Where(e => e.UserId == userId)
                 .OrderByDescending(e => e.FechaEncargue)
                 .ToListAsync();
@@ -132,7 +133,7 @@ namespace BackFoodMacano.Controllers
 
             try
             {
-                // Verificar que todos los productos existan
+                // Cargar los productos para cada detalle y establecer los valores
                 foreach (var detalle in mauiEncargue.Detalles)
                 {
                     var producto = await _context.productos.FindAsync(detalle.ProductoId);
@@ -140,39 +141,30 @@ namespace BackFoodMacano.Controllers
                     {
                         return BadRequest($"Producto con ID {detalle.ProductoId} no encontrado.");
                     }
+
                     detalle.Producto = producto;
+                    detalle.NombreProducto = producto.Nombre;
+                    detalle.PrecioUnitario = producto.Precio;
+                    detalle.Encargue = mauiEncargue;
                 }
 
-                // Calcular el total correctamente
-                mauiEncargue.Total = mauiEncargue.Detalles.Sum(d => d.Cantidad * d.Producto.Precio);
-
-                // Establecer la fecha si no está establecida
-                if (mauiEncargue.FechaEncargue == default)
-                {
-                    mauiEncargue.FechaEncargue = DateTime.UtcNow;
-                }
+                // Calcular el total
+                mauiEncargue.Total = mauiEncargue.Detalles.Sum(d => d.Subtotal);
 
                 _context.mauiEncargue.Add(mauiEncargue);
                 await _context.SaveChangesAsync();
 
-                // Cargar los detalles relacionados antes de devolver
+                // Recargar el encargue con todos sus detalles
                 await _context.Entry(mauiEncargue)
                     .Collection(e => e.Detalles)
+                    .Query()
+                    .Include(d => d.Producto)
                     .LoadAsync();
 
-                return CreatedAtAction(
-                    nameof(GetMauiEncargue),
-                    new { id = mauiEncargue.Id },
-                    mauiEncargue);
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine($"Error de base de datos: {ex.InnerException?.Message ?? ex.Message}");
-                return StatusCode(500, $"Error al guardar en la base de datos: {ex.InnerException?.Message ?? ex.Message}");
+                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, mauiEncargue);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en PostMauiEncargue: {ex}");
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }

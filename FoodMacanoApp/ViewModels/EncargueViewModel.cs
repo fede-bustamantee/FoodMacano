@@ -162,17 +162,10 @@ namespace FoodMacanoApp.ViewModels
                     detallesTexto.AppendLine("\nProductos:");
                     foreach (var detalle in detallesEncargue.Detalles)
                     {
-                        if (detalle.Producto != null) // Verifica que Producto no sea null
-                        {
-                            detallesTexto.AppendLine($"- {detalle.Producto.Nombre}");
-                            detallesTexto.AppendLine($"  Cantidad: {detalle.Cantidad}");
-                            detallesTexto.AppendLine($"  Precio unitario: ${detalle.Producto.Precio:N2}");
-                            detallesTexto.AppendLine($"  Subtotal: ${detalle.Subtotal:N2}");
-                        }
-                        else
-                        {
-                            detallesTexto.AppendLine($"- Producto desconocido (ID: {detalle.ProductoId})");
-                        }
+                        detallesTexto.AppendLine($"- {detalle.NombreProducto}");
+                        detallesTexto.AppendLine($"  Cantidad: {detalle.Cantidad}");
+                        detallesTexto.AppendLine($"  Precio unitario: ${detalle.PrecioUnitario:N2}");
+                        detallesTexto.AppendLine($"  Subtotal: ${detalle.Subtotal:N2}");
                     }
                 }
 
