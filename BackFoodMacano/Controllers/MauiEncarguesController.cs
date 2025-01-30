@@ -133,9 +133,14 @@ namespace BackFoodMacano.Controllers
 
             try
             {
-                // Cargar los productos para cada detalle y establecer los valores
+                // Desconectar los objetos Producto existentes para evitar problemas de tracking
                 foreach (var detalle in mauiEncargue.Detalles)
                 {
+                    if (detalle.Producto != null)
+                    {
+                        _context.Entry(detalle.Producto).State = EntityState.Detached;
+                    }
+
                     var producto = await _context.productos.FindAsync(detalle.ProductoId);
                     if (producto == null)
                     {
@@ -154,14 +159,13 @@ namespace BackFoodMacano.Controllers
                 _context.mauiEncargue.Add(mauiEncargue);
                 await _context.SaveChangesAsync();
 
-                // Recargar el encargue con todos sus detalles
-                await _context.Entry(mauiEncargue)
-                    .Collection(e => e.Detalles)
-                    .Query()
-                    .Include(d => d.Producto)
-                    .LoadAsync();
+                // Recargar el encargue con todos sus detalles para la respuesta
+                var encargueConDetalles = await _context.mauiEncargue
+                    .Include(e => e.Detalles)
+                        .ThenInclude(d => d.Producto)
+                    .FirstOrDefaultAsync(e => e.Id == mauiEncargue.Id);
 
-                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, mauiEncargue);
+                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueConDetalles);
             }
             catch (Exception ex)
             {
