@@ -14,6 +14,19 @@ public class MauiEncarguesController : ControllerBase
         _context = context;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetMauiEncargues()
+    {
+        var encargues = await _context.mauiEncargue
+            .Include(e => e.Detalles) // Incluir detalles del encargue
+            .ThenInclude(d => d.Producto) // Incluir productos en los detalles
+            .OrderByDescending(e => e.FechaEncargue)
+            .ToListAsync();
+
+        return Ok(encargues);
+    }
+
+
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesByUser(string userId)
     {
@@ -124,5 +137,19 @@ public class MauiEncarguesController : ControllerBase
             return StatusCode(500, $"Error interno del servidor: {ex.Message}");
         }
     }
+    // DELETE: api/MauiEncargues/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMauiEncargue(int id)
+    {
+        var mauiEncargue = await _context.mauiEncargue.FindAsync(id);
+        if (mauiEncargue == null)
+        {
+            return NotFound();
+        }
 
+        _context.mauiEncargue.Remove(mauiEncargue);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
