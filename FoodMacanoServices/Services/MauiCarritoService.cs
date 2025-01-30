@@ -96,20 +96,19 @@ namespace FoodMacanoServices.Services
                     ProductoId = item.ProductoId,
                     NombreProducto = item.Producto?.Nombre ?? "Producto Desconocido",
                     PrecioUnitario = item.Producto?.Precio ?? 0,
-                    Cantidad = item.Cantidad,
-                    Producto = item.Producto
+                    Cantidad = item.Cantidad
                 }).ToList();
 
                 var nuevoEncargue = new MauiEncargue
                 {
                     FechaEncargue = DateTime.UtcNow,
                     Estado = "Pendiente",
-                    Total = detalles.Sum(d => d.Subtotal),
                     UserId = userId,
-                    Detalles = detalles
+                    Detalles = detalles,
+                    Total = detalles.Sum(d => d.Subtotal)
                 };
 
-                await _encargueService.AddAsync(nuevoEncargue);
+                await _encargueService.AddEncargueAsync(nuevoEncargue);
                 await ClearCartAsync();
             }
             catch (Exception ex)

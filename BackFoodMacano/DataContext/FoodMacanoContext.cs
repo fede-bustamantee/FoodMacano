@@ -20,6 +20,8 @@ namespace BackFoodMacano.DataContext
         public virtual DbSet<Encargue> encargues { get; set; }
         public virtual DbSet<Usuario> usuarios { get; set; }
         public virtual DbSet<MauiEncargue> mauiEncargue { get; set; }
+        public virtual DbSet<MauiEncargueDetalle> mauiDetalleEncargue { get; set; }
+
 
         #endregion
 
