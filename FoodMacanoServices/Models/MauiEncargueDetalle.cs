@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace FoodMacanoServices.Models
 {
@@ -10,12 +6,17 @@ namespace FoodMacanoServices.Models
     {
         public int Id { get; set; }
         public int EncargueId { get; set; }
-        public MauiEncargue Encargue { get; set; }
+
+        [JsonIgnore] // Evita la serialización circular
+        public MauiEncargue? Encargue { get; set; }
+
         public int ProductoId { get; set; }
-        public string NombreProducto { get; set; }
+        public string NombreProducto { get; set; } = string.Empty;
         public decimal PrecioUnitario { get; set; }
         public int Cantidad { get; set; }
-        public decimal Subtotal { get; set; }
-        public Producto Producto { get; set; }
+
+        public decimal Subtotal => Cantidad * PrecioUnitario; // Se calcula automáticamente
+
+        public Producto? Producto { get; set; }
     }
 }

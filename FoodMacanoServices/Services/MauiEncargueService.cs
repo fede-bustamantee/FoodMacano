@@ -40,7 +40,7 @@ namespace FoodMacanoServices.Services
             try
             {
                 await SetAuthHeader();
-                var response = await _httpClient.GetAsync($"{_endpoint}?userId={firebaseUserId}");
+                var response = await _httpClient.GetAsync($"{_endpoint}/user/{firebaseUserId}");
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

@@ -103,7 +103,7 @@ namespace FoodMacanoApp.ViewModels
                     return;
                 }
 
-                var encargues = await _encargueService.GetEncarguesConDetallesAsync(userId);
+                var encargues = await _encargueService.GetEncarguesAsync(userId);
                 Console.WriteLine($"Encargues obtenidos: {encargues?.Count ?? 0}");
 
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -117,6 +117,11 @@ namespace FoodMacanoApp.ViewModels
                         }
                     }
                 });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                ErrorMessage = "Sesión expirada. Por favor, vuelva a iniciar sesión.";
+                Console.WriteLine("Error de autenticación al cargar encargues");
             }
             catch (Exception ex)
             {
@@ -136,20 +141,32 @@ namespace FoodMacanoApp.ViewModels
 
             try
             {
-                var detallesEncargue = await _encargueService.GetEncargueConDetallesAsync(encargue.Id);
-                var detallesTexto = new StringBuilder();
+                var detallesEncargue = await _encargueService.GetEncargueByIdAsync(encargue.Id);
 
+                if (detallesEncargue == null)
+                {
+                    await Application.Current.MainPage.DisplayAlert(
+                        "Error",
+                        "No se encontró el encargue solicitado.",
+                        "OK");
+                    return;
+                }
+
+                var detallesTexto = new StringBuilder();
                 detallesTexto.AppendLine($"Encargue #{detallesEncargue.Id}");
                 detallesTexto.AppendLine($"Fecha: {detallesEncargue.FechaEncargue:dd/MM/yyyy HH:mm}");
                 detallesTexto.AppendLine($"Estado: {detallesEncargue.Estado}");
-                detallesTexto.AppendLine("\nProductos:");
 
-                foreach (var detalle in detallesEncargue.Detalles)
+                if (detallesEncargue.Detalles?.Any() == true)
                 {
-                    detallesTexto.AppendLine($"- {detalle.NombreProducto}");
-                    detallesTexto.AppendLine($"  Cantidad: {detalle.Cantidad}");
-                    detallesTexto.AppendLine($"  Precio unitario: ${detalle.PrecioUnitario:N2}");
-                    detallesTexto.AppendLine($"  Subtotal: ${detalle.Subtotal:N2}");
+                    detallesTexto.AppendLine("\nProductos:");
+                    foreach (var detalle in detallesEncargue.Detalles)
+                    {
+                        detallesTexto.AppendLine($"- {detalle.NombreProducto}");
+                        detallesTexto.AppendLine($"  Cantidad: {detalle.Cantidad}");
+                        detallesTexto.AppendLine($"  Precio unitario: ${detalle.PrecioUnitario:N2}");
+                        detallesTexto.AppendLine($"  Subtotal: ${detalle.Subtotal:N2}");
+                    }
                 }
 
                 detallesTexto.AppendLine($"\nTotal: ${detallesEncargue.Total:N2}");
@@ -158,6 +175,13 @@ namespace FoodMacanoApp.ViewModels
                     "Detalles del Encargue",
                     detallesTexto.ToString(),
                     "Cerrar");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                await Application.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "Sesión expirada. Por favor, vuelva a iniciar sesión.",
+                    "OK");
             }
             catch (Exception ex)
             {
