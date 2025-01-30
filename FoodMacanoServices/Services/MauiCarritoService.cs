@@ -95,9 +95,8 @@ namespace FoodMacanoServices.Services
                 var detalles = _carrito.Select(item => new MauiEncargueDetalle
                 {
                     ProductoId = item.ProductoId,
-                    Producto = item.Producto,  // Ya obtenemos los datos desde Producto
-                    Cantidad = item.Cantidad,
-                    EncargueId = 0  // Se asignará automáticamente al guardarlo en la base de datos
+                    Producto = item.Producto ?? new Producto { Id = item.ProductoId }, // Evita null
+                    Cantidad = item.Cantidad
                 }).ToList();
 
                 // Crear el nuevo encargue con sus detalles

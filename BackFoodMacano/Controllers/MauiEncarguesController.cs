@@ -125,10 +125,29 @@ namespace BackFoodMacano.Controllers
                 return BadRequest("Datos inválidos.");
             }
 
-            _context.mauiEncargue.Add(mauiEncargue);
-            await _context.SaveChangesAsync();
+            if (mauiEncargue.Detalles == null || !mauiEncargue.Detalles.Any())
+            {
+                return BadRequest("El encargue debe incluir al menos un detalle.");
+            }
 
-            return CreatedAtAction("GetMauiEncargue", new { id = mauiEncargue.Id }, mauiEncargue);
+            try
+            {
+                // Asociar cada detalle con el encargue
+                foreach (var detalle in mauiEncargue.Detalles)
+                {
+                    detalle.Encargue = mauiEncargue;
+                }
+
+                _context.mauiEncargue.Add(mauiEncargue);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetMauiEncargue", new { id = mauiEncargue.Id }, mauiEncargue);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en PostMauiEncargue: {ex}");
+                return StatusCode(500, "Error interno del servidor.");
+            }
         }
 
         [HttpDelete("{id}")]
