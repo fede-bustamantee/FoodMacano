@@ -133,60 +133,39 @@ namespace BackFoodMacano.Controllers
 
             try
             {
-                // Start a new transaction
-                using var transaction = await _context.Database.BeginTransactionAsync();
-
-                try
+                // Desconectar los objetos Producto existentes para evitar problemas de tracking
+                foreach (var detalle in mauiEncargue.Detalles)
                 {
-                    // First, create the encargue without details
-                    var newEncargue = new MauiEncargue
+                    if (detalle.Producto != null)
                     {
-                        FechaEncargue = mauiEncargue.FechaEncargue,
-                        Estado = mauiEncargue.Estado,
-                        UserId = mauiEncargue.UserId,
-                        Total = mauiEncargue.Total
-                    };
-
-                    _context.mauiEncargue.Add(newEncargue);
-                    await _context.SaveChangesAsync();
-
-                    // Now add the details one by one
-                    foreach (var detalle in mauiEncargue.Detalles)
-                    {
-                        var producto = await _context.productos.FindAsync(detalle.ProductoId);
-                        if (producto == null)
-                        {
-                            throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
-                        }
-
-                        var newDetalle = new MauiEncargueDetalle
-                        {
-                            EncargueId = newEncargue.Id,
-                            ProductoId = detalle.ProductoId,
-                            NombreProducto = producto.Nombre,
-                            PrecioUnitario = producto.Precio,
-                            Cantidad = detalle.Cantidad
-                        };
-
-                        _context.mauiDetalleEncargue.Add(newDetalle);
+                        _context.Entry(detalle.Producto).State = EntityState.Detached;
                     }
 
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+                    var producto = await _context.productos.FindAsync(detalle.ProductoId);
+                    if (producto == null)
+                    {
+                        return BadRequest($"Producto con ID {detalle.ProductoId} no encontrado.");
+                    }
 
-                    // Load the complete order for the response
-                    var encargueCompleto = await _context.mauiEncargue
-                        .Include(e => e.Detalles)
+                    detalle.Producto = producto;
+                    detalle.NombreProducto = producto.Nombre;
+                    detalle.PrecioUnitario = producto.Precio;
+                    detalle.Encargue = mauiEncargue;
+                }
+
+                // Calcular el total
+                mauiEncargue.Total = mauiEncargue.Detalles.Sum(d => d.Subtotal);
+
+                _context.mauiEncargue.Add(mauiEncargue);
+                await _context.SaveChangesAsync();
+
+                // Recargar el encargue con todos sus detalles para la respuesta
+                var encargueConDetalles = await _context.mauiEncargue
+                    .Include(e => e.Detalles)
                         .ThenInclude(d => d.Producto)
-                        .FirstOrDefaultAsync(e => e.Id == newEncargue.Id);
+                    .FirstOrDefaultAsync(e => e.Id == mauiEncargue.Id);
 
-                    return CreatedAtAction(nameof(GetMauiEncargue), new { id = newEncargue.Id }, encargueCompleto);
-                }
-                catch
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
+                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueConDetalles);
             }
             catch (Exception ex)
             {
