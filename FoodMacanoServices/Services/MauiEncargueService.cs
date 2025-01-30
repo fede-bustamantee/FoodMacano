@@ -3,6 +3,7 @@ using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FoodMacanoServices.Services
 {
@@ -27,9 +28,7 @@ namespace FoodMacanoServices.Services
         {
             var token = await _authService.GetCurrentUserToken();
             if (string.IsNullOrEmpty(token))
-            {
                 throw new UnauthorizedAccessException("Token de autenticación no disponible");
-            }
 
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -48,14 +47,22 @@ namespace FoodMacanoServices.Services
                     throw new ApplicationException($"Error al obtener encargues: {response.StatusCode}");
                 }
 
-                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options) ?? new List<MauiEncargue>();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.Preserve
+                };
+
+                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, options)
+                    ?? new List<MauiEncargue>();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener los encargues del usuario {firebaseUserId}: {ex}");
-                throw new Exception($"Error al obtener los encargues del usuario {firebaseUserId}", ex);
+                throw;
             }
         }
+
         public async Task AddEncargueAsync(MauiEncargue encargue)
         {
             if (encargue == null)
@@ -64,35 +71,15 @@ namespace FoodMacanoServices.Services
             try
             {
                 await SetAuthHeader();
-
-                // Create a simplified version of the encargue for transport
-                var encargueDto = new
-                {
-                    FechaEncargue = encargue.FechaEncargue,
-                    Estado = encargue.Estado,
-                    UserId = encargue.UserId,
-                    Total = encargue.Total,
-                    Detalles = encargue.Detalles.Select(d => new
-                    {
-                        ProductoId = d.ProductoId,
-                        NombreProducto = d.NombreProducto,
-                        PrecioUnitario = d.PrecioUnitario,
-                        Cantidad = d.Cantidad
-                    }).ToList()
-                };
-
-                var response = await _httpClient.PostAsJsonAsync(_endpoint, encargueDto);
+                var response = await _httpClient.PostAsJsonAsync(_endpoint, encargue);
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error al crear el encargue: {content}");
-                }
+                    throw new ApplicationException(content);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al crear el encargue: {ex}");
-                throw new Exception($"Error al crear el encargue: {ex.Message}", ex);
+                throw new Exception("Error al crear el encargue", ex);
             }
         }
 
@@ -111,11 +98,13 @@ namespace FoodMacanoServices.Services
                     throw new ApplicationException(content);
 
                 var encargue = JsonSerializer.Deserialize<MauiEncargue>(content, _options);
-                return encargue ?? throw new Exception($"No se encontró el encargue con ID {id}");
+                if (encargue == null)
+                    throw new Exception($"No se encontró el encargue con ID {id}");
+
+                return encargue;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al obtener el encargue con ID {id}: {ex}");
                 throw new Exception($"Error al obtener el encargue con ID {id}", ex);
             }
         }
@@ -139,7 +128,6 @@ namespace FoodMacanoServices.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al actualizar el encargue con ID {encargue.Id}: {ex}");
                 throw new Exception($"Error al actualizar el encargue con ID {encargue.Id}", ex);
             }
         }
@@ -160,8 +148,53 @@ namespace FoodMacanoServices.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al eliminar el encargue con ID {id}: {ex}");
                 throw new Exception($"Error al eliminar el encargue con ID {id}", ex);
+            }
+        }
+        public async Task<List<MauiEncargue>> GetEncarguesConDetallesAsync(string userId)
+        {
+            try
+            {
+                await SetAuthHeader();
+                var response = await _httpClient.GetAsync($"{_endpoint}/user/{userId}/withDetails");
+
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"Error al obtener encargues: {response.StatusCode}");
+
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options) ??
+                       new List<MauiEncargue>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener encargues con detalles: {ex.Message}");
+                throw;
+            }
+        }
+
+        // Método para mostrar los detalles de un encargue específico
+        public async Task<MauiEncargue> GetEncargueConDetallesAsync(int encargueId)
+        {
+            try
+            {
+                await SetAuthHeader();
+                var response = await _httpClient.GetAsync($"{_endpoint}/{encargueId}/details");
+
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"Error al obtener encargue: {response.StatusCode}");
+
+                var content = await response.Content.ReadAsStringAsync();
+                var encargue = JsonSerializer.Deserialize<MauiEncargue>(content, _options);
+
+                if (encargue == null)
+                    throw new Exception($"No se encontró el encargue con ID {encargueId}");
+
+                return encargue;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener encargue con detalles: {ex.Message}");
+                throw;
             }
         }
     }

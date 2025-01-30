@@ -8,6 +8,7 @@
         public decimal Total { get; set; }
         public string UserId { get; set; } = string.Empty;
 
-        public List<MauiEncargueDetalle> Detalles { get; set; } = new List<MauiEncargueDetalle>();
+        // Configuración explícita de la relación
+        public virtual ICollection<MauiEncargueDetalle> Detalles { get; set; } = new List<MauiEncargueDetalle>();
     }
 }

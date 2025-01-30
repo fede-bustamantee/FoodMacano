@@ -1,196 +1,156 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BackFoodMacano.DataContext;
+﻿using BackFoodMacano.DataContext;
 using FoodMacanoServices.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace BackFoodMacano.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class MauiEncarguesController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MauiEncarguesController : ControllerBase
+    private readonly FoodMacanoContext _context;
+
+    public MauiEncarguesController(FoodMacanoContext context)
     {
-        private readonly FoodMacanoContext _context;
+        _context = context;
+    }
 
-        public MauiEncarguesController(FoodMacanoContext context)
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesByUser(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
         {
-            _context = context;
+            return BadRequest("User ID is required");
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesByUser(string userId)
-        {
-            if (string.IsNullOrEmpty(userId))
+        var encargues = await _context.mauiEncargue
+            .Where(e => e.UserId == userId)
+            .Include(e => e.Detalles)
+            .Select(e => new MauiEncargue
             {
-                return BadRequest("User ID is required");
-            }
+                Id = e.Id,
+                FechaEncargue = e.FechaEncargue,
+                Estado = e.Estado,
+                Total = e.Total,
+                UserId = e.UserId,
+                Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
+                {
+                    Id = d.Id,
+                    EncargueId = d.EncargueId,
+                    ProductoId = d.ProductoId,
+                    NombreProducto = d.NombreProducto,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Cantidad = d.Cantidad,
+                    Producto = _context.productos.FirstOrDefault(p => p.Id == d.ProductoId)
+                }).ToList()
+            })
+            .OrderByDescending(e => e.FechaEncargue)
+            .ToListAsync();
 
-            var encargues = await _context.mauiEncargue
-                .Include(e => e.Detalles)
-                    .ThenInclude(d => d.Producto)
-                .Where(e => e.UserId == userId)
-                .OrderByDescending(e => e.FechaEncargue)
-                .ToListAsync();
+        return Ok(encargues);
+    }
 
-            return Ok(encargues);
-        }
-
-        // GET: api/MauiEncargues/{id}/details
-        [HttpGet("{id}/details")]
-        public async Task<ActionResult<MauiEncargue>> GetEncargueWithDetails(int id)
-        {
-            var encargue = await _context.mauiEncargue
-                .Include(e => e.Detalles)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (encargue == null)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<MauiEncargue>> GetMauiEncargue(int id)
+    {
+        var mauiEncargue = await _context.mauiEncargue
+            .Include(e => e.Detalles)
+            .Select(e => new MauiEncargue
             {
-                return NotFound($"Encargue with ID {id} not found");
-            }
+                Id = e.Id,
+                FechaEncargue = e.FechaEncargue,
+                Estado = e.Estado,
+                Total = e.Total,
+                UserId = e.UserId,
+                Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
+                {
+                    Id = d.Id,
+                    EncargueId = d.EncargueId,
+                    ProductoId = d.ProductoId,
+                    NombreProducto = d.NombreProducto,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Cantidad = d.Cantidad,
+                    Producto = _context.productos.FirstOrDefault(p => p.Id == d.ProductoId)
+                }).ToList()
+            })
+            .FirstOrDefaultAsync(e => e.Id == id);
 
-            return Ok(encargue);
+        if (mauiEncargue == null)
+        {
+            return NotFound();
         }
 
-        // GET: api/MauiEncargues/user/{userId}/withDetails
-        [HttpGet("user/{userId}/withDetails")]
-        public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesWithDetailsByUser(string userId)
+        return mauiEncargue;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<MauiEncargue>> PostMauiEncargue(MauiEncargue mauiEncargue)
+    {
+        if (mauiEncargue == null || string.IsNullOrEmpty(mauiEncargue.UserId))
         {
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User ID is required");
-            }
-
-            var encargues = await _context.mauiEncargue
-                .Include(e => e.Detalles)
-                .Where(e => e.UserId == userId)
-                .OrderByDescending(e => e.FechaEncargue)
-                .ToListAsync();
-
-            return Ok(encargues);
+            return BadRequest("Datos inválidos.");
         }
 
-        // Existing endpoints...
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetMauiEncargues()
+        if (mauiEncargue.Detalles == null || !mauiEncargue.Detalles.Any())
         {
-            return await _context.mauiEncargue.ToListAsync();
+            return BadRequest("El encargue debe incluir al menos un detalle.");
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MauiEncargue>> GetMauiEncargue(int id)
+        try
         {
-            var mauiEncargue = await _context.mauiEncargue.FindAsync(id);
-            if (mauiEncargue == null)
-            {
-                return NotFound();
-            }
-            return mauiEncargue;
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMauiEncargue(int id, MauiEncargue mauiEncargue)
-        {
-            if (id != mauiEncargue.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(mauiEncargue).State = EntityState.Modified;
-
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MauiEncargueExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<MauiEncargue>> PostMauiEncargue(MauiEncargue mauiEncargue)
-        {
-            if (mauiEncargue == null || string.IsNullOrEmpty(mauiEncargue.UserId))
-            {
-                return BadRequest("Datos inválidos.");
-            }
-
-            if (mauiEncargue.Detalles == null || !mauiEncargue.Detalles.Any())
-            {
-                return BadRequest("El encargue debe incluir al menos un detalle.");
-            }
-
-            try
-            {
-                // Desconectar los objetos Producto existentes para evitar problemas de tracking
+                // Verificar y cargar datos de productos
                 foreach (var detalle in mauiEncargue.Detalles)
                 {
-                    if (detalle.Producto != null)
-                    {
-                        _context.Entry(detalle.Producto).State = EntityState.Detached;
-                    }
-
                     var producto = await _context.productos.FindAsync(detalle.ProductoId);
                     if (producto == null)
                     {
-                        return BadRequest($"Producto con ID {detalle.ProductoId} no encontrado.");
+                        throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
                     }
-
                     detalle.Producto = producto;
                     detalle.NombreProducto = producto.Nombre;
                     detalle.PrecioUnitario = producto.Precio;
-                    detalle.Encargue = mauiEncargue;
                 }
-
-                // Calcular el total
-                mauiEncargue.Total = mauiEncargue.Detalles.Sum(d => d.Subtotal);
 
                 _context.mauiEncargue.Add(mauiEncargue);
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-                // Recargar el encargue con todos sus detalles para la respuesta
-                var encargueConDetalles = await _context.mauiEncargue
+                // Cargar el encargue completo para la respuesta
+                var encargueCompleto = await _context.mauiEncargue
                     .Include(e => e.Detalles)
-                        .ThenInclude(d => d.Producto)
+                    .Select(e => new MauiEncargue
+                    {
+                        Id = e.Id,
+                        FechaEncargue = e.FechaEncargue,
+                        Estado = e.Estado,
+                        Total = e.Total,
+                        UserId = e.UserId,
+                        Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
+                        {
+                            Id = d.Id,
+                            EncargueId = d.EncargueId,
+                            ProductoId = d.ProductoId,
+                            NombreProducto = d.NombreProducto,
+                            PrecioUnitario = d.PrecioUnitario,
+                            Cantidad = d.Cantidad,
+                            Producto = _context.productos.FirstOrDefault(p => p.Id == d.ProductoId)
+                        }).ToList()
+                    })
                     .FirstOrDefaultAsync(e => e.Id == mauiEncargue.Id);
 
-                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueConDetalles);
+                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueCompleto);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+                await transaction.RollbackAsync();
+                throw;
             }
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMauiEncargue(int id)
+        catch (Exception ex)
         {
-            var mauiEncargue = await _context.mauiEncargue.FindAsync(id);
-            if (mauiEncargue == null)
-            {
-                return NotFound();
-            }
-
-            _context.mauiEncargue.Remove(mauiEncargue);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool MauiEncargueExists(int id)
-        {
-            return _context.mauiEncargue.Any(e => e.Id == id);
+            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
         }
     }
 }
