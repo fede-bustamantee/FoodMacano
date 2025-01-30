@@ -131,58 +131,51 @@ namespace BackFoodMacano.Controllers
                 return BadRequest("El encargue debe incluir al menos un detalle.");
             }
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var strategy = _context.Database.CreateExecutionStrategy();
 
             try
             {
-                // Crear el encargue primero
-                var nuevoEncargue = new MauiEncargue
+                await strategy.ExecuteAsync(async () =>
                 {
-                    FechaEncargue = mauiEncargue.FechaEncargue,
-                    Estado = mauiEncargue.Estado,
-                    UserId = mauiEncargue.UserId,
-                    Total = mauiEncargue.Total
-                };
-
-                _context.mauiEncargue.Add(nuevoEncargue);
-                await _context.SaveChangesAsync();
-
-                // Agregar los detalles
-                foreach (var detalle in mauiEncargue.Detalles)
-                {
-                    var producto = await _context.productos.FindAsync(detalle.ProductoId);
-                    if (producto == null)
+                    using var transaction = await _context.Database.BeginTransactionAsync();
+                    try
                     {
-                        throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
+                        // Asegurarse de que los productos existen y cargar sus datos
+                        foreach (var detalle in mauiEncargue.Detalles)
+                        {
+                            var producto = await _context.productos.FindAsync(detalle.ProductoId);
+                            if (producto == null)
+                            {
+                                throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
+                            }
+                            detalle.Producto = producto;
+                            detalle.NombreProducto = producto.Nombre;
+                            detalle.PrecioUnitario = producto.Precio;
+                        }
+
+                        // Agregar el encargue y sus detalles
+                        _context.mauiEncargue.Add(mauiEncargue);
+                        await _context.SaveChangesAsync();
+
+                        await transaction.CommitAsync();
                     }
-
-                    var nuevoDetalle = new MauiEncargueDetalle
+                    catch
                     {
-                        EncargueId = nuevoEncargue.Id,
-                        ProductoId = detalle.ProductoId,
-                        NombreProducto = detalle.NombreProducto,
-                        PrecioUnitario = detalle.PrecioUnitario,
-                        Cantidad = detalle.Cantidad,
-                        Producto = producto
-                    };
-
-                    _context.mauiDetalleEncargue.Add(nuevoDetalle);
-                }
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                        await transaction.RollbackAsync();
+                        throw;
+                    }
+                });
 
                 // Cargar el encargue completo para la respuesta
                 var encargueCompleto = await _context.mauiEncargue
                     .Include(e => e.Detalles)
                     .ThenInclude(d => d.Producto)
-                    .FirstOrDefaultAsync(e => e.Id == nuevoEncargue.Id);
+                    .FirstOrDefaultAsync(e => e.Id == mauiEncargue.Id);
 
-                return CreatedAtAction(nameof(GetMauiEncargue), new { id = nuevoEncargue.Id }, encargueCompleto);
+                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueCompleto);
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
                 return StatusCode(500, $"Error interno del servidor: {ex.Message}");
             }
         }

@@ -96,7 +96,7 @@ namespace FoodMacanoServices.Services
                     ProductoId = item.ProductoId,
                     NombreProducto = item.Producto?.Nombre ?? "Producto Desconocido",
                     PrecioUnitario = item.Producto?.Precio ?? 0,
-                    Cantidad = item.Cantidad
+                    Cantidad = item.Cantidad,
                 }).ToList();
 
                 var nuevoEncargue = new MauiEncargue
