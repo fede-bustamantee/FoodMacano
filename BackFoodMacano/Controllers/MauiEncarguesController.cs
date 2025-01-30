@@ -131,48 +131,62 @@ namespace BackFoodMacano.Controllers
                 return BadRequest("El encargue debe incluir al menos un detalle.");
             }
 
-            var strategy = _context.Database.CreateExecutionStrategy();
-
             try
             {
-                await strategy.ExecuteAsync(async () =>
+                // Start a new transaction
+                using var transaction = await _context.Database.BeginTransactionAsync();
+
+                try
                 {
-                    using var transaction = await _context.Database.BeginTransactionAsync();
-                    try
+                    // First, create the encargue without details
+                    var newEncargue = new MauiEncargue
                     {
-                        // Asegurarse de que los productos existen y cargar sus datos
-                        foreach (var detalle in mauiEncargue.Detalles)
+                        FechaEncargue = mauiEncargue.FechaEncargue,
+                        Estado = mauiEncargue.Estado,
+                        UserId = mauiEncargue.UserId,
+                        Total = mauiEncargue.Total
+                    };
+
+                    _context.mauiEncargue.Add(newEncargue);
+                    await _context.SaveChangesAsync();
+
+                    // Now add the details one by one
+                    foreach (var detalle in mauiEncargue.Detalles)
+                    {
+                        var producto = await _context.productos.FindAsync(detalle.ProductoId);
+                        if (producto == null)
                         {
-                            var producto = await _context.productos.FindAsync(detalle.ProductoId);
-                            if (producto == null)
-                            {
-                                throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
-                            }
-                            detalle.Producto = producto;
-                            detalle.NombreProducto = producto.Nombre;
-                            detalle.PrecioUnitario = producto.Precio;
+                            throw new InvalidOperationException($"Producto no encontrado: {detalle.ProductoId}");
                         }
 
-                        // Agregar el encargue y sus detalles
-                        _context.mauiEncargue.Add(mauiEncargue);
-                        await _context.SaveChangesAsync();
+                        var newDetalle = new MauiEncargueDetalle
+                        {
+                            EncargueId = newEncargue.Id,
+                            ProductoId = detalle.ProductoId,
+                            NombreProducto = producto.Nombre,
+                            PrecioUnitario = producto.Precio,
+                            Cantidad = detalle.Cantidad
+                        };
 
-                        await transaction.CommitAsync();
+                        _context.mauiDetalleEncargue.Add(newDetalle);
                     }
-                    catch
-                    {
-                        await transaction.RollbackAsync();
-                        throw;
-                    }
-                });
 
-                // Cargar el encargue completo para la respuesta
-                var encargueCompleto = await _context.mauiEncargue
-                    .Include(e => e.Detalles)
-                    .ThenInclude(d => d.Producto)
-                    .FirstOrDefaultAsync(e => e.Id == mauiEncargue.Id);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
 
-                return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, encargueCompleto);
+                    // Load the complete order for the response
+                    var encargueCompleto = await _context.mauiEncargue
+                        .Include(e => e.Detalles)
+                        .ThenInclude(d => d.Producto)
+                        .FirstOrDefaultAsync(e => e.Id == newEncargue.Id);
+
+                    return CreatedAtAction(nameof(GetMauiEncargue), new { id = newEncargue.Id }, encargueCompleto);
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
             catch (Exception ex)
             {

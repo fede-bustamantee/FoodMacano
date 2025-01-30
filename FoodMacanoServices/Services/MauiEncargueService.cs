@@ -56,7 +56,6 @@ namespace FoodMacanoServices.Services
                 throw new Exception($"Error al obtener los encargues del usuario {firebaseUserId}", ex);
             }
         }
-
         public async Task AddEncargueAsync(MauiEncargue encargue)
         {
             if (encargue == null)
@@ -65,16 +64,35 @@ namespace FoodMacanoServices.Services
             try
             {
                 await SetAuthHeader();
-                var response = await _httpClient.PostAsJsonAsync(_endpoint, encargue);
+
+                // Create a simplified version of the encargue for transport
+                var encargueDto = new
+                {
+                    FechaEncargue = encargue.FechaEncargue,
+                    Estado = encargue.Estado,
+                    UserId = encargue.UserId,
+                    Total = encargue.Total,
+                    Detalles = encargue.Detalles.Select(d => new
+                    {
+                        ProductoId = d.ProductoId,
+                        NombreProducto = d.NombreProducto,
+                        PrecioUnitario = d.PrecioUnitario,
+                        Cantidad = d.Cantidad
+                    }).ToList()
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(_endpoint, encargueDto);
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
-                    throw new ApplicationException(content);
+                {
+                    throw new ApplicationException($"Error al crear el encargue: {content}");
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al crear el encargue: {ex}");
-                throw new Exception("Error al crear el encargue", ex);
+                throw new Exception($"Error al crear el encargue: {ex.Message}", ex);
             }
         }
 
