@@ -97,6 +97,9 @@
 	  <MauiXaml Update="Views\Carrito\CarritoView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Encargue\EncargueView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Inicio\InicioView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

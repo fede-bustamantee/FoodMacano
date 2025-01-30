@@ -1,5 +1,6 @@
 ﻿using FoodMacanoApp.ViewModels;
 using FoodMacanoApp.Views.Carrito;
+using FoodMacanoApp.Views.Encargue;
 using FoodMacanoApp.Views.Inicio;
 using FoodMacanoApp.Views.Login;
 
@@ -19,6 +20,7 @@ namespace FoodMacanoApp
             Routing.RegisterRoute("InicioView", typeof(InicioView));
             Routing.RegisterRoute("InicioSesionView", typeof(InicioSesionView));
             Routing.RegisterRoute("CarritoView", typeof(CarritoView));
+            Routing.RegisterRoute("EncargueView", typeof(EncargueView));
 
         }
 

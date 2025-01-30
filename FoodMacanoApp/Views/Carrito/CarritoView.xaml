@@ -14,12 +14,15 @@
         </Grid>
 
         <!-- Mensaje de Estado -->
+        <!-- Mensaje de Estado -->
         <Grid Grid.Row="1">
             <Frame BackgroundColor="#FFC107" Padding="20" HeightRequest="80" CornerRadius="30" Margin="0,20,0,0">
-                <Label Text="{Binding MensajeEstado}" TextColor="Green" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+                <ScrollView Orientation="Vertical">
+                    <Label Text="{Binding MensajeEstado}" TextColor="Green" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+                </ScrollView>
             </Frame>
         </Grid>
-
+        
         <!-- Productos del Carrito -->
         <ScrollView Grid.Row="2" Margin="0,10,0,0" VerticalScrollBarVisibility="Always">
             <StackLayout Spacing="20" Padding="8">

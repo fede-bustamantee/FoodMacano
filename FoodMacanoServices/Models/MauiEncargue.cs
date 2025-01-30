@@ -12,7 +12,8 @@ namespace FoodMacanoServices.Models
         public DateTime FechaEncargue { get; set; }
         public string Estado { get; set; }
         public decimal Total { get; set; }
-        public string UserId { get; set; }  // Relacionado con FirebaseSignInResponse.LocalId
+        public string UserId { get; set; }
+        public List<MauiEncargueDetalle> Detalles { get; set; } = new List<MauiEncargueDetalle>();
     }
 
 }

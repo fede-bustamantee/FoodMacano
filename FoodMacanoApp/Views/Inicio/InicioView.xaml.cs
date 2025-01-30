@@ -118,5 +118,16 @@ public partial class InicioView : ContentPage
             await DisplayAlert("Error", $"No se pudo acceder al carrito: {ex.Message}", "OK");
         }
     }
+    private async void EncargueClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("EncargueView");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo acceder a encargue: {ex.Message}", "OK");
+        }
+    }
 
 }

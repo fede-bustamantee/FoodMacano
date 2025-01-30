@@ -224,7 +224,8 @@
                 FontSize="24" 
                 HorizontalOptions="Center" 
                 VerticalOptions="Start"
-                Padding="8"/>
+                Padding="8"
+                Clicked="EncargueClicked"/>
             <Label Grid.Column="1" 
                Text="Encargues" 
                TextColor="Black" 

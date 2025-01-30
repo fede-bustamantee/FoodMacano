@@ -1,4 +1,4 @@
-using FoodMacanoApp.ViewModels;
+Ôªøusing FoodMacanoApp.ViewModels;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
@@ -25,20 +25,20 @@ public partial class LoginView : ContentPage
         {
             var authUrl = $"{_authUri}?client_id={_clientId}&redirect_uri={_redirectUri}&response_type=code&scope=email%20profile&access_type=offline";
 
-            // Abre el navegador para el inicio de sesiÛn
+            // Abre el navegador para el inicio de sesi√≥n
             var authResult = await WebAuthenticator.AuthenticateAsync(
                 new Uri(authUrl),
                 new Uri(_redirectUri));
 
-            // Obtener el cÛdigo de autorizaciÛn
+            // Obtener el c√≥digo de autorizaci√≥n
             var authCode = authResult.Properties["code"];
 
-            // Intercambiar el cÛdigo por un token de acceso
+            // Intercambiar el c√≥digo por un token de acceso
             var accessToken = await ExchangeAuthCodeForToken(authCode);
 
-            // Iniciar sesiÛn con Firebase usando el token de acceso
+            // Iniciar sesi√≥n con Firebase usando el token de acceso
             //await SignInWithFirebase(accessToken);
-            // AquÌ puedes manejar el token de acceso (guardar, usar para solicitar datos, etc.)
+            // Aqu√≠ puedes manejar el token de acceso (guardar, usar para solicitar datos, etc.)
             try
             {
 
@@ -56,11 +56,11 @@ public partial class LoginView : ContentPage
         catch (Exception ex)
         {
             // Manejo de errores
-            await DisplayAlert("Error", $"OcurriÛ un error: {ex.Message}", "OK");
+            await DisplayAlert("Error", $"Ocurri√≥ un error: {ex.Message}", "OK");
         }
     }
 
-    // MÈtodo para intercambiar el cÛdigo de autorizaciÛn por un token de acceso
+    // M√©todo para intercambiar el c√≥digo de autorizaci√≥n por un token de acceso
     private async Task<string> ExchangeAuthCodeForToken(string authCode)
     {
         using (var client = new HttpClient())
@@ -82,37 +82,54 @@ public partial class LoginView : ContentPage
             return tokenData.GetProperty("id_token").GetString();
         }
     }
-    // MÈtodo para registrar al usuario en Firebase usando el access token de Google
+    // M√©todo para registrar al usuario en Firebase usando el access token de Google
     public async Task<string> SignInWithGoogleAccessToken(string googleAccessToken)
     {
         var firebaseUrl = $"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key={_firebaseApiKey}";
-
         var requestData = new
         {
             postBody = $"id_token={googleAccessToken}&providerId=google.com",
-            requestUri = "http://localhost", // Este campo es necesario, pero no se usa
+            requestUri = "http://localhost",
             returnSecureToken = true
         };
 
         using var httpClient = new HttpClient();
         var response = await httpClient.PostAsJsonAsync(firebaseUrl, requestData);
+
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadFromJsonAsync<FirebaseSignInResponse>();
 
-            // Add this navigation code
-            var institutoShell = (AppShell)App.Current.MainPage;
-            institutoShell.EnableAppAfterLogin();
+            if (jsonResponse != null)
+            {
+                var authService = Handler.MauiContext.Services.GetService<IAuthService>() as MauiFirebaseAuthService;
 
-            return jsonResponse?.DisplayName;
+                if (authService != null)
+                {
+                    Console.WriteLine("Guardando informaci√≥n de usuario despu√©s del login con Google");
+                    await authService.SetCurrentUser(jsonResponse, "google");
+                }
+                else
+                {
+                    Console.WriteLine("Error: No se pudo obtener el servicio de autenticaci√≥n");
+                }
+
+                var institutoShell = (AppShell)App.Current.MainPage;
+                institutoShell.EnableAppAfterLogin();
+
+                return jsonResponse.DisplayName;
+            }
+            else
+            {
+                throw new Exception("La respuesta de Firebase fue nula");
+            }
         }
         else
         {
             var errorResponse = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Error al registrar el usuario: {errorResponse}");
+            Console.WriteLine($"Error en la respuesta de Firebase: {errorResponse}");
             throw new HttpRequestException($"Error al registrar el usuario en Firebase: {response.ReasonPhrase}");
         }
-
     }
     private async void OnEmailLoginClicked(object sender, EventArgs e)
     {

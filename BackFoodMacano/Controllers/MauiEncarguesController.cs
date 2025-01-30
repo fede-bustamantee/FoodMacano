@@ -19,29 +19,75 @@ namespace BackFoodMacano.Controllers
             _context = context;
         }
 
-        // GET: api/MauiEncargues
+        // GET: api/MauiEncargues/user/{userId}
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesByUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required");
+            }
+
+            var encargues = await _context.mauiEncargue
+                .Where(e => e.UserId == userId)
+                .OrderByDescending(e => e.FechaEncargue)
+                .ToListAsync();
+
+            return Ok(encargues);
+        }
+
+        // GET: api/MauiEncargues/{id}/details
+        [HttpGet("{id}/details")]
+        public async Task<ActionResult<MauiEncargue>> GetEncargueWithDetails(int id)
+        {
+            var encargue = await _context.mauiEncargue
+                .Include(e => e.Detalles)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (encargue == null)
+            {
+                return NotFound($"Encargue with ID {id} not found");
+            }
+
+            return Ok(encargue);
+        }
+
+        // GET: api/MauiEncargues/user/{userId}/withDetails
+        [HttpGet("user/{userId}/withDetails")]
+        public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesWithDetailsByUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required");
+            }
+
+            var encargues = await _context.mauiEncargue
+                .Include(e => e.Detalles)
+                .Where(e => e.UserId == userId)
+                .OrderByDescending(e => e.FechaEncargue)
+                .ToListAsync();
+
+            return Ok(encargues);
+        }
+
+        // Existing endpoints...
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetMauiEncargues()
         {
-            // Devuelve todos los encargues con paginación opcional en caso de alto volumen de datos
             return await _context.mauiEncargue.ToListAsync();
         }
 
-        // GET: api/MauiEncargues/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MauiEncargue>> GetMauiEncargue(int id)
         {
             var mauiEncargue = await _context.mauiEncargue.FindAsync(id);
-
             if (mauiEncargue == null)
             {
                 return NotFound();
             }
-
             return mauiEncargue;
         }
 
-        // PUT: api/MauiEncargues/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMauiEncargue(int id, MauiEncargue mauiEncargue)
         {
@@ -71,7 +117,6 @@ namespace BackFoodMacano.Controllers
             return NoContent();
         }
 
-        // POST: api/MauiEncargues
         [HttpPost]
         public async Task<ActionResult<MauiEncargue>> PostMauiEncargue(MauiEncargue mauiEncargue)
         {
@@ -86,7 +131,6 @@ namespace BackFoodMacano.Controllers
             return CreatedAtAction("GetMauiEncargue", new { id = mauiEncargue.Id }, mauiEncargue);
         }
 
-        // DELETE: api/MauiEncargues/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMauiEncargue(int id)
         {

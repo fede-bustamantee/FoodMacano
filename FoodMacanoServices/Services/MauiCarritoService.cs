@@ -12,9 +12,11 @@ namespace FoodMacanoServices.Services
         private readonly MauiEncargueService _encargueService;
         private readonly MauiFirebaseAuthService _authService;
 
-        public MauiCarritoService()
+        public MauiCarritoService(MauiEncargueService encargueService, MauiFirebaseAuthService authService)
         {
             _carrito = new List<CarritoCompra>();
+            _encargueService = encargueService ?? throw new ArgumentNullException(nameof(encargueService));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
         }
 
         public async Task AddToCartAsync(Producto producto)
@@ -83,20 +85,31 @@ namespace FoodMacanoServices.Services
 
             try
             {
-                // Obtener el usuario autenticado
                 var userId = _authService.GetCurrentUserId();
                 if (string.IsNullOrEmpty(userId))
                 {
                     throw new InvalidOperationException("No se puede procesar el pedido. Usuario no autenticado.");
                 }
 
-                // Crear un nuevo MauiEncargue
+                // Crear los detalles del encargue a partir del carrito
+                var detalles = _carrito.Select(item => new MauiEncargueDetalle
+                {
+                    ProductoId = item.ProductoId,
+                    NombreProducto = item.Producto.Nombre,
+                    PrecioUnitario = item.Producto.Precio,
+                    Cantidad = item.Cantidad,
+                    Subtotal = item.Producto.Precio * item.Cantidad,
+                    Producto = item.Producto
+                }).ToList();
+
+                // Crear el nuevo encargue con sus detalles
                 var nuevoEncargue = new MauiEncargue
                 {
                     FechaEncargue = DateTime.Now,
                     Estado = "Pendiente",
-                    Total = _carrito.Sum(item => item.Producto.Precio * item.Cantidad),
-                    UserId = userId
+                    Total = detalles.Sum(d => d.Subtotal),
+                    UserId = userId,
+                    Detalles = detalles
                 };
 
                 // Registrar el pedido usando MauiEncargueService
@@ -105,10 +118,11 @@ namespace FoodMacanoServices.Services
                 // Limpiar el carrito después de procesar el pedido
                 await ClearCartAsync();
 
-                Console.WriteLine("Pedido procesado exitosamente.");
+                Console.WriteLine($"Pedido procesado exitosamente. Total: {nuevoEncargue.Total}, Productos: {detalles.Count}");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error en checkout: {ex.Message}");
                 throw new Exception($"Error al procesar el pedido: {ex.Message}", ex);
             }
         }

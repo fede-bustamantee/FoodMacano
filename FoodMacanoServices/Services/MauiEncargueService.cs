@@ -27,7 +27,9 @@ namespace FoodMacanoServices.Services
         {
             var token = await _authService.GetCurrentUserToken();
             if (string.IsNullOrEmpty(token))
+            {
                 throw new UnauthorizedAccessException("Token de autenticación no disponible");
+            }
 
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -38,16 +40,19 @@ namespace FoodMacanoServices.Services
             try
             {
                 await SetAuthHeader();
-                var response = await _httpClient.GetAsync($"{_endpoint}/user/{firebaseUserId}");
+                var response = await _httpClient.GetAsync($"{_endpoint}?userId={firebaseUserId}");
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
-                    throw new ApplicationException(content);
+                {
+                    throw new ApplicationException($"Error al obtener encargues: {response.StatusCode}");
+                }
 
                 return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options) ?? new List<MauiEncargue>();
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error al obtener los encargues del usuario {firebaseUserId}: {ex}");
                 throw new Exception($"Error al obtener los encargues del usuario {firebaseUserId}", ex);
             }
         }
@@ -68,6 +73,7 @@ namespace FoodMacanoServices.Services
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error al crear el encargue: {ex}");
                 throw new Exception("Error al crear el encargue", ex);
             }
         }
@@ -87,13 +93,11 @@ namespace FoodMacanoServices.Services
                     throw new ApplicationException(content);
 
                 var encargue = JsonSerializer.Deserialize<MauiEncargue>(content, _options);
-                if (encargue == null)
-                    throw new Exception($"No se encontró el encargue con ID {id}");
-
-                return encargue;
+                return encargue ?? throw new Exception($"No se encontró el encargue con ID {id}");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error al obtener el encargue con ID {id}: {ex}");
                 throw new Exception($"Error al obtener el encargue con ID {id}", ex);
             }
         }
@@ -117,6 +121,7 @@ namespace FoodMacanoServices.Services
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error al actualizar el encargue con ID {encargue.Id}: {ex}");
                 throw new Exception($"Error al actualizar el encargue con ID {encargue.Id}", ex);
             }
         }
@@ -137,6 +142,7 @@ namespace FoodMacanoServices.Services
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error al eliminar el encargue con ID {id}: {ex}");
                 throw new Exception($"Error al eliminar el encargue con ID {id}", ex);
             }
         }

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
+using FoodMacanoApp.ViewModels;
+using FoodMacanoApp.Views.Encargue;
 
 namespace FoodMacanoApp
 {
@@ -41,6 +43,9 @@ namespace FoodMacanoApp
 
 #endif
             builder.Services.AddSingleton<MauiCarritoService>();
+            builder.Services.AddSingleton<MauiEncargueService>();
+            builder.Services.AddSingleton<MauiFirebaseAuthService>();
+            builder.Services.AddScoped<IAuthService, MauiFirebaseAuthService>();
             builder.Services.AddSingleton<IGenericService<Categoria>, GenericService<Categoria>>();
             builder.Services.AddSingleton<IGenericService<Producto>, ProductoService>();
             builder.Services.AddSingleton<ProductoService>();
@@ -53,6 +58,7 @@ namespace FoodMacanoApp
             builder.Services.AddTransient<LoginView>();
             builder.Services.AddTransient<InicioSesionView>();
             builder.Services.AddTransient<RegisterView>();
+            builder.Services.AddTransient<EncargueView>();
 
             return builder.Build();
         }
