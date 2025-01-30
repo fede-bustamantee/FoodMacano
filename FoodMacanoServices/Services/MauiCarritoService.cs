@@ -95,11 +95,9 @@ namespace FoodMacanoServices.Services
                 var detalles = _carrito.Select(item => new MauiEncargueDetalle
                 {
                     ProductoId = item.ProductoId,
-                    NombreProducto = item.Producto.Nombre,
-                    PrecioUnitario = item.Producto.Precio,
+                    Producto = item.Producto,  // Ya obtenemos los datos desde Producto
                     Cantidad = item.Cantidad,
-                    Subtotal = item.Producto.Precio * item.Cantidad,
-                    Producto = item.Producto
+                    EncargueId = 0  // Se asignará automáticamente al guardarlo en la base de datos
                 }).ToList();
 
                 // Crear el nuevo encargue con sus detalles
@@ -107,7 +105,7 @@ namespace FoodMacanoServices.Services
                 {
                     FechaEncargue = DateTime.Now,
                     Estado = "Pendiente",
-                    Total = detalles.Sum(d => d.Subtotal),
+                    Total = detalles.Sum(d => d.Producto.Precio * d.Cantidad), // Se usa Producto.Precio directamente
                     UserId = userId,
                     Detalles = detalles
                 };
