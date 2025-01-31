@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodMacanoApp.Views.Informacion.InformacionView"
+             Title="InformacionView"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Barra superior -->
+        <Grid Padding="25,5" ColumnDefinitions="Auto,*,Auto">
+            <Button FontFamily="FontAwesomeSolid" 
+                    Text="&#xf060;" 
+                    FontSize="18" 
+                    BackgroundColor="Transparent" 
+                    TextColor="White"
+                    Clicked="OnBackButtonClicked"/>
+
+            <Label Grid.Column="1" 
+                   Text="Detalles del Producto" 
+                   TextColor="White" 
+                   FontSize="20" 
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- Contenido principal -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20">
+                <!-- Imagen del producto -->
+                <Frame CornerRadius="30" 
+                       HeightRequest="250" 
+                       Padding="0" 
+                       IsClippedToBounds="True">
+                    <Image Source="{Binding Producto.ImagenUrl}"
+                           Aspect="AspectFill"/>
+                </Frame>
+
+                <!-- Información del producto -->
+                <Frame BackgroundColor="#2A2A2A" 
+                       CornerRadius="30" 
+                       Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="{Binding Producto.Nombre}" 
+                               TextColor="White" 
+                               FontSize="24" 
+                               FontAttributes="Bold"/>
+
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <HorizontalStackLayout Grid.Column="0" Spacing="5">
+                                <Image Source="star_icon.png" HeightRequest="15"/>
+                                <Label Text="{Binding Producto.Calidad}" 
+                                       TextColor="Gray"/>
+                            </HorizontalStackLayout>
+
+                            <Label Grid.Column="2" 
+                                   Text="{Binding Producto.Precio, StringFormat='${0}'}" 
+                                   TextColor="Orange" 
+                                   FontSize="20"/>
+                        </Grid>
+
+                        <BoxView HeightRequest="1" 
+                                 Color="Gray" 
+                                 Opacity="0.5"/>
+
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Descripción Corta" 
+                                   TextColor="Orange" 
+                                   FontSize="16"/>
+                            <Label Text="{Binding Producto.DescripcionProducto.DescripcionCorta}" 
+                                   TextColor="White"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Descripción Detallada" 
+                                   TextColor="Orange" 
+                                   FontSize="16"/>
+                            <Label Text="{Binding Producto.DescripcionProducto.DescripcionLarga}" 
+                                   TextColor="White"/>
+                        </VerticalStackLayout>
+
+                        <HorizontalStackLayout Spacing="10">
+                            <Image Source="calories_icon.png" 
+                                   HeightRequest="20"/>
+                            <Label Text="{Binding Producto.Calorias, StringFormat='{0} calorías'}" 
+                                   TextColor="Gray"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodMacanoApp.Views.Negocios.NegociosView"
+             Title="NegociosView"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Barra superior -->
+        <Grid Padding="25,5" ColumnDefinitions="Auto,*,Auto">
+            <Button FontFamily="FontAwesomeSolid" 
+                    Text="&#xf060;" 
+                    FontSize="18" 
+                    BackgroundColor="Transparent" 
+                    TextColor="White"
+                    Clicked="OnBackButtonClicked"/>
+
+            <Label Grid.Column="1" 
+                   Text="Información del Negocio" 
+                   TextColor="White" 
+                   FontSize="20" 
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- Contenido principal -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20" Padding="20">
+                <!-- Tarjeta de información principal -->
+                <Frame BackgroundColor="#2A2A2A" 
+                       CornerRadius="30" 
+                       Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="{Binding Negocio.Nombre}" 
+                               TextColor="Orange" 
+                               FontSize="24" 
+                               FontAttributes="Bold"/>
+
+                        <!-- Dirección -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeSolid"
+                                   Text="&#xf3c5;"
+                                   TextColor="White"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Negocio.Direccion}"
+                                   TextColor="White"/>
+                        </Grid>
+
+                        <!-- Teléfono -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeSolid"
+                                   Text="&#xf095;"
+                                   TextColor="White"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Negocio.Telefono}"
+                                   TextColor="White"/>
+                        </Grid>
+
+                        <!-- Horario -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeSolid"
+                                   Text="&#xf017;"
+                                   TextColor="White"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Negocio.Horario}"
+                                   TextColor="White"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Redes Sociales -->
+                <Frame BackgroundColor="#2A2A2A" 
+                       CornerRadius="30" 
+                       Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Redes Sociales" 
+                               TextColor="Orange" 
+                               FontSize="20" 
+                               FontAttributes="Bold"/>
+
+                        <!-- Facebook -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeBrands"
+                                   Text="&#xf39e;"
+                                   TextColor="White"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Negocio.RedesSocial.Facebook}"
+                                   TextColor="White"/>
+                        </Grid>
+
+                        <!-- Instagram -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeBrands"
+                                   Text="&#xf16d;"
+                                   TextColor="White"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Negocio.RedesSocial.Instagram}"
+                                   TextColor="White"/>
+                        </Grid>
+
+                        <!-- WhatsApp -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeBrands"
+                                   Text="&#xf232;"  
+                                   TextColor="White"/>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Negocio.RedesSocial.Whatsapp}" 
+                                   TextColor="White"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Mapa -->
+                <Frame BackgroundColor="#2A2A2A" 
+                       CornerRadius="30" 
+                       Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Ubicación" 
+                               TextColor="Orange" 
+                               FontSize="20" 
+                               FontAttributes="Bold"/>
+
+                        <WebView Source="{Binding Negocio.MapaIframe}"
+                                HeightRequest="200"/>
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

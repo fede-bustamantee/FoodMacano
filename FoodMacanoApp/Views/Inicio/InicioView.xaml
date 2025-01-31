@@ -172,7 +172,8 @@
                                         Margin="10,0,0,10"
                                         VerticalOptions="End"
                                         FontFamily="FontAwesomeSolid" 
-                                        Text="&#xf2e7;"/>
+                                        Text="&#xf2e7;"
+                                        Clicked="OnInformacionClicked"/>
                                     <Button HeightRequest="40" 
                                         WidthRequest="46"
                                         CornerRadius="20"
@@ -233,18 +234,19 @@
                HorizontalOptions="Center"
                VerticalOptions="End"
                Padding="6"/>
-            <!-- Botón Favorites -->
+            <!-- Botón horarios -->
             <Button Grid.Column="2" 
                 BackgroundColor="Transparent" 
-                Text="&#xf005;" 
+                Text="&#xf017;" 
                 FontFamily="FontAwesomeSolid" 
                 TextColor="Black" 
                 FontSize="24" 
                 HorizontalOptions="Center" 
                 VerticalOptions="Start"
-                Padding="8"/>
+                Padding="8"
+                Clicked="OnNegocioClicked"/>
             <Label Grid.Column="2" 
-               Text="Favorites" 
+               Text="Horarios" 
                TextColor="Black" 
                FontSize="12" 
                HorizontalOptions="Center"

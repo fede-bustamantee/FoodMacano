@@ -9,6 +9,8 @@ using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
 using FoodMacanoApp.ViewModels;
 using FoodMacanoApp.Views.Encargue;
+using FoodMacanoApp.Views.Informacion;
+using FoodMacanoApp.Views.Negocios;
 
 namespace FoodMacanoApp
 {
@@ -49,6 +51,7 @@ namespace FoodMacanoApp
             builder.Services.AddSingleton<IGenericService<Categoria>, GenericService<Categoria>>();
             builder.Services.AddSingleton<IGenericService<Producto>, ProductoService>();
             builder.Services.AddSingleton<ProductoService>();
+            builder.Services.AddSingleton<IGenericService<Negocio>, GenericService<Negocio>>();
 
             // Configura la URL base de la API
             var urlApi = Properties.Resources.UrlApi;
@@ -59,6 +62,8 @@ namespace FoodMacanoApp
             builder.Services.AddTransient<InicioSesionView>();
             builder.Services.AddTransient<RegisterView>();
             builder.Services.AddTransient<EncargueView>();
+            builder.Services.AddTransient<InformacionView>();
+            builder.Services.AddTransient<NegociosView>();
 
             return builder.Build();
         }

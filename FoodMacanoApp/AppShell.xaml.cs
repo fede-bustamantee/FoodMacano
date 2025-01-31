@@ -1,8 +1,10 @@
 ﻿using FoodMacanoApp.ViewModels;
 using FoodMacanoApp.Views.Carrito;
 using FoodMacanoApp.Views.Encargue;
+using FoodMacanoApp.Views.Informacion;
 using FoodMacanoApp.Views.Inicio;
 using FoodMacanoApp.Views.Login;
+using FoodMacanoApp.Views.Negocios;
 
 namespace FoodMacanoApp
 {
@@ -21,7 +23,8 @@ namespace FoodMacanoApp
             Routing.RegisterRoute("InicioSesionView", typeof(InicioSesionView));
             Routing.RegisterRoute("CarritoView", typeof(CarritoView));
             Routing.RegisterRoute("EncargueView", typeof(EncargueView));
-
+            Routing.RegisterRoute("InformacionView", typeof(InformacionView));
+            Routing.RegisterRoute("NegocioView", typeof(NegociosView));
         }
 
         public async void EnableAppAfterLogin()

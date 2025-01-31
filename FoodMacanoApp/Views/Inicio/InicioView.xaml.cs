@@ -129,5 +129,31 @@ public partial class InicioView : ContentPage
             await DisplayAlert("Error", $"No se pudo acceder a encargue: {ex.Message}", "OK");
         }
     }
-
+    private async void OnInformacionClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var button = sender as Button;
+            var producto = button?.BindingContext as Producto;
+            if (producto != null)
+            {
+                await Shell.Current.GoToAsync($"InformacionView?id={producto.Id}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo abrir la información del producto: {ex.Message}", "OK");
+        }
+    }
+    private async void OnNegocioClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("NegocioView");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"No se pudo abrir la información del negocio: {ex.Message}", "OK");
+        }
+    }
 }
