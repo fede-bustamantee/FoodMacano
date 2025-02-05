@@ -45,23 +45,37 @@ namespace FoodMacanoApp.ViewModels
 
         private async void Registrarse()
         {
-            if (password == verifyPassword)
+            // Verificar que todos los campos estén completos
+            if (string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(password) ||
+                string.IsNullOrWhiteSpace(verifyPassword) ||
+                string.IsNullOrWhiteSpace(nombre))
             {
-                try
-                {
-                    var user = await _clientAuth.CreateUserWithEmailAndPasswordAsync(email, password, nombre);
-                    await SendVerificationEmailAsync(user.User.GetIdTokenAsync().Result);
-                    await Application.Current.MainPage.DisplayAlert("Registrarse", "Cuenta creada!", "Ok");
-                }
-                catch (FirebaseAuthException error) // Use alias here 
-                {
-                    await Application.Current.MainPage.DisplayAlert("Registrarse", "Ocurrió un problema:" + error.Reason, "Ok");
-
-                }
+                await Application.Current.MainPage.DisplayAlert("Registrarse", "Por favor, complete todos los campos", "Ok");
+                return;
             }
-            else
+
+            // Verificar que las contraseñas coincidan
+            if (password != verifyPassword)
             {
                 await Application.Current.MainPage.DisplayAlert("Registrarse", "Las contraseñas ingresadas no coinciden", "Ok");
+                return;
+            }
+
+            try
+            {
+                var user = await _clientAuth.CreateUserWithEmailAndPasswordAsync(email, password, nombre);
+                await SendVerificationEmailAsync(user.User.GetIdTokenAsync().Result);
+                await Application.Current.MainPage.DisplayAlert("Registrarse", "¡Cuenta creada! Veríficala", "Ok");
+                await Shell.Current.GoToAsync("LoginView");
+            }
+            catch (FirebaseAuthException error)
+            {
+                await Application.Current.MainPage.DisplayAlert("Registrarse", "Ocurrió un problema: " + error.Reason, "Ok");
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Registrarse", "Ocurrió un error inesperado: " + ex.Message, "Ok");
             }
         }
 

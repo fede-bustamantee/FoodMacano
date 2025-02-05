@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FoodMacanoApp.Controls"
+             x:Class="FoodMacanoApp.Views.Perfil.PerfilView"
+             Title="PerfilView"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <!-- Barra superior -->
+        <Grid Padding="25,5" ColumnDefinitions="Auto,*,Auto">
+            <Button Text="&#xf060;"
+                    FontFamily="FontAwesomeSolid"
+                    BackgroundColor="Transparent"
+                    TextColor="Gray"
+                    FontSize="18"
+                    Grid.Column="0"
+                    HorizontalOptions="Start"
+                    Clicked="OnVolverClicked"/>
+            <Label Text="Perfil" 
+                   TextColor="Orange" 
+                   FontSize="18" 
+                   Grid.Column="1" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center"
+                   Margin="0,0,40,0"/>
+        </Grid>
+        <!-- Contenido principal -->
+        <VerticalStackLayout Grid.Row="1" 
+                            Spacing="14" 
+                            Padding="40,140,30,0"
+                            VerticalOptions="Start"
+                            HorizontalOptions="Center">
+            <Frame BorderColor="Transparent" 
+                   BackgroundColor="{Binding UsuarioActual.DisplayName, Converter={StaticResource NameToColorConverter}}"
+                   CornerRadius="75" 
+                   HeightRequest="150" 
+                   WidthRequest="150" 
+                   HorizontalOptions="Center"
+                   IsClippedToBounds="True"
+                   Padding="0">
+                <Grid HeightRequest="150" 
+                      WidthRequest="150">
+                    <Image x:Name="UserProfileImage"
+                           Source="{Binding UsuarioActual.PhotoUrl}"
+                           Aspect="AspectFill"
+                           HeightRequest="150"
+                           WidthRequest="150"
+                           IsVisible="{Binding UsuarioActual.PhotoUrl, Converter={StaticResource StringNotNullOrEmptyConverter}}"
+                           HorizontalOptions="Fill"
+                           VerticalOptions="Fill"/>
+                    <Label x:Name="InitialsLabel"
+                           Text="{Binding UsuarioActual.DisplayName, Converter={StaticResource NameToInitialsConverter}}"
+                           IsVisible="{Binding UsuarioActual.PhotoUrl, Converter={StaticResource StringNullOrEmptyConverter}}"
+                           TextColor="White"
+                           FontSize="55"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Grid>
+            </Frame>
+
+            <StackLayout Spacing="10" 
+                         HorizontalOptions="Center">
+                <Label x:Name="WelcomeLabel"
+                       Text="{Binding UsuarioActual.DisplayName, StringFormat='¡Hola, {0}!'}"
+                       TextColor="White"
+                       FontSize="28"
+                       HorizontalTextAlignment="Center"/>
+                <Label x:Name="UserEmailLabel"
+                       Text="{Binding UsuarioActual.Email}"
+                       TextColor="Gray"
+                       FontSize="20"
+                       HorizontalTextAlignment="Center"/>
+            </StackLayout>
+        </VerticalStackLayout>
+
+        <!-- Botón de Cerrar Sesión -->
+        <Button Grid.Row="2"
+                Text="Cerrar Sesión"
+                BackgroundColor="Orange"
+                TextColor="Black"
+                Clicked="OnCerrarSesionClicked"
+                CornerRadius="80"
+                Margin="40,10,40,230"
+                HeightRequest="60"
+                WidthRequest="150"
+                HorizontalOptions="Center"/>
+
+        <!-- Menú Inferior -->
+        <controls:MenuInferiorr
+            Grid.Row="3"
+            ColorInicio="Gray"
+            ColorEncargues="Gray"
+            ColorHorarios="Gray"
+            ColorPerfil="Orange"/>
+    </Grid>
+</ContentPage>

@@ -17,6 +17,7 @@ public partial class LoginView : ContentPage
     public LoginView()
     {
         InitializeComponent();
+        BindingContext = new IniciarSesionViewModel();
     }
 
     private async void Button_Clicked(object sender, EventArgs e)
@@ -25,38 +26,37 @@ public partial class LoginView : ContentPage
         {
             var authUrl = $"{_authUri}?client_id={_clientId}&redirect_uri={_redirectUri}&response_type=code&scope=email%20profile&access_type=offline";
 
-            // Abre el navegador para el inicio de sesión
             var authResult = await WebAuthenticator.AuthenticateAsync(
                 new Uri(authUrl),
                 new Uri(_redirectUri));
 
-            // Obtener el código de autorización
             var authCode = authResult.Properties["code"];
-
-            // Intercambiar el código por un token de acceso
             var accessToken = await ExchangeAuthCodeForToken(authCode);
 
-            // Iniciar sesión con Firebase usando el token de acceso
-            //await SignInWithFirebase(accessToken);
-            // Aquí puedes manejar el token de acceso (guardar, usar para solicitar datos, etc.)
             try
             {
-
-                // Paso 2: Intercambia el access token de Google por un token de Firebase
                 var nameUser = await SignInWithGoogleAccessToken(accessToken);
-
-                // El usuario ha sido registrado correctamente en Firebase y obtienes el ID Token de Firebase
                 Console.WriteLine($"Usuario registrado exitosamente en Firebase. Firebase Nombre usuario: {nameUser}");
             }
             catch (HttpRequestException ex)
             {
+                await DisplayAlert("Error de Autenticación",
+                    $"No se pudo registrar al usuario en Firebase: {ex.Message}",
+                    "OK");
                 Console.WriteLine($"Error al registrar al usuario en Firebase: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error Inesperado",
+                    $"Ocurrió un error durante el inicio de sesión: {ex.Message}",
+                    "OK");
+                Console.WriteLine($"Error inesperado: {ex}");
             }
         }
         catch (Exception ex)
         {
-            // Manejo de errores
             await DisplayAlert("Error", $"Ocurrió un error: {ex.Message}", "OK");
+            Console.WriteLine($"Error general de autenticación: {ex}");
         }
     }
 
@@ -130,9 +130,5 @@ public partial class LoginView : ContentPage
             Console.WriteLine($"Error en la respuesta de Firebase: {errorResponse}");
             throw new HttpRequestException($"Error al registrar el usuario en Firebase: {response.ReasonPhrase}");
         }
-    }
-    private async void OnEmailLoginClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("InicioSesionView");
     }
 }

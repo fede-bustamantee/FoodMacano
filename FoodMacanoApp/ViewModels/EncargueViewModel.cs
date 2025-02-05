@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using FoodMacanoApp.Class;
 using System.Text;
+using FoodMacanoApp.Views.Encargue;
 
 namespace FoodMacanoApp.ViewModels
 {
@@ -94,8 +95,14 @@ namespace FoodMacanoApp.ViewModels
                 IsRefreshing = true;
                 ErrorMessage = string.Empty;
 
+                // Detailed logging for current user
+                var currentUser = await _authService.GetCurrentUser();
+                Console.WriteLine($"Current User LocalId: {currentUser?.LocalId}");
+                Console.WriteLine($"Current User Email: {currentUser?.Email}");
+                Console.WriteLine($"Current User Display Name: {currentUser?.DisplayName}");
+
                 var userId = _authService.GetCurrentUserId();
-                Console.WriteLine($"Current UserId: {userId}");
+                Console.WriteLine($"Current UserId from GetCurrentUserId(): {userId}");
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -116,16 +123,23 @@ namespace FoodMacanoApp.ViewModels
                             Encargues.Add(encargue);
                         }
                     }
+                    else
+                    {
+                        Console.WriteLine("No se encontraron encargues para este usuario.");
+                    }
                 });
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
+                Console.WriteLine($"Unauthorized Access Error: {ex.Message}");
                 ErrorMessage = "Sesión expirada. Por favor, vuelva a iniciar sesión.";
-                Console.WriteLine("Error de autenticación al cargar encargues");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error general: {ex}");
+                Console.WriteLine($"Error detallado al cargar encargues: {ex}");
+                Console.WriteLine($"Error Message: {ex.Message}");
+                Console.WriteLine($"Error StackTrace: {ex.StackTrace}");
+
                 ErrorMessage = "Error al cargar los encargues. Por favor, intenta más tarde.";
             }
             finally
@@ -141,47 +155,8 @@ namespace FoodMacanoApp.ViewModels
 
             try
             {
-                var detallesEncargue = await _encargueService.GetEncargueByIdAsync(encargue.Id);
-
-                if (detallesEncargue == null)
-                {
-                    await Application.Current.MainPage.DisplayAlert(
-                        "Error",
-                        "No se encontró el encargue solicitado.",
-                        "OK");
-                    return;
-                }
-
-                var detallesTexto = new StringBuilder();
-                detallesTexto.AppendLine($"Encargue #{detallesEncargue.Id}");
-                detallesTexto.AppendLine($"Fecha: {detallesEncargue.FechaEncargue:dd/MM/yyyy HH:mm}");
-                detallesTexto.AppendLine($"Estado: {detallesEncargue.Estado}");
-
-                if (detallesEncargue.Detalles?.Any() == true)
-                {
-                    detallesTexto.AppendLine("\nProductos:");
-                    foreach (var detalle in detallesEncargue.Detalles)
-                    {
-                        detallesTexto.AppendLine($"- {detalle.NombreProducto}");
-                        detallesTexto.AppendLine($"  Cantidad: {detalle.Cantidad}");
-                        detallesTexto.AppendLine($"  Precio unitario: ${detalle.PrecioUnitario:N2}");
-                        detallesTexto.AppendLine($"  Subtotal: ${detalle.Subtotal:N2}");
-                    }
-                }
-
-                detallesTexto.AppendLine($"\nTotal: ${detallesEncargue.Total:N2}");
-
-                await Application.Current.MainPage.DisplayAlert(
-                    "Detalles del Encargue",
-                    detallesTexto.ToString(),
-                    "Cerrar");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                await Application.Current.MainPage.DisplayAlert(
-                    "Error",
-                    "Sesión expirada. Por favor, vuelva a iniciar sesión.",
-                    "OK");
+                // Llamar a la vista y pasarle el encargue seleccionado
+                await Shell.Current.Navigation.PushModalAsync(new EncargueDetalleView(encargue));
             }
             catch (Exception ex)
             {

@@ -1,10 +1,13 @@
 ﻿using FoodMacanoApp.ViewModels;
+using FoodMacanoApp.Views.Busqueda;
 using FoodMacanoApp.Views.Carrito;
 using FoodMacanoApp.Views.Encargue;
 using FoodMacanoApp.Views.Informacion;
 using FoodMacanoApp.Views.Inicio;
 using FoodMacanoApp.Views.Login;
 using FoodMacanoApp.Views.Negocios;
+using FoodMacanoApp.Views.Perfil;
+using FoodMacanoServices.Interfaces;
 
 namespace FoodMacanoApp
 {
@@ -20,11 +23,13 @@ namespace FoodMacanoApp
         {
             Routing.RegisterRoute("Registrarse", typeof(RegisterView));
             Routing.RegisterRoute("InicioView", typeof(InicioView));
-            Routing.RegisterRoute("InicioSesionView", typeof(InicioSesionView));
             Routing.RegisterRoute("CarritoView", typeof(CarritoView));
             Routing.RegisterRoute("EncargueView", typeof(EncargueView));
             Routing.RegisterRoute("InformacionView", typeof(InformacionView));
             Routing.RegisterRoute("NegocioView", typeof(NegociosView));
+            Routing.RegisterRoute("PerfilView", typeof(PerfilView));
+            Routing.RegisterRoute("LoginView", typeof(LoginView));
+            Routing.RegisterRoute("SearchView", typeof(SearchView));
         }
 
         public async void EnableAppAfterLogin()
@@ -68,8 +73,13 @@ namespace FoodMacanoApp
 
         public void DisableAppAfterLogin()
         {
-            FlyoutBehavior = FlyoutBehavior.Disabled; // Deshabilita el FlyOut
-            Shell.Current.GoToAsync("Login"); // Navega a la página de login
+            var authService = Application.Current.Handler.MauiContext.Services.GetService<IAuthService>();
+            if (authService != null)
+            {
+                authService.Logout();
+            }
+            FlyoutBehavior = FlyoutBehavior.Disabled;
+            Shell.Current.GoToAsync("LoginView");
         }
     }
 }

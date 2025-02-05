@@ -4,6 +4,7 @@ using FoodMacanoServices.Services;
 using FoodMacanoServices.Interfaces;
 using System.Collections.ObjectModel;
 using System.Net.Http;
+using System.Windows.Input;
 
 namespace FoodMacanoApp.ViewModels
 {
@@ -11,7 +12,7 @@ namespace FoodMacanoApp.ViewModels
 	{
 		private readonly IGenericService<Producto> _productoService;
 		private readonly IGenericService<Categoria> _categoriaService;
-		private readonly MauiCarritoService _carritoService;
+		public readonly MauiCarritoService _carritoService;
 		private ObservableCollection<Producto> _todosLosProductos;
 		public event EventHandler DatosCargados;
 
@@ -97,8 +98,22 @@ namespace FoodMacanoApp.ViewModels
 				}
 			}
 		}
+        private bool _isRefreshing;
+        public bool IsRefreshing
+        {
+            get => _isRefreshing;
+            set
+            {
+                if (_isRefreshing != value)
+                {
+                    _isRefreshing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-		public InicioViewModel(
+        public ICommand RefreshCommand => new Command(async () => await RefreshData());
+        public InicioViewModel(
 			IGenericService<Producto> productoService,
 			IGenericService<Categoria> categoriaService,
 			MauiCarritoService carritoService)
@@ -162,29 +177,25 @@ namespace FoodMacanoApp.ViewModels
 			}
 		}
 
-		private async Task CargarOfertasAleatorias()
-		{
-			try
-			{
-				var ofertas = await _productoService.GetRandomAsync(8);
-				if (ofertas != null)
-				{
-					OfertasEspeciales.Clear();
-					foreach (var oferta in ofertas)
-					{
-						OfertasEspeciales.Add(oferta);
-					}
-				}
-				MensajeError = string.Empty;
-			}
-			catch (Exception ex)
-			{
-				MensajeError = $"Error al cargar ofertas: {ex.Message}";
-				Console.WriteLine($"Error en CargarOfertasAleatorias: {ex}");
-			}
-		}
+        private async Task CargarOfertasAleatorias()
+        {
+            try
+            {
+                var ofertas = await _productoService.GetRandomAsync(8);
+                if (ofertas != null)
+                {
+                    OfertasEspeciales = new ObservableCollection<Producto>(ofertas);
+                }
+                MensajeError = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                MensajeError = $"Error al cargar ofertas: {ex.Message}";
+                Console.WriteLine($"Error en CargarOfertasAleatorias: {ex}");
+            }
+        }
 
-		private async Task CargarCategorias()
+        private async Task CargarCategorias()
 		{
 			try
 			{
@@ -242,5 +253,22 @@ namespace FoodMacanoApp.ViewModels
 				throw;
 			}
 		}
-	}
+        private async Task RefreshData()
+        {
+            try
+            {
+                IsRefreshing = true;
+                await CargarDatosIniciales();
+                CantidadEnCarrito = await _carritoService.GetUniqueItemCountAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle error
+            }
+            finally
+            {
+                IsRefreshing = false;
+            }
+        }
+    }
 }

@@ -2,18 +2,130 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FoodMacanoApp.Views.Login.LoginView"
-             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
+             BackgroundColor="Black"
              NavigationPage.HasNavigationBar="False">
-    <VerticalStackLayout Padding="30">
-        <Label Text="Iniciar sesión con Google"
-           FontSize="24"
-           HorizontalOptions="Center" />
+    <ScrollView>
+        <VerticalStackLayout Spacing="5" Padding="15,70">
+            <!-- Logo y nombre -->
+            <StackLayout Orientation="Horizontal" 
+                        HorizontalOptions="Center" 
+                        Spacing="2">
+                <Image Source="logoo1.png" 
+                       HeightRequest="30" 
+                       WidthRequest="30" />
+                <Label Text="Food Macano"
+                       VerticalOptions="Center"
+                       FontSize="27"
+                       FontAttributes="Bold"
+                       TextColor="White"/>
+            </StackLayout>
 
-        <Button Text="Iniciar"
-            FontSize="18"
-            HorizontalOptions="Center"
-            Clicked="Button_Clicked" />
-        <Button Text="Iniciar sesión con Gmail" 
-        Clicked="OnEmailLoginClicked"/>
-    </VerticalStackLayout>
+            <!-- Titulo de bienvenida -->
+            <Label Text="Bienvenido!"
+                   TextColor="White"
+                   FontSize="20"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,0"/>
+
+            <!-- Campos de entrada -->
+            <Frame BackgroundColor="#2A2A2A"
+                   Padding="20"
+                   CornerRadius="20"
+                   HasShadow="False"
+                   Margin="0,20">
+                <VerticalStackLayout Spacing="20">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Email"
+                               TextColor="White"/>
+                        <Frame Padding="15,0"
+                               BackgroundColor="#333333"
+                               CornerRadius="10"
+                               HasShadow="False">
+                            <Entry Text="{Binding Email}"
+                                   TextColor="White"
+                                   PlaceholderColor="Gray"
+                                   Placeholder="tucorreo@ejemplo.com"
+                                   HeightRequest="50"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Clave"
+                               TextColor="white"/>
+                        <Frame Padding="15,0"
+                               BackgroundColor="#333333"
+                               CornerRadius="10"
+                               HasShadow="False">
+                            <Entry Text="{Binding Password}"
+                                   IsPassword="True"
+                                   TextColor="White"
+                                   PlaceholderColor="Gray"
+                                   Placeholder="********"
+                                   HeightRequest="50"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <!-- Recordar clave -->
+                    <HorizontalStackLayout Spacing="0">
+                        <CheckBox IsChecked="{Binding RecordarContraseña}"
+                                 Color="Orange"/>
+                        <Label Text="Recordar Sesion"
+                               TextColor="White"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Botones -->
+                    <Button Text="Iniciar sesion"
+                            Command="{Binding IniciarSesionCommand}"
+                            BackgroundColor="Orange"
+                            TextColor="Black"
+                            FontAttributes="Bold"
+                            CornerRadius="20"
+                            HeightRequest="50"
+                            Margin="0,0"/>
+
+                    <Button Text="Registrarse"
+                            Command="{Binding RegistrarseCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="Orange"
+                            BorderColor="Orange"
+                            BorderWidth="1"
+                            CornerRadius="20"
+                            HeightRequest="50"/>
+
+                    <!-- Separador -->
+                    <Grid ColumnDefinitions="*,Auto,*" 
+                          RowDefinitions="Auto" 
+                          VerticalOptions="Center"
+                          Margin="0,10">
+                        <BoxView Color="Gray" 
+                                 HeightRequest="1" 
+                                 VerticalOptions="Center"/>
+                        <Label Grid.Column="1" 
+                               Text="O continuar con" 
+                               TextColor="Gray"
+                               Margin="10,0"/>
+                        <BoxView Grid.Column="2" 
+                                 Color="Gray" 
+                                 HeightRequest="1" 
+                                 VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Boton de Google -->
+                    <Button Text="Continuar con Google"
+                            BackgroundColor="#333333"
+                            TextColor="White"
+                            CornerRadius="20"
+                            HeightRequest="50"
+                            WidthRequest="320"
+                            Clicked="Button_Clicked">
+                        <Button.ImageSource>
+                            <FileImageSource File="google.png" />
+                        </Button.ImageSource>
+                    </Button>
+
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

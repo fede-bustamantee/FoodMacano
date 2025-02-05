@@ -1,0 +1,87 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FoodMacanoApp.Controls.MenuInferiorr">
+    <Grid ColumnDefinitions="*,*,*,*" Padding="0,0" HeightRequest="60">
+
+        <!-- Borde Blanco -->
+        <Frame Grid.ColumnSpan="4"
+               BorderColor="White"
+               BackgroundColor="Transparent"
+               CornerRadius="20"
+               HeightRequest="62"
+            VerticalOptions="End"/>
+
+            <!-- Fondo del Menú -->
+            <BoxView Grid.ColumnSpan="4" 
+                 BackgroundColor="#2A2A2A" 
+                 CornerRadius="20,20,0,0" 
+                 HeightRequest="60" 
+                 VerticalOptions="End"/>
+
+            <!-- Botones del Menú -->
+            <VerticalStackLayout Grid.Column="0">
+                <Button BackgroundColor="Transparent" 
+                    Text="&#xf015;" 
+                    FontFamily="FontAwesomeSolid"
+                    TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorInicio}"
+                    FontSize="24" 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Start"
+                    Clicked="OnInicioClicked"
+                    Padding="8"/>
+                <Label Text="Inicio" 
+                   TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorInicio}"
+                   FontSize="12" 
+                   HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Column="1">
+                <Button BackgroundColor="Transparent" 
+                    Text="&#xe4c6;" 
+                    FontFamily="FontAwesomeSolid"
+                    TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorEncargues}"
+                    FontSize="24" 
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    Clicked="OnEncargueClicked"
+                    Padding="8"/>
+                <Label Text="Encargues" 
+                   TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorEncargues}"
+                   FontSize="12" 
+                   HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Column="2">
+                <Button BackgroundColor="Transparent" 
+                    Text="&#xf017;" 
+                    FontFamily="FontAwesomeSolid"
+                    TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorHorarios}"
+                    FontSize="24" 
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    Clicked="OnHorariosClicked"
+                    Padding="8"/>
+                <Label Text="Horarios" 
+                   TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorHorarios}"
+                   FontSize="12" 
+                   HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Column="3">
+                <Button BackgroundColor="Transparent" 
+                    Text="&#xf007;" 
+                    FontFamily="FontAwesomeSolid"
+                    TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorPerfil}"
+                    FontSize="24" 
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    Clicked="OnPerfilClicked"
+                    Padding="8"/>
+                <Label Text="Perfil" 
+                   TextColor="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ColorPerfil}"
+                   FontSize="12" 
+                   HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+    </Grid>
+</ContentView>

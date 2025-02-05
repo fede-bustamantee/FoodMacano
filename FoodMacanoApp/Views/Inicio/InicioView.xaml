@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FoodMacanoApp.Controls"
              x:Class="FoodMacanoApp.Views.Inicio.InicioView"
              NavigationPage.HasNavigationBar="False">
-    
-    <Grid RowDefinitions="Auto,*,Auto">
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+             Command="{Binding RefreshCommand}">
+        <Grid RowDefinitions="Auto,*,Auto">
         <!-- Barra superior -->
         <Grid Padding="25,5" ColumnDefinitions="Auto,*,Auto">
-            <Button FontFamily="FontAwesomeSolid" 
-                Text="&#xf0c9;" FontSize="18" 
-                BackgroundColor="Transparent" 
-                TextColor="White" 
-                Grid.Column="0"/>
+            <!-- Imagen y texto alineados horizontalmente -->
+            <StackLayout Orientation="Horizontal" VerticalOptions="Center" Grid.Column="0" Spacing="5">
+                <Image Source="logoo1.png" HeightRequest="25" WidthRequest="25" />
+                <Label Text="Food Macano"
+                   VerticalOptions="Center"
+                   FontSize="16"
+                   TextColor="White" />
+            </StackLayout>
 
             <Grid Grid.Column="2">
                 <Button Clicked="CarritoClicked"
@@ -19,7 +25,7 @@
                 Text="&#xf07a;" 
                 FontSize="18" 
                 BackgroundColor="Transparent" 
-                TextColor="White" />
+                TextColor="Gray" />
                 <Frame IsVisible="{Binding CantidadEnCarrito, Converter={StaticResource IntToBoolConverter}}"
                BackgroundColor="Green"
                CornerRadius="10"
@@ -42,20 +48,20 @@
             <VerticalStackLayout Spacing="14" Padding="20,0">
                 <!-- Buscador -->
                 <Frame CornerRadius="20" Padding="15,5" BorderColor="Gray">
-                    <HorizontalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="0">
                         <Label Text="&#xf002;" 
-                        FontFamily="FontAwesomeSolid" 
-                        FontSize="15" 
-                        TextColor="White" 
-                        VerticalOptions="Center"/>
-                        <Entry Placeholder="Buscar Comida..." 
-                        PlaceholderColor="Gray" 
-                        TextColor="White"
-                        HorizontalOptions="FillAndExpand"
-                        />
+                               FontFamily="FontAwesomeSolid" 
+        FontSize="15" 
+        TextColor="White" 
+        VerticalOptions="Center"/>
+                        <Button Text="Buscar Comida..." 
+        BackgroundColor="Transparent" 
+        TextColor="Gray"
+        HorizontalOptions="FillAndExpand"
+        Clicked="OnBuscarClicked"
+        />
                     </HorizontalStackLayout>
                 </Frame>
-
                 <!-- Carousel con indicador -->
                 <Label Text="Ofertas Especiales" TextColor="White" FontSize="18"/>
                 <CarouselView HeightRequest="180" 
@@ -90,7 +96,8 @@
                             TextColor="Black"
                             HeightRequest="50"
                             HorizontalOptions="Start"
-                            Margin="0"/>
+                            Margin="0"
+                            Clicked="OnAgregarAlCarritoClicked"/>
                                     </Grid>
                                 </Grid>
                             </Frame>
@@ -107,7 +114,6 @@
                 <!-- Categorias -->
                 <Grid ColumnDefinitions="*,Auto">
                     <Label Text="Categorias" TextColor="White" FontSize="18"/>
-                    <Label Grid.Column="1" Text="Ver todo" TextColor="Orange" FontSize="14" VerticalOptions="Center"/>
                 </Grid>
 
                 <CollectionView x:Name="categoriasCollectionView" HeightRequest="100" ItemsSource="{Binding Categorias}" ItemsLayout="HorizontalList">
@@ -191,85 +197,14 @@
                 </CollectionView>
             </VerticalStackLayout>
         </ScrollView>
-
-        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*" Padding="0,0">
-            <!-- Fondo redondeado del menú inferior -->
-            <BoxView Grid.ColumnSpan="4"
-                 BackgroundColor="DimGray"
-                 CornerRadius="20,20,0,0"  
-                 HeightRequest="60"
-                 VerticalOptions="End"/>
-            <!-- Botón Inicio -->
-            <Button Grid.Column="0" 
-                BackgroundColor="Transparent" 
-                Text="&#xf015;" 
-                FontFamily="FontAwesomeSolid" 
-                TextColor="Orange" 
-                FontSize="24" 
-                HorizontalOptions="Center" 
-                VerticalOptions="Start"
-                Padding="8"/>
-            <Label Grid.Column="0" 
-               Text="Inicio" 
-               TextColor="Orange" 
-               FontSize="12" 
-               HorizontalOptions="Center"
-               VerticalOptions="End"
-               Padding="6"/>
-            <!-- Botón Orders -->
-            <Button Grid.Column="1" 
-                BackgroundColor="Transparent" 
-                Text="&#xe4c6;" 
-                FontFamily="FontAwesomeSolid" 
-                TextColor="Black" 
-                FontSize="24" 
-                HorizontalOptions="Center" 
-                VerticalOptions="Start"
-                Padding="8"
-                Clicked="EncargueClicked"/>
-            <Label Grid.Column="1" 
-               Text="Encargues" 
-               TextColor="Black" 
-               FontSize="12" 
-               HorizontalOptions="Center"
-               VerticalOptions="End"
-               Padding="6"/>
-            <!-- Botón horarios -->
-            <Button Grid.Column="2" 
-                BackgroundColor="Transparent" 
-                Text="&#xf017;" 
-                FontFamily="FontAwesomeSolid" 
-                TextColor="Black" 
-                FontSize="24" 
-                HorizontalOptions="Center" 
-                VerticalOptions="Start"
-                Padding="8"
-                Clicked="OnNegocioClicked"/>
-            <Label Grid.Column="2" 
-               Text="Horarios" 
-               TextColor="Black" 
-               FontSize="12" 
-               HorizontalOptions="Center"
-               VerticalOptions="End"
-               Padding="6"/>
-            <!-- Botón Profile -->
-            <Button Grid.Column="3" 
-                BackgroundColor="Transparent" 
-                Text="&#xf007;" 
-                FontFamily="FontAwesomeSolid" 
-                TextColor="Black" 
-                FontSize="24" 
-                HorizontalOptions="Center" 
-                VerticalOptions="Start"
-                Padding="8"/>
-            <Label Grid.Column="3" 
-               Text="Profile" 
-               TextColor="Black" 
-               FontSize="12" 
-               HorizontalOptions="Center"
-               VerticalOptions="End"
-               Padding="6"/>
-        </Grid>
+        
+        <controls:MenuInferiorr 
+            Grid.Row="2"
+            ColorInicio="Orange"
+            ColorEncargues="Gray"
+            ColorHorarios="Gray"
+            ColorPerfil="Gray"/>
 
     </Grid>
+    </RefreshView>
 </ContentPage>

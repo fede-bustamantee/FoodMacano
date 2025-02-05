@@ -8,17 +8,16 @@
     <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20" BackgroundColor="#1E1E1E">
         <!-- Header -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto">
-            <Button Clicked="VolverClicked" FontFamily="FontAwesomeSolid" Text="&#xf060;" FontSize="20" BackgroundColor="Transparent" TextColor="White" Grid.Column="0" />
-            <Label Text="Carrito" HorizontalOptions="Center" VerticalOptions="Center" Grid.Column="1" TextColor="White" FontSize="20" FontAttributes="Bold" />
-            <Button FontFamily="FontAwesomeRegular" Text="&#xf2ed;" FontSize="20" BackgroundColor="Transparent" TextColor="White" Grid.Column="2" />
+            <Button Clicked="VolverClicked" FontFamily="FontAwesomeSolid" Text="&#xf060;" FontSize="20" BackgroundColor="Transparent" TextColor="Gray" Grid.Column="0" />
+            <Label Text="Carrito" HorizontalOptions="Center" VerticalOptions="Center" Grid.Column="1" TextColor="Orange" FontSize="20" FontAttributes="Bold" />
+            <Button Command="{Binding LimpiarCarritoCommand}" FontFamily="FontAwesomeRegular" Text="&#xf2ed;" FontSize="20" BackgroundColor="Transparent" TextColor="Gray" Grid.Column="2" />
         </Grid>
 
         <!-- Mensaje de Estado -->
-        <!-- Mensaje de Estado -->
         <Grid Grid.Row="1">
             <Frame BackgroundColor="#FFC107" Padding="20" HeightRequest="80" CornerRadius="30" Margin="0,20,0,0">
-                <ScrollView Orientation="Vertical">
-                    <Label Text="{Binding MensajeEstado}" TextColor="Green" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+                <ScrollView Orientation="Vertical" HorizontalOptions="Center">
+                    <Label Text="{Binding MensajeEstado}" TextColor="Green" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center"/>
                 </ScrollView>
             </Frame>
         </Grid>

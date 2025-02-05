@@ -11,4 +11,8 @@ public partial class RegisterView : ContentPage
         InitializeComponent();
         BindingContext = new RegisterViewModel();
     }
+    private async void OnVolverClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("LoginView");
+    }
 }

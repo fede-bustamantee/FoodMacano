@@ -1,89 +1,68 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FoodMacanoApp.Controls"
              x:Class="FoodMacanoApp.Views.Encargue.EncargueView"
+             NavigationPage.HasNavigationBar="False"
              Title="Mis Encargues">
-
-    <Grid RowDefinitions="Auto,*">
-        <!-- Loading Indicator -->
-        <ActivityIndicator Grid.RowSpan="2"
-                          IsVisible="{Binding IsLoading}"
-                          IsRunning="{Binding IsLoading}"
-                          HorizontalOptions="Center"
-                          VerticalOptions="Center"
-                          ZIndex="1"/>
-
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Barra superior -->
+        <Grid Grid.Row="0" Padding="25,5" ColumnDefinitions="Auto,*,Auto">
+            <Button Grid.Column="0" Text="&#xf060;" FontFamily="FontAwesomeSolid" BackgroundColor="Transparent" TextColor="Gray" FontSize="18" Clicked="OnVolverClicked"/>
+            <Label Grid.Column="1" Text="Mis Encargues" TextColor="Orange" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,40,0"/>
+        </Grid>
         <!-- Error Message -->
-        <Label Text="{Binding ErrorMessage}"
-               IsVisible="{Binding HasError}"
-               TextColor="Red"
-               Margin="20,10"
-               Grid.Row="0"/>
-
-        <!-- Lista de Encargues -->
-        <RefreshView Grid.Row="1"
-                    Command="{Binding RefreshCommand}"
-                    IsRefreshing="{Binding IsRefreshing}">
-            <ScrollView>
-                <VerticalStackLayout>
-                    <CollectionView ItemsSource="{Binding Encargues}">
-                        <CollectionView.EmptyView>
-                            <VerticalStackLayout HorizontalOptions="Center" 
-                                               VerticalOptions="Center">
-                                <Label Text="No hay encargues para mostrar"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       TextColor="Gray"/>
-                            </VerticalStackLayout>
-                        </CollectionView.EmptyView>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame Margin="10,5" 
-                                       Padding="10"
-                                       BorderColor="LightGray"
-                                       CornerRadius="10">
-                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" 
-                                          ColumnDefinitions="*,Auto">
-
-                                        <!-- Fecha del Encargue -->
-                                        <Label Grid.Row="0" Grid.Column="0"
-                                               Text="{Binding FechaEncargue, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}"
-                                               FontAttributes="Bold"/>
-
-                                        <!-- Estado -->
-                                        <Label Grid.Row="0" Grid.Column="1"
-                                               Text="{Binding Estado}"
-                                               TextColor="White"
-                                               BackgroundColor="Orange"
-                                               Padding="8,4"
-                                               FontSize="12"/>
-
-                                        <!-- ID del Encargue -->
-                                        <Label Grid.Row="1" Grid.Column="0"
-                                               Text="{Binding Id, StringFormat='Orden #{0}'}"
-                                               TextColor="Gray"
-                                               FontSize="14"/>
-
-                                        <!-- Total -->
-                                        <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                               Text="{Binding Total, StringFormat='Total: ${0:N2}'}"
-                                               FontAttributes="Bold"
-                                               FontSize="16"
-                                               Margin="0,5"/>
-
-                                        <!-- Botón para ver detalles -->
-                                        <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                                                Text="Ver Detalles"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.VerDetallesCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Margin="0,5,0,0"/>
-                                    </Grid>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-            </ScrollView>
-        </RefreshView>
+        <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextColor="Red" Margin="20,10" Grid.Row="0"/>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="10,10,0,0">
+                <CollectionView ItemsSource="{Binding Encargues}">
+                    <CollectionView.EmptyView>
+                        <Grid RowDefinitions="Auto,Auto,Auto" 
+                              VerticalOptions="Center" 
+                              HorizontalOptions="Center"
+                              Margin="20">
+                            <!-- icono -->
+                            <Label Grid.Row="0" 
+                                   Text="&#xf07a;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="72"
+                                   TextColor="LightGray"
+                                   HorizontalOptions="Center"
+                                   Margin="0,0,0,20"/>
+                            <!-- Mensaje principal -->
+                            <Label Grid.Row="1"
+                                   Text="No tienes encargues"
+                                   FontSize="24"
+                                   TextColor="Gray"
+                                   HorizontalOptions="Center"
+                                   FontAttributes="Bold"
+                                   Margin="0,0,0,10"/>
+                            <!-- Submensaje -->
+                            <Label Grid.Row="2"
+                                   Text="Explora nuestro menu y haz tu primer pedido!"
+                                   FontSize="16"
+                                   TextColor="DarkGray"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center"
+                                   MaxLines="2"
+                                   Margin="20,0"/>
+                        </Grid>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Margin="10,5" Padding="15" BorderColor="LightGray" CornerRadius="20">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding FechaEncargue, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" FontAttributes="Bold" TextColor="White"/>
+                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Estado}" TextColor="White" BackgroundColor="Orange" Padding="8,4" FontSize="12"/>
+                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Id, StringFormat='Orden #{0}'}" TextColor="Gray" FontSize="14"/>
+                                    <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Total, StringFormat='Total: ${0:N2}'}" FontAttributes="Bold" TextColor="White" FontSize="16" Margin="0,5"/>
+                                    <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="Ver Detalles" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.VerDetallesCommand}" CommandParameter="{Binding .}" BackgroundColor="Orange" TextColor="Black" Margin="0,5,0,0"/>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+        <controls:MenuInferiorr Grid.Row="2" ColorInicio="Gray" ColorEncargues="Orange" ColorHorarios="Gray" ColorPerfil="Gray"/>
     </Grid>
 </ContentPage>

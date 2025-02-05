@@ -19,6 +19,11 @@ public partial class InicioView : ContentPage
         BindingContext = _viewModel;
         _viewModel.DatosCargados += OnDatosCargados;
     }
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        _viewModel.CantidadEnCarrito = await _viewModel._carritoService.GetUniqueItemCountAsync();
+    }
     public class IntToBoolConverter : IValueConverter
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -118,17 +123,6 @@ public partial class InicioView : ContentPage
             await DisplayAlert("Error", $"No se pudo acceder al carrito: {ex.Message}", "OK");
         }
     }
-    private async void EncargueClicked(object sender, EventArgs e)
-    {
-        try
-        {
-            await Shell.Current.GoToAsync("EncargueView");
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", $"No se pudo acceder a encargue: {ex.Message}", "OK");
-        }
-    }
     private async void OnInformacionClicked(object sender, EventArgs e)
     {
         try
@@ -145,15 +139,8 @@ public partial class InicioView : ContentPage
             await DisplayAlert("Error", $"No se pudo abrir la información del producto: {ex.Message}", "OK");
         }
     }
-    private async void OnNegocioClicked(object sender, EventArgs e)
+    private async void OnBuscarClicked(object sender, EventArgs e)
     {
-        try
-        {
-            await Shell.Current.GoToAsync("NegocioView");
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", $"No se pudo abrir la información del negocio: {ex.Message}", "OK");
-        }
+        await Shell.Current.GoToAsync("SearchView");
     }
 }

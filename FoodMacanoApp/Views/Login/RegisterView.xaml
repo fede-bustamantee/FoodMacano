@@ -1,55 +1,134 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             NavigationPage.HasNavigationBar="False"
-             x:Class="FoodMacanoApp.Views.Login.RegisterView">
-    
+             x:Class="FoodMacanoApp.Views.Login.RegisterView"
+             BackgroundColor="Black"
+             NavigationPage.HasNavigationBar="False">
+
     <ScrollView>
-        <VerticalStackLayout Margin="20">
-            <Label 
-             FontSize="Title"
-             Text="Creando nueva cuenta en InstitutoApp"
-             VerticalOptions="Center" 
-             HorizontalOptions="Center" />
-            <Grid RowDefinitions="2*,2*,2*,2*,*" ColumnDefinitions="*,*">
-                <Label Grid.Row="0" Grid.Column="0" 
-                    HorizontalTextAlignment="End"
-                    VerticalTextAlignment="Center"
-                    Margin="5,10">Apellido y Nombre:</Label>
-                <Entry Grid.Row="0" Grid.Column="1" 
-                    Text="{Binding Nombre}"
-                    Margin="10,20,10,20"></Entry>
-                <Label Grid.Row="1" Grid.Column="0" 
-                    HorizontalTextAlignment="End"
-                    VerticalTextAlignment="Center"
-                    Margin="10,20">Email:</Label>
-                <Entry Grid.Row="1" Grid.Column="1" 
-                    Text="{Binding Email}"
-                    Margin="10,20,10,20"></Entry>
+        <VerticalStackLayout Spacing="10" Padding="15,50">
+            <!-- Logo y nombre -->
+            <StackLayout Orientation="Horizontal" 
+                        HorizontalOptions="Center" 
+                        Spacing="2">
+                <Image Source="logoo1.png" 
+                       HeightRequest="30" 
+                       WidthRequest="30" />
+                <Label Text="Food Macano"
+                       VerticalOptions="Center"
+                       FontSize="27"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+            </StackLayout>
 
-                <Label Grid.Row="2" Grid.Column="0" 
-                    HorizontalTextAlignment="End"
-                    VerticalTextAlignment="Center"
-                    Margin="10,20">Contraseña:</Label>
-                <Entry Grid.Row="2" Grid.Column="1" 
-                    Text="{Binding Password}"
-                    Margin="10,20,100,20" IsPassword="True"></Entry>
+            <!-- Título de registro -->
+            <Label Text="Crear nueva cuenta"
+                   TextColor="White"
+                   FontSize="20"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,0"/>
 
-                <Label Grid.Row="3" Grid.Column="0" 
-                    HorizontalTextAlignment="End"
-                    VerticalTextAlignment="Center"
-                    Margin="10,20">Verificar Contraseña:</Label>
-                <Entry Grid.Row="3" Grid.Column="1" 
-                    Text="{Binding VerifyPassword}"
-                    Margin="10,20,100,20" IsPassword="True"></Entry>
+            <!-- Formulario de registro -->
+            <Frame BackgroundColor="#2A2A2A"
+                   Padding="20"
+                   CornerRadius="20"
+                   HasShadow="False"
+                   Margin="0,20">
+                <VerticalStackLayout Spacing="15">
+                    <!-- Nombre -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Apellido y Nombre"
+                               TextColor="White"/>
+                        <Frame Padding="15,0"
+                               BackgroundColor="#333333"
+                               CornerRadius="10"
+                               HasShadow="False">
+                            <Entry Text="{Binding Nombre}"
+                                   TextColor="White"
+                                   PlaceholderColor="Gray"
+                                   Placeholder="Juan Pérez"
+                                   HeightRequest="50"/>
+                        </Frame>
+                    </VerticalStackLayout>
 
-                <Button Text="Registrarse"
-                     Command="{Binding RegistrarseCommand}"
-                     Grid.Row="4" Grid.Column="0"
-                     Grid.ColumnSpan="2"
-                     Margin="100,10"
-                     ></Button>
-            </Grid>
+                    <!-- Email -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Email"
+                               TextColor="White"/>
+                        <Frame Padding="15,0"
+                               BackgroundColor="#333333"
+                               CornerRadius="10"
+                               HasShadow="False">
+                            <Entry Text="{Binding Email}"
+                                   TextColor="White"
+                                   PlaceholderColor="Gray"
+                                   Placeholder="tucorreo@ejemplo.com"
+                                   HeightRequest="50"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <!-- Contraseña -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Contraseña"
+                               TextColor="White"/>
+                        <Frame Padding="15,0"
+                               BackgroundColor="#333333"
+                               CornerRadius="10"
+                               HasShadow="False">
+                            <Entry Text="{Binding Password}"
+                                   IsPassword="True"
+                                   TextColor="White"
+                                   PlaceholderColor="Gray"
+                                   Placeholder="••••••••"
+                                   HeightRequest="50"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <!-- Verificar Contraseña -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Verificar Contraseña"
+                               TextColor="White"/>
+                        <Frame Padding="15,0"
+                               BackgroundColor="#333333"
+                               CornerRadius="10"
+                               HasShadow="False">
+                            <Entry Text="{Binding VerifyPassword}"
+                                   IsPassword="True"
+                                   TextColor="White"
+                                   PlaceholderColor="Gray"
+                                   Placeholder="••••••••"
+                                   HeightRequest="50"/>
+                        </Frame>
+                    </VerticalStackLayout>
+
+                    <!-- Botón de registro -->
+                    <Button Text="Crear cuenta"
+                            Command="{Binding RegistrarseCommand}"
+                            BackgroundColor="Orange"
+                            TextColor="Black"
+                            FontAttributes="Bold"
+                            CornerRadius="20"
+                            HeightRequest="50"
+                            Margin="0,10"/>
+
+                    <!-- Botón volver -->
+                    <Button Text="Volver al inicio de sesión"
+                            BackgroundColor="Transparent"
+                            TextColor="Orange"
+                            BorderColor="Orange"
+                            BorderWidth="1"
+                            CornerRadius="20"
+                            HeightRequest="50"
+                            Clicked="OnVolverClicked"/>
+
+                    <!-- Texto de términos y condiciones -->
+                    <Label Text="Al registrarte, aceptas nuestros términos y condiciones y política de privacidad"
+                           TextColor="Gray"
+                           FontSize="12"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Frame>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

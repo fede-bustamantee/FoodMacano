@@ -48,11 +48,26 @@ namespace FoodMacanoServices.Services
             return await Task.FromResult(_carrito);
         }
 
-        public async Task ClearCartAsync()
+        public async Task ClearCartAsync(int? productId = null)
         {
-            _carrito.Clear();
+            if (productId.HasValue)
+            {
+                // Elimina solo el producto con el ID especificado
+                var productToRemove = _carrito.FirstOrDefault(p => p.Id == productId.Value);
+                if (productToRemove != null)
+                {
+                    _carrito.Remove(productToRemove);
+                }
+            }
+            else
+            {
+                // Si no se pasa un ID de producto, limpia todo el carrito
+                _carrito.Clear();
+            }
+
             await Task.CompletedTask;
         }
+
 
         public async Task RemoveFromCartAsync(int productoId)
         {

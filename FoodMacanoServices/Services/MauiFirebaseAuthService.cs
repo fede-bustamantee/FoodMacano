@@ -1,4 +1,5 @@
 ﻿using Firebase.Auth;
+using Firebase.Auth.Repository;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using Microsoft.Maui.Storage;
@@ -28,11 +29,15 @@ namespace FoodMacanoServices.Services
         {
             try
             {
+                // Clear existing user data first
+                _currentUser = null;
+
                 var authMethod = _preferences.Get(AUTH_METHOD_KEY, string.Empty);
                 var userId = _preferences.Get(USER_ID_KEY, string.Empty);
                 var userEmail = _preferences.Get(USER_EMAIL_KEY, string.Empty);
                 var userToken = _preferences.Get(USER_TOKEN_KEY, string.Empty);
                 var displayName = _preferences.Get(USER_DISPLAY_NAME_KEY, string.Empty);
+                var photoUrl = _preferences.Get("USER_PHOTO_URL_KEY", string.Empty);
 
                 if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(authMethod))
                 {
@@ -41,7 +46,8 @@ namespace FoodMacanoServices.Services
                         LocalId = userId,
                         Email = userEmail,
                         IdToken = userToken,
-                        DisplayName = displayName
+                        DisplayName = displayName,
+                        PhotoUrl = photoUrl
                     };
                     Console.WriteLine($"Usuario cargado de preferencias: {userId} con método: {authMethod}");
                 }
@@ -62,6 +68,7 @@ namespace FoodMacanoServices.Services
                 _preferences.Set(USER_EMAIL_KEY, user.Email);
                 _preferences.Set(USER_TOKEN_KEY, user.IdToken);
                 _preferences.Set(USER_DISPLAY_NAME_KEY, user.DisplayName);
+                _preferences.Set("USER_PHOTO_URL_KEY", user.PhotoUrl);
                 Console.WriteLine($"Usuario guardado en preferencias: {user.LocalId} con método: {authMethod}");
             }
             catch (Exception ex)
@@ -72,10 +79,19 @@ namespace FoodMacanoServices.Services
 
         private void ClearUserData()
         {
+            // Explicitly clear all preferences
+            _preferences.Remove(AUTH_METHOD_KEY);
+            _preferences.Remove(USER_ID_KEY);
+            _preferences.Remove(USER_EMAIL_KEY);
+            _preferences.Remove(USER_TOKEN_KEY);
+            _preferences.Remove(USER_DISPLAY_NAME_KEY);
+            _preferences.Remove("USER_PHOTO_URL_KEY");
+
             _currentUser = null;
-            _preferences.Clear();
+
             try
             {
+                // Ensure Firebase sign out
                 _firebaseAuth.SignOut();
             }
             catch (Exception ex)
@@ -101,7 +117,13 @@ namespace FoodMacanoServices.Services
             // Luego establecemos el nuevo usuario
             _currentUser = user;
             SaveUserToPreferences(user, authMethod);
-            Console.WriteLine($"Usuario establecido: {user.LocalId} con método: {authMethod}");
+
+            Console.WriteLine($"SetCurrentUser - Usuario establecido: {user.LocalId}");
+            Console.WriteLine($"SetCurrentUser - Método de autenticación: {authMethod}");
+
+            // Verify the current user after setting
+            var currentUser = await GetCurrentUser();
+            Console.WriteLine($"Verificación post-SetCurrentUser - LocalId: {currentUser?.LocalId}");
         }
 
         public bool IsAuthenticated()
@@ -115,15 +137,16 @@ namespace FoodMacanoServices.Services
 
         public string GetCurrentUserId()
         {
+            // Force reload of current user
+            LoadUserFromPreferences();
+
             if (_currentUser == null)
             {
-                LoadUserFromPreferences();
-                if (_currentUser == null)
-                {
-                    Console.WriteLine("No se encontró usuario en las preferencias");
-                    throw new InvalidOperationException("No hay usuario autenticado");
-                }
+                Console.WriteLine("No user loaded from preferences");
+                throw new InvalidOperationException("No hay usuario autenticado");
             }
+
+            Console.WriteLine($"Returning user ID: {_currentUser.LocalId}");
             return _currentUser.LocalId;
         }
 

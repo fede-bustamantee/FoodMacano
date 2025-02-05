@@ -7,10 +7,12 @@ using Microsoft.Extensions.Logging;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
-using FoodMacanoApp.ViewModels;
 using FoodMacanoApp.Views.Encargue;
 using FoodMacanoApp.Views.Informacion;
 using FoodMacanoApp.Views.Negocios;
+using FoodMacanoApp.Views.Perfil;
+using FoodMacanoApp.Views.Busqueda;
+using FoodMacanoApp.ViewModels;
 
 namespace FoodMacanoApp
 {
@@ -59,11 +61,13 @@ namespace FoodMacanoApp
             builder.Services.AddTransient<CarritoView>();
             builder.Services.AddTransient<InicioView>();
             builder.Services.AddTransient<LoginView>();
-            builder.Services.AddTransient<InicioSesionView>();
             builder.Services.AddTransient<RegisterView>();
             builder.Services.AddTransient<EncargueView>();
             builder.Services.AddTransient<InformacionView>();
             builder.Services.AddTransient<NegociosView>();
+            builder.Services.AddTransient<PerfilView>();
+            builder.Services.AddTransient<SearchView>();
+            builder.Services.AddTransient<EncargueDetalleView>();
 
             return builder.Build();
         }

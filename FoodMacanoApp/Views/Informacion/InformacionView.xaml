@@ -7,20 +7,9 @@
 
     <Grid RowDefinitions="Auto,*">
         <!-- Barra superior -->
-        <Grid Padding="25,5" ColumnDefinitions="Auto,*,Auto">
-            <Button FontFamily="FontAwesomeSolid" 
-                    Text="&#xf060;" 
-                    FontSize="18" 
-                    BackgroundColor="Transparent" 
-                    TextColor="White"
-                    Clicked="OnBackButtonClicked"/>
-
-            <Label Grid.Column="1" 
-                   Text="Detalles del Producto" 
-                   TextColor="White" 
-                   FontSize="20" 
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"/>
+        <Grid Grid.Row="0" Padding="25,5" ColumnDefinitions="Auto,*,Auto">
+            <Button Grid.Column="0" Text="&#xf060;" FontFamily="FontAwesomeSolid" BackgroundColor="Transparent" TextColor="Gray" FontSize="18" Clicked="OnBackButtonClicked"/>
+            <Label Grid.Column="1" Text="Informacion Producto" TextColor="Orange" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,40,0"/>
         </Grid>
 
         <!-- Contenido principal -->
@@ -28,8 +17,11 @@
             <VerticalStackLayout Spacing="20" Padding="20">
                 <!-- Imagen del producto -->
                 <Frame CornerRadius="30" 
-                       HeightRequest="250" 
-                       Padding="0" 
+                       HeightRequest="300" 
+                       Padding="20"
+                       BorderColor="Gray"
+                       WidthRequest="400"
+                       BackgroundColor="Transparent"
                        IsClippedToBounds="True">
                     <Image Source="{Binding Producto.ImagenUrl}"
                            Aspect="AspectFill"/>
@@ -41,15 +33,15 @@
                        Padding="20">
                     <VerticalStackLayout Spacing="15">
                         <Label Text="{Binding Producto.Nombre}" 
-                               TextColor="White" 
+                               TextColor="Orange" 
                                FontSize="24" 
                                FontAttributes="Bold"/>
 
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <HorizontalStackLayout Grid.Column="0" Spacing="5">
-                                <Image Source="star_icon.png" HeightRequest="15"/>
-                                <Label Text="{Binding Producto.Calidad}" 
-                                       TextColor="Gray"/>
+                                <Image Source="aprobado.png" HeightRequest="16" Margin="0,0,0,5"/>
+                                <Label Text="Calidad:" TextColor="Gray" FontSize="16"/>
+                                <Label Text="{Binding Producto.Calidad}" TextColor="Gray" FontSize="16" />
                             </HorizontalStackLayout>
 
                             <Label Grid.Column="2" 
@@ -65,23 +57,26 @@
                         <VerticalStackLayout Spacing="10">
                             <Label Text="Descripción Corta" 
                                    TextColor="Orange" 
-                                   FontSize="16"/>
+                                   FontSize="20"/>
                             <Label Text="{Binding Producto.DescripcionProducto.DescripcionCorta}" 
-                                   TextColor="White"/>
+                                   TextColor="White"
+                                   FontSize="16"/>
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="10">
                             <Label Text="Descripción Detallada" 
                                    TextColor="Orange" 
-                                   FontSize="16"/>
+                                   FontSize="20"/>
                             <Label Text="{Binding Producto.DescripcionProducto.DescripcionLarga}" 
-                                   TextColor="White"/>
+                                   TextColor="White"
+                                   FontSize="16"/>
                         </VerticalStackLayout>
 
-                        <HorizontalStackLayout Spacing="10">
-                            <Image Source="calories_icon.png" 
-                                   HeightRequest="20"/>
-                            <Label Text="{Binding Producto.Calorias, StringFormat='{0} calorías'}" 
+                        <HorizontalStackLayout Spacing="5">
+                            <Image Source="calorias.png" 
+                                   HeightRequest="15"/>
+                            <Label Text="{Binding Producto.Calorias, StringFormat='{0} calorías'}"
+                                   FontSize="16"
                                    TextColor="Gray"/>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>

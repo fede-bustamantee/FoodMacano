@@ -18,6 +18,6 @@ public partial class CarritoView : ContentPage
 
 	private async void VolverClicked(object sender, EventArgs e)
 	{
-		await Navigation.PopAsync();
-	}
+        await Shell.Current.GoToAsync("///InicioView");
+    }
 }

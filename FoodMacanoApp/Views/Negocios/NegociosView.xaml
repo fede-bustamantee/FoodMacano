@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FoodMacanoApp.Controls"
              x:Class="FoodMacanoApp.Views.Negocios.NegociosView"
              Title="NegociosView"
              NavigationPage.HasNavigationBar="False">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
         <!-- Barra superior -->
         <Grid Padding="25,5" ColumnDefinitions="Auto,*,Auto">
             <Button FontFamily="FontAwesomeSolid" 
                     Text="&#xf060;" 
                     FontSize="18" 
                     BackgroundColor="Transparent" 
-                    TextColor="White"
+                    TextColor="Gray"
                     Clicked="OnBackButtonClicked"/>
 
             <Label Grid.Column="1" 
                    Text="Información del Negocio" 
-                   TextColor="White" 
+                   TextColor="Orange" 
                    FontSize="20" 
                    HorizontalOptions="Center"
-                   VerticalOptions="Center"/>
+                   VerticalOptions="Center"
+                   Margin="0,0,40,0"/>
         </Grid>
 
         <!-- Contenido principal -->
         <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="20" Padding="20">
+            <VerticalStackLayout Spacing="30" Padding="20,40,20,30">
                 <!-- Tarjeta de información principal -->
                 <Frame BackgroundColor="#2A2A2A" 
                        CornerRadius="30" 
@@ -44,7 +46,12 @@
                                    TextColor="White"/>
                             <Label Grid.Column="1"
                                    Text="{Binding Negocio.Direccion}"
-                                   TextColor="White"/>
+                                   TextDecorations="Underline"
+                                   TextColor="White">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnDireccionTapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
                         </Grid>
 
                         <!-- Teléfono -->
@@ -89,7 +96,12 @@
                                    TextColor="White"/>
                             <Label Grid.Column="1"
                                    Text="{Binding Negocio.RedesSocial.Facebook}"
-                                   TextColor="White"/>
+                                   TextDecorations="Underline"
+                                   TextColor="White">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnFacebookTapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
                         </Grid>
 
                         <!-- Instagram -->
@@ -100,7 +112,12 @@
                                    TextColor="White"/>
                             <Label Grid.Column="1"
                                    Text="{Binding Negocio.RedesSocial.Instagram}"
-                                   TextColor="White"/>
+                                   TextDecorations="Underline"
+                                   TextColor="White">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnInstagramTapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
                         </Grid>
 
                         <!-- WhatsApp -->
@@ -110,27 +127,25 @@
                                    Text="&#xf232;"  
                                    TextColor="White"/>
                             <Label Grid.Column="1"
-                                   Text="{Binding Negocio.RedesSocial.Whatsapp}" 
-                                   TextColor="White"/>
+                                   Text="{Binding Negocio.RedesSocial.Whatsapp}"
+                                   TextDecorations="Underline"
+                                   TextColor="White">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnWhatsAppTapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
                         </Grid>
-                    </VerticalStackLayout>
-                </Frame>
-
-                <!-- Mapa -->
-                <Frame BackgroundColor="#2A2A2A" 
-                       CornerRadius="30" 
-                       Padding="20">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Ubicación" 
-                               TextColor="Orange" 
-                               FontSize="20" 
-                               FontAttributes="Bold"/>
-
-                        <WebView Source="{Binding Negocio.MapaIframe}"
-                                HeightRequest="200"/>
                     </VerticalStackLayout>
                 </Frame>
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Menú Inferior -->
+        <controls:MenuInferiorr
+            Grid.Row="2"
+            ColorInicio="Gray"
+            ColorEncargues="Gray"
+            ColorHorarios="Orange"
+            ColorPerfil="Gray"/>
     </Grid>
 </ContentPage>

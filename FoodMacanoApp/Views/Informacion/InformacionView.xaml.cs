@@ -34,6 +34,6 @@ public partial class InformacionView : ContentPage
 
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("///InicioView");
     }
 }

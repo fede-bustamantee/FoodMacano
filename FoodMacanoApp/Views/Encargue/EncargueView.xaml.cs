@@ -21,5 +21,9 @@ namespace FoodMacanoApp.Views.Encargue
             base.OnAppearing();
             await _viewModel.CargarEncargues();
         }
+        private async void OnVolverClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("///InicioView");
+        }
     }
 }

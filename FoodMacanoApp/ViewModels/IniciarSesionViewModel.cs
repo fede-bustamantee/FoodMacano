@@ -12,7 +12,7 @@ namespace FoodMacanoApp.ViewModels
     public partial class IniciarSesionViewModel : ObservableObject
     {
         private readonly FirebaseAuthClient _clientAuth;
-        private readonly FileUserRepository _userRepository;
+        public readonly FileUserRepository _userRepository;
         private UserInfo _userInfo;
         private FirebaseCredential _firebaseCredential;
 
@@ -23,9 +23,6 @@ namespace FoodMacanoApp.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(IniciarSesionCommand))]
         private string password;
-
-        [ObservableProperty]
-        private bool recordarContraseña;
 
         public IRelayCommand IniciarSesionCommand { get; }
         public IRelayCommand RegistrarseCommand { get; }
@@ -43,7 +40,7 @@ namespace FoodMacanoApp.ViewModels
             });
             _userRepository = new FileUserRepository("FoodMacanoApp");
             ChequearSiHayUsuarioAlmacenado();
-            IniciarSesionCommand = new RelayCommand(IniciarSesion, PermitirIniciarSesion);
+            IniciarSesionCommand = new RelayCommand(IniciarSesion);
             RegistrarseCommand = new RelayCommand(Registrarse);
         }
 
@@ -56,11 +53,12 @@ namespace FoodMacanoApp.ViewModels
         {
             try
             {
+                // Check if user exists in repository
                 if (_userRepository.UserExists())
                 {
                     (_userInfo, _firebaseCredential) = _userRepository.ReadUser();
 
-                    // Verificar que el token sea válido
+                    // Verify token validity
                     var token = _firebaseCredential.IdToken;
                     if (string.IsNullOrEmpty(token))
                     {
@@ -68,12 +66,10 @@ namespace FoodMacanoApp.ViewModels
                         return;
                     }
 
-                    // Obtener el servicio de autenticación
                     var authService = Application.Current.Handler.MauiContext.Services.GetService<IAuthService>() as MauiFirebaseAuthService;
 
                     if (authService != null)
                     {
-                        // Crear FirebaseSignInResponse con la información almacenada
                         var firebaseResponse = new FirebaseSignInResponse
                         {
                             LocalId = _userInfo.Uid,
@@ -95,17 +91,20 @@ namespace FoodMacanoApp.ViewModels
                 _userRepository.DeleteUser();
             }
         }
-
-        private bool PermitirIniciarSesion()
-        {
-            return !string.IsNullOrEmpty(Email) && !string.IsNullOrEmpty(Password);
-        }
-
         private async void IniciarSesion()
         {
             try
             {
+                // Validación de campos vacíos
+                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Advertencia",
+                        "Por favor complete todos los campos", "Ok");
+                    return;
+                }
+
                 var userCredential = await _clientAuth.SignInWithEmailAndPasswordAsync(email, password);
+
                 if (!userCredential.User.Info.IsEmailVerified)
                 {
                     await Application.Current.MainPage.DisplayAlert("Inicio de sesión",
@@ -126,29 +125,19 @@ namespace FoodMacanoApp.ViewModels
                 // Obtener el servicio de autenticación y guardar el usuario
                 var authService = Application.Current.Handler.MauiContext.Services.GetService<IAuthService>()
                     as MauiFirebaseAuthService;
-
                 if (authService != null)
                 {
                     await authService.SetCurrentUser(firebaseResponse, "email");
                 }
 
-                if (recordarContraseña)
-                {
-                    _userRepository.SaveUser(userCredential.User);
-                }
-                else
-                {
-                    _userRepository.DeleteUser();
-                }
-
-                var institutoShell = (AppShell)App.Current.MainPage;
-                institutoShell.EnableAppAfterLogin();
+                var appShell = (AppShell)App.Current.MainPage;
+                appShell.EnableAppAfterLogin();
             }
             catch (FirebaseAuthException error)
             {
                 Console.WriteLine($"Error de autenticación: {error.Message}");
-                await Application.Current.MainPage.DisplayAlert("Inicio de sesión",
-                    "Ocurrió un problema: " + error.Reason, "Ok");
+                await Application.Current.MainPage.DisplayAlert("Error de inicio de sesión",
+                    "Correo o contraseña incorrectos", "Ok");
             }
             catch (Exception ex)
             {
