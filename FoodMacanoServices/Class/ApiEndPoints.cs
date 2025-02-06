@@ -12,8 +12,7 @@
         public static string Encargue { get; set; } = "encargues";
         public static string Usuario { get; set; } = "usuarios";
         public static string MauiEncargue { get; set; } = "mauiencargues";
-
-
+        public static string DesktopEncargue { get; set; } = "desktopencargue";
 
         public static string GetEndpoint(string name)
         {
@@ -29,6 +28,7 @@
                 nameof(Encargue) => Encargue,
                 nameof(Usuario) => Usuario,
                 nameof(MauiEncargue) => MauiEncargue,
+                nameof(DesktopEncargue) => DesktopEncargue,
 
 
                 _ => throw new ArgumentException($"Endpoint '{name}' no está definido.")

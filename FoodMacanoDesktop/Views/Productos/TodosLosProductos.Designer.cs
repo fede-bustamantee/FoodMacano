@@ -34,15 +34,9 @@
             label2 = new Label();
             label1 = new Label();
             txtBoxBuscar = new TextBox();
-            txtTotal = new Label();
-            flowLayoutPanel2 = new FlowLayoutPanel();
-            iconButton1 = new FontAwesome.Sharp.IconButton();
-            btnEncargar = new FontAwesome.Sharp.IconButton();
-            panel2 = new Panel();
             flowLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -52,7 +46,7 @@
             flowLayoutPanel1.Controls.Add(panel1);
             flowLayoutPanel1.Location = new Point(0, 99);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(605, 428);
+            flowLayoutPanel1.Size = new Size(499, 428);
             flowLayoutPanel1.TabIndex = 2;
             // 
             // panel1
@@ -107,72 +101,11 @@
             txtBoxBuscar.Size = new Size(496, 23);
             txtBoxBuscar.TabIndex = 3;
             // 
-            // txtTotal
-            // 
-            txtTotal.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            txtTotal.AutoSize = true;
-            txtTotal.ForeColor = Color.Black;
-            txtTotal.Location = new Point(15, 433);
-            txtTotal.Name = "txtTotal";
-            txtTotal.Size = new Size(65, 15);
-            txtTotal.TabIndex = 5;
-            txtTotal.Text = "Cargando..";
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            flowLayoutPanel2.AutoScroll = true;
-            flowLayoutPanel2.Location = new Point(15, 57);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Size = new Size(325, 357);
-            flowLayoutPanel2.TabIndex = 6;
-            // 
-            // iconButton1
-            // 
-            iconButton1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            iconButton1.IconChar = FontAwesome.Sharp.IconChar.None;
-            iconButton1.IconColor = Color.Black;
-            iconButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            iconButton1.Location = new Point(119, 18);
-            iconButton1.Name = "iconButton1";
-            iconButton1.Size = new Size(122, 30);
-            iconButton1.TabIndex = 7;
-            iconButton1.Text = "Carrito Compras";
-            iconButton1.UseVisualStyleBackColor = true;
-            // 
-            // btnEncargar
-            // 
-            btnEncargar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnEncargar.IconChar = FontAwesome.Sharp.IconChar.None;
-            btnEncargar.IconColor = Color.Black;
-            btnEncargar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnEncargar.Location = new Point(119, 452);
-            btnEncargar.Name = "btnEncargar";
-            btnEncargar.Size = new Size(122, 34);
-            btnEncargar.TabIndex = 8;
-            btnEncargar.Text = "Encargar";
-            btnEncargar.UseVisualStyleBackColor = true;
-            btnEncargar.Click += btnEncargar_Click;
-            // 
-            // panel2
-            // 
-            panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            panel2.BackColor = Color.FromArgb(255, 128, 0);
-            panel2.Controls.Add(btnEncargar);
-            panel2.Controls.Add(txtTotal);
-            panel2.Controls.Add(iconButton1);
-            panel2.Controls.Add(flowLayoutPanel2);
-            panel2.Location = new Point(596, 12);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(349, 503);
-            panel2.TabIndex = 9;
-            // 
             // TodosLosProductos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(948, 527);
-            Controls.Add(panel2);
             Controls.Add(txtBoxBuscar);
             Controls.Add(flowLayoutPanel1);
             Name = "TodosLosProductos";
@@ -181,8 +114,6 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            panel2.ResumeLayout(false);
-            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -205,10 +136,6 @@
         private Panel panel1;
         private Label label1;
         private TextBox txtBoxBuscar;
-        private Label txtTotal;
-        private FlowLayoutPanel flowLayoutPanel2;
-        private FontAwesome.Sharp.IconButton iconButton1;
-        private FontAwesome.Sharp.IconButton btnEncargar;
-        private Panel panel2;
+
     }
 }

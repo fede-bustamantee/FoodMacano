@@ -1,0 +1,84 @@
+﻿using BackFoodMacano.DataContext;
+using FoodMacanoServices.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace BackFoodMacano.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DesktopEncargueController : ControllerBase
+    {
+        private readonly FoodMacanoContext _context;
+
+        public DesktopEncargueController(FoodMacanoContext context)
+        {
+            _context = context;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<DesktopEncargue>> PostEncargue([FromBody] DesktopEncargue encargue)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Validar que el producto exista
+                var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
+                if (!productoExiste)
+                {
+                    return BadRequest($"El producto con ID {encargue.ProductoId} no existe.");
+                }
+
+                _context.desktopEncargues.Add(encargue);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<DesktopEncargue>> GetEncargue(int id)
+        {
+            var encargue = await _context.desktopEncargues
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (encargue == null)
+            {
+                return NotFound();
+            }
+
+            return encargue;
+        }
+
+        // Método opcional para obtener todos los encargues
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DesktopEncargue>>> GetEncargues()
+        {
+            return await _context.desktopEncargues.ToListAsync();
+        }
+
+        // Método opcional para obtener encargues por número de mesa
+        [HttpGet("mesa/{numeroMesa}")]
+        public async Task<ActionResult<IEnumerable<DesktopEncargue>>> GetEncarguesPorMesa(string numeroMesa)
+        {
+            var encargues = await _context.desktopEncargues
+                .Where(e => e.NumeroMesa == numeroMesa)
+                .ToListAsync();
+
+            if (!encargues.Any())
+            {
+                return NotFound($"No se encontraron encargues para la mesa {numeroMesa}");
+            }
+
+            return encargues;
+        }
+    }
+}

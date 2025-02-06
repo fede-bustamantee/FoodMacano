@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FoodMacanoDesktop.Views.Productos;
-using FoodMacanoDesktop.Views.Encargues;
 using FoodMacanoDesktop.Views.DatosDelNegocio;
 
 namespace FoodMacanoDesktop.Views.Menu
@@ -141,10 +140,10 @@ namespace FoodMacanoDesktop.Views.Menu
             ResaltarBoton(btnTodos);
         }
 
-        private void btnHamburguesas_Click(object sender, EventArgs e)
+        private void btnCategoria_Click(object sender, EventArgs e)
         {
-            AbrirFormulariosHijos(new PrimerCategoriaView());
-            ResaltarBoton(btnHamburguesas);
+            AbrirFormulariosHijos(new PorCategoriaView());
+            ResaltarBoton(btnCategoria);
         }
 
         private void btnEncargues_Click(object sender, EventArgs e)
@@ -155,7 +154,6 @@ namespace FoodMacanoDesktop.Views.Menu
 
         private void btnListaEncargues_Click(object sender, EventArgs e)
         {
-            AbrirFormulariosHijos(new EncarguesView());
             ResaltarBoton(btnListaEncargues);
         }
 
