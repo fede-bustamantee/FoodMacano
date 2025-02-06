@@ -90,13 +90,23 @@ namespace FoodMacanoDesktop.Controls
             try
             {
                 var encargueService = new DesktopEncargueService();
+                string numeroMesa = textBox1.Text;
+
+                // Verificar si la mesa ya tiene una reserva
+                bool mesaReservada = await encargueService.MesaYaReservadaAsync(numeroMesa);
+                if (mesaReservada)
+                {
+                    MessageBox.Show($"La mesa {numeroMesa} ya tiene un encargo activo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 List<Task> tareas = new List<Task>();
 
                 foreach (var item in carrito.Items)
                 {
                     var encargue = new DesktopEncargue
                     {
-                        NumeroMesa = textBox1.Text,
+                        NumeroMesa = numeroMesa,
                         ProductoId = item.Producto.Id,
                         NombreProducto = item.Producto.Nombre,
                         Cantidad = item.Cantidad,

@@ -69,6 +69,7 @@
             btnEncargar.TabIndex = 9;
             btnEncargar.Text = "Encargar";
             btnEncargar.UseVisualStyleBackColor = true;
+            btnEncargar.Click += new EventHandler(btnEncargar_Click);
             // 
             // txtTotal
             // 
@@ -98,7 +99,6 @@
             panel2.PerformLayout();
             ResumeLayout(false);
             Dock = DockStyle.Right; 
-
         }
 
         #endregion

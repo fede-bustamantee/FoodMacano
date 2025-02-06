@@ -52,5 +52,19 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
+        public async Task<bool> MesaYaReservadaAsync(string numeroMesa)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_endpoint}/mesa/{numeroMesa}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al verificar la reserva de la mesa: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

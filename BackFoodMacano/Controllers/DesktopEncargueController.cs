@@ -26,11 +26,13 @@ namespace BackFoodMacano.Controllers
                     return BadRequest(ModelState);
                 }
 
-                // Validar que el producto exista
-                var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
-                if (!productoExiste)
+                // Validar si la mesa ya tiene un encargo activo
+                var existeEncargue = await _context.desktopEncargues
+                    .AnyAsync(e => e.NumeroMesa == encargue.NumeroMesa);
+
+                if (existeEncargue)
                 {
-                    return BadRequest($"El producto con ID {encargue.ProductoId} no existe.");
+                    return Conflict($"La mesa {encargue.NumeroMesa} ya tiene un encargo activo.");
                 }
 
                 _context.desktopEncargues.Add(encargue);
@@ -79,6 +81,61 @@ namespace BackFoodMacano.Controllers
             }
 
             return encargues;
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEncargue(int id, [FromBody] DesktopEncargue encargue)
+        {
+            if (id != encargue.Id)
+            {
+                return BadRequest("El ID del encargue no coincide con el ID de la solicitud.");
+            }
+
+            var encargueExistente = await _context.desktopEncargues.FindAsync(id);
+            if (encargueExistente == null)
+            {
+                return NotFound("Encargue no encontrado.");
+            }
+
+            encargueExistente.NumeroMesa = encargue.NumeroMesa;
+            encargueExistente.ProductoId = encargue.ProductoId;
+            encargueExistente.NombreProducto = encargue.NombreProducto;
+            encargueExistente.Cantidad = encargue.Cantidad;
+            encargueExistente.PrecioUnitario = encargue.PrecioUnitario;
+            encargueExistente.Total = encargue.Total;
+            encargueExistente.FechaEncargue = encargue.FechaEncargue;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al actualizar el encargue.", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEncargue(int id)
+        {
+            var encargue = await _context.desktopEncargues.FindAsync(id);
+            if (encargue == null)
+            {
+                return NotFound("Encargue no encontrado.");
+            }
+
+            _context.desktopEncargues.Remove(encargue);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al eliminar el encargue.", error = ex.Message });
+            }
         }
     }
 }
