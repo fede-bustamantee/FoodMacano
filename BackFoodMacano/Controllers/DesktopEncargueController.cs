@@ -33,9 +33,17 @@ namespace BackFoodMacano.Controllers
                     return BadRequest($"El producto con ID {encargue.ProductoId} no existe.");
                 }
 
+                // Verificar si ya existe un encargue activo para esta mesa
+                var encargueExistente = await _context.desktopEncargues
+                    .AnyAsync(e => e.NumeroMesa == encargue.NumeroMesa);
+
+                if (encargueExistente)
+                {
+                    return Conflict($"Ya existe un encargue activo para la mesa {encargue.NumeroMesa}");
+                }
+
                 _context.desktopEncargues.Add(encargue);
                 await _context.SaveChangesAsync();
-
                 return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
             }
             catch (Exception ex)
