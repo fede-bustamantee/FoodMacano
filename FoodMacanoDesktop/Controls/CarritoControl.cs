@@ -90,14 +90,6 @@ namespace FoodMacanoDesktop.Controls
             {
                 var encargueService = new DesktopEncargueService();
 
-                // Check for existing active order for this table
-                var existingEncargues = await encargueService.GetEncarguesAsync();
-                if (existingEncargues.Any(e => e.NumeroMesa == textBox1.Text))
-                {
-                    MessageBox.Show($"La mesa {textBox1.Text} ya tiene un encargo activo", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
                 // Create a list to hold all order items
                 List<DesktopEncargue> ordenCompleta = new List<DesktopEncargue>();
 
@@ -125,6 +117,7 @@ namespace FoodMacanoDesktop.Controls
                     if (!resultadoEnvio)
                     {
                         todoEnviado = false;
+                        MessageBox.Show($"No se pudo enviar el producto: {encargue.NombreProducto}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                     }
                 }
