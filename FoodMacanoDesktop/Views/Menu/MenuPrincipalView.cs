@@ -116,9 +116,9 @@ namespace FoodMacanoDesktop.Views.Menu
         private void ResaltarEncabezadosAbiertos()
         {
             // Restablece el color de fondo de los botones
-            btnPedidos.BackColor = 
-            btnEncargues.BackColor = 
-            btnNosotros.BackColor = 
+            btnPedidos.BackColor =
+            btnEncargues.BackColor =
+            btnNosotros.BackColor =
             btnConfiguracion.BackColor = Color.Empty;
 
             // Resalta el encabezado si los submenús son visibles
@@ -180,6 +180,12 @@ namespace FoodMacanoDesktop.Views.Menu
         private void btnConfigProductos_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new ProductosView());
+            ResaltarBoton(btnConfigProductos);
+        }
+
+        private void btnEncargusMovil_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new MovilView());
             ResaltarBoton(btnConfigProductos);
         }
     }
