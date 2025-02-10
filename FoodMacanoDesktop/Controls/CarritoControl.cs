@@ -72,7 +72,7 @@ namespace FoodMacanoDesktop.Controls
             carrito.RemoverProducto(item);
             ActualizarVistaCarrito();
         }
-        // CarritoControl method update
+
         private async void btnEncargar_Click(object sender, EventArgs e)
         {
             if (!carrito.Items.Any())
@@ -90,40 +90,31 @@ namespace FoodMacanoDesktop.Controls
             {
                 var encargueService = new DesktopEncargueService();
 
-                // Create a list to hold all order items
-                List<DesktopEncargue> ordenCompleta = new List<DesktopEncargue>();
-
-                // Create a separate DesktopEncargue for each cart item
-                foreach (var item in carrito.Items)
+                // Verifica si ya existe un encargo para la mesa
+                var existingEncargues = await encargueService.GetEncarguesAsync();
+                if (existingEncargues.Any(e => e.NumeroMesa == textBox1.Text))
                 {
-                    var encargue = new DesktopEncargue
-                    {
-                        NumeroMesa = textBox1.Text,
-                        ProductoId = item.Producto.Id,
-                        NombreProducto = item.Producto.Nombre,
-                        Cantidad = item.Cantidad,
-                        PrecioUnitario = item.Producto.Precio,
-                        Total = item.Producto.Precio * item.Cantidad,
-                        FechaEncargue = DateTime.Now
-                    };
-                    ordenCompleta.Add(encargue);
+                    MessageBox.Show($"La mesa {textBox1.Text} ya tiene un encargo activo", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
-                // Send all items
-                bool todoEnviado = true;
-                foreach (var encargue in ordenCompleta)
+                // Crear lista con todos los productos del carrito
+                List<DesktopEncargue> ordenCompleta = carrito.Items.Select(item => new DesktopEncargue
                 {
-                    bool resultadoEnvio = await encargueService.EnviarEncargueAsync(encargue);
-                    if (!resultadoEnvio)
-                    {
-                        todoEnviado = false;
-                        MessageBox.Show($"No se pudo enviar el producto: {encargue.NombreProducto}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        break;
-                    }
-                }
+                    NumeroMesa = textBox1.Text,
+                    ProductoId = item.Producto.Id,
+                    NombreProducto = item.Producto.Nombre,
+                    Cantidad = item.Cantidad,
+                    PrecioUnitario = item.Producto.Precio,
+                    Total = item.Producto.Precio * item.Cantidad,
+                    FechaEncargue = DateTime.Now
+                }).ToList();
 
-                // Handle results
-                if (todoEnviado)
+                // Enviar todos los productos en una sola petición
+                bool resultadoEnvio = await encargueService.EnviarEncarguesAsync(ordenCompleta);
+
+                // Manejar el resultado
+                if (resultadoEnvio)
                 {
                     carrito.LimpiarCarrito();
                     textBox1.Clear();
@@ -132,7 +123,7 @@ namespace FoodMacanoDesktop.Controls
                 }
                 else
                 {
-                    MessageBox.Show("No se pudo procesar completamente el encargo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No se pudo procesar el encargo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)

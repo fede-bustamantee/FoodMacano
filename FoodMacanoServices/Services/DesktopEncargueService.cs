@@ -21,17 +21,17 @@ namespace FoodMacanoServices.Services
             _endpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(DesktopEncargue));
         }
 
-        public async Task<bool> EnviarEncargueAsync(DesktopEncargue encargue)
+        public async Task<bool> EnviarEncarguesAsync(List<DesktopEncargue> encargues)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(_endpoint, encargue);
+                var response = await _httpClient.PostAsJsonAsync(_endpoint, encargues);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al enviar el encargue: {ex.Message}");
-                throw;
+                Console.WriteLine($"Error al enviar el encargo: {ex.Message}");
+                return false;
             }
         }
 
