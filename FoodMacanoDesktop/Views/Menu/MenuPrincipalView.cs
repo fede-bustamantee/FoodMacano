@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FoodMacanoDesktop.Views.Productos;
 using FoodMacanoDesktop.Views.DatosDelNegocio;
+using FoodMacanoDesktop.Views.Encargues;
 
 namespace FoodMacanoDesktop.Views.Menu
 {
@@ -154,6 +155,7 @@ namespace FoodMacanoDesktop.Views.Menu
 
         private void btnListaEncargues_Click(object sender, EventArgs e)
         {
+            AbrirFormulariosHijos(new EncarguesView());
             ResaltarBoton(btnListaEncargues);
         }
 

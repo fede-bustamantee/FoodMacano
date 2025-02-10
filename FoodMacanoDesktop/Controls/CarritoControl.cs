@@ -72,7 +72,7 @@ namespace FoodMacanoDesktop.Controls
             carrito.RemoverProducto(item);
             ActualizarVistaCarrito();
         }
-
+        // CarritoControl method update
         private async void btnEncargar_Click(object sender, EventArgs e)
         {
             if (!carrito.Items.Any())
@@ -90,33 +90,33 @@ namespace FoodMacanoDesktop.Controls
             try
             {
                 var encargueService = new DesktopEncargueService();
-                List<Task> tareas = new List<Task>();
 
-                foreach (var item in carrito.Items)
+                var encargue = new DesktopEncargue
                 {
-                    var encargue = new DesktopEncargue
+                    NumeroMesa = textBox1.Text,
+                    Detalles = carrito.Items.Select(item => new DesktopDetalleEncargue
                     {
-                        NumeroMesa = textBox1.Text,
                         ProductoId = item.Producto.Id,
                         NombreProducto = item.Producto.Nombre,
                         Cantidad = item.Cantidad,
                         PrecioUnitario = item.Producto.Precio,
-                        Total = item.Producto.Precio * item.Cantidad,
-                        FechaEncargue = DateTime.Now
-                    };
+                        Total = item.Producto.Precio * item.Cantidad
+                    }).ToList()
+                };
 
-                    tareas.Add(encargueService.EnviarEncargueAsync(encargue));
+                var result = await encargueService.EnviarEncargueAsync(encargue);
+
+                if (result)
+                {
+                    carrito.LimpiarCarrito();
+                    textBox1.Clear();
+                    ActualizarVistaCarrito();
+                    MessageBox.Show("Encargo realizado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-
-                await Task.WhenAll(tareas);
-                carrito.LimpiarCarrito();
-                textBox1.Clear();
-                ActualizarVistaCarrito();
-                MessageBox.Show("El encargo ha sido realizado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al procesar el encargo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
