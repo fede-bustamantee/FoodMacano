@@ -26,6 +26,10 @@ namespace FoodMacanoServices.Services
             try
             {
                 var response = await _httpClient.PostAsJsonAsync(_endpoint, encargues);
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Código de estado: {response.StatusCode}");
+                Console.WriteLine($"Respuesta: {responseBody}");
+
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)

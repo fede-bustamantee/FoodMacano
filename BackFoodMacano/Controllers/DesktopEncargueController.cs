@@ -17,7 +17,7 @@ namespace BackFoodMacano.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<DesktopEncargue>> PostEncargue([FromBody] DesktopEncargue encargue)
+        public async Task<ActionResult> PostEncargue([FromBody] List<DesktopEncargue> encargues)
         {
             try
             {
@@ -26,29 +26,31 @@ namespace BackFoodMacano.Controllers
                     return BadRequest(ModelState);
                 }
 
-                // Validar que el producto exista
-                var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
-                if (!productoExiste)
+                if (encargues == null || !encargues.Any())
                 {
-                    return BadRequest($"El producto con ID {encargue.ProductoId} no existe.");
+                    return BadRequest("La lista de encargues está vacía.");
                 }
 
-                // Verificar si ya existe un encargue activo para esta mesa
-                var encargueExistente = await _context.desktopEncargues
-                    .AnyAsync(e => e.NumeroMesa == encargue.NumeroMesa);
+                string numeroMesa = encargues.First().NumeroMesa;
+
+                // Verificar si ya existe un encargo para esta mesa
+                bool encargueExistente = await _context.desktopEncargues
+                    .AnyAsync(e => e.NumeroMesa == numeroMesa);
 
                 if (encargueExistente)
                 {
-                    return Conflict($"Ya existe un encargue activo para la mesa {encargue.NumeroMesa}");
+                    return Conflict($"Ya existe un encargo activo para la mesa {numeroMesa}");
                 }
 
-                _context.desktopEncargues.Add(encargue);
+                // Guardar todos los productos en la base de datos
+                await _context.desktopEncargues.AddRangeAsync(encargues);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
+
+                return Ok(new { message = "Encargo registrado correctamente" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
+                return StatusCode(500, new { message = "Error interno al procesar el encargo.", error = ex.Message });
             }
         }
 
