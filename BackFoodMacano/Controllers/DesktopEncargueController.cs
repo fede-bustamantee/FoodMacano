@@ -21,34 +21,34 @@ namespace BackFoodMacano.Controllers
         {
             try
             {
-                // Validar mesa ocupada
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Validar que el producto exista
+                var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
+                if (!productoExiste)
+                {
+                    return BadRequest($"El producto con ID {encargue.ProductoId} no existe.");
+                }
+
+                // Verificar si ya existe un encargue activo para esta mesa
                 var encargueExistente = await _context.desktopEncargues
                     .AnyAsync(e => e.NumeroMesa == encargue.NumeroMesa);
 
                 if (encargueExistente)
-                    return Conflict($"Ya existe un encargue activo para la mesa {encargue.NumeroMesa}");
-
-                // Validar productos
-                foreach (var detalle in encargue.Detalles)
                 {
-                    var productoExiste = await _context.productos
-                        .AnyAsync(p => p.Id == detalle.ProductoId);
-
-                    if (!productoExiste)
-                        return BadRequest($"Producto {detalle.ProductoId} no existe");
+                    return Conflict($"Ya existe un encargue activo para la mesa {encargue.NumeroMesa}");
                 }
-
-                encargue.Total = encargue.Detalles.Sum(d => d.Total);
-                encargue.FechaEncargue = DateTime.Now;
 
                 _context.desktopEncargues.Add(encargue);
                 await _context.SaveChangesAsync();
-
                 return CreatedAtAction(nameof(GetEncargue), new { id = encargue.Id }, encargue);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error procesando encargue", error = ex.Message });
+                return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
             }
         }
 

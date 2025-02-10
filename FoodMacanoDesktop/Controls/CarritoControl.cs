@@ -80,7 +80,6 @@ namespace FoodMacanoDesktop.Controls
                 MessageBox.Show("El carrito está vacío", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 MessageBox.Show("Por favor ingrese un número de mesa", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -91,32 +90,61 @@ namespace FoodMacanoDesktop.Controls
             {
                 var encargueService = new DesktopEncargueService();
 
-                var encargue = new DesktopEncargue
+                // Check for existing active order for this table
+                var existingEncargues = await encargueService.GetEncarguesAsync();
+                if (existingEncargues.Any(e => e.NumeroMesa == textBox1.Text))
                 {
-                    NumeroMesa = textBox1.Text,
-                    Detalles = carrito.Items.Select(item => new DesktopDetalleEncargue
+                    MessageBox.Show($"La mesa {textBox1.Text} ya tiene un encargo activo", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Create a list to hold all order items
+                List<DesktopEncargue> ordenCompleta = new List<DesktopEncargue>();
+
+                // Create a separate DesktopEncargue for each cart item
+                foreach (var item in carrito.Items)
+                {
+                    var encargue = new DesktopEncargue
                     {
+                        NumeroMesa = textBox1.Text,
                         ProductoId = item.Producto.Id,
                         NombreProducto = item.Producto.Nombre,
                         Cantidad = item.Cantidad,
                         PrecioUnitario = item.Producto.Precio,
-                        Total = item.Producto.Precio * item.Cantidad
-                    }).ToList()
-                };
+                        Total = item.Producto.Precio * item.Cantidad,
+                        FechaEncargue = DateTime.Now
+                    };
+                    ordenCompleta.Add(encargue);
+                }
 
-                var result = await encargueService.EnviarEncargueAsync(encargue);
+                // Send all items
+                bool todoEnviado = true;
+                foreach (var encargue in ordenCompleta)
+                {
+                    bool resultadoEnvio = await encargueService.EnviarEncargueAsync(encargue);
+                    if (!resultadoEnvio)
+                    {
+                        todoEnviado = false;
+                        break;
+                    }
+                }
 
-                if (result)
+                // Handle results
+                if (todoEnviado)
                 {
                     carrito.LimpiarCarrito();
                     textBox1.Clear();
                     ActualizarVistaCarrito();
-                    MessageBox.Show("Encargo realizado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("El encargo ha sido realizado exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo procesar completamente el encargo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al procesar el encargo: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
