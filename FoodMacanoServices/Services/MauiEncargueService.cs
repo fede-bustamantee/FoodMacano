@@ -197,25 +197,5 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
-        public async Task<List<MauiEncargue>> GetEncarguesParaAdminAsync()
-        {
-            try
-            {
-                await SetAuthHeader();
-                var response = await _httpClient.GetAsync($"{_endpoint}/all");
-
-                if (!response.IsSuccessStatusCode)
-                    throw new HttpRequestException($"Error al obtener encargues: {response.StatusCode}");
-
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options) ?? new List<MauiEncargue>();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al obtener encargues para admin: {ex.Message}");
-                throw;
-            }
-        }
-
     }
 }

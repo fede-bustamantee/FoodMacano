@@ -179,10 +179,5 @@ namespace FoodMacanoServices.Services
             ClearUserData();
             Console.WriteLine("Usuario deslogueado y preferencias limpiadas");
         }
-        public bool IsAdmin()
-        {
-            return _currentUser?.Email == "admin@gmail.com";
-        }
-
     }
 }

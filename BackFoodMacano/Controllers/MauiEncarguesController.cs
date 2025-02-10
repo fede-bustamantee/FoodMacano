@@ -152,16 +152,4 @@ public class MauiEncarguesController : ControllerBase
 
         return NoContent();
     }
-
-    [HttpGet("all")]
-    public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetAllEncargues()
-    {
-        var encargues = await _context.mauiEncargue
-            .Include(e => e.Detalles)
-            .OrderByDescending(e => e.FechaEncargue)
-            .ToListAsync();
-
-        return Ok(encargues);
-    }
-
 }

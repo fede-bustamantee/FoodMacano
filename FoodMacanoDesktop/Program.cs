@@ -7,22 +7,17 @@ namespace FoodMacanoDesktop
     internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///  The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
-            // Create and show login form
-            var loginForm = new IniciarSesionView();
-            Application.Run(loginForm);
-
-            // Only proceed to main menu if login was successful
-            if (loginForm.loginSuccessfull)
-            {
-                Application.Run(new MenuPrincipalView());
-            }
+            Application.Run(new MenuPrincipalView());
+            
         }
     }
 }
