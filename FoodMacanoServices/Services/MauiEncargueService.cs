@@ -197,5 +197,28 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
+
+        public async Task<List<MauiEncargue>> GetEncarguesSummaryAsync(string firebaseUserId)
+        {
+            try
+            {
+                await SetAuthHeader();
+                var response = await _httpClient.GetAsync($"{_endpoint}/summary/{firebaseUserId}");
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new ApplicationException($"Error al obtener resumen de encargues: {response.StatusCode}");
+                }
+
+                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options)
+                    ?? new List<MauiEncargue>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener resumen de encargues del usuario {firebaseUserId}: {ex}");
+                throw;
+            }
+        }
     }
 }

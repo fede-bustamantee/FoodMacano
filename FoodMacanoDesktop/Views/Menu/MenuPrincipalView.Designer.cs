@@ -53,7 +53,9 @@
             btnDatos = new FontAwesome.Sharp.IconButton();
             btnNosotros = new FontAwesome.Sharp.IconButton();
             SubmenuEncargues = new Panel();
-            btnListaEncargues = new FontAwesome.Sharp.IconButton();
+            btnEncargusMovil = new FontAwesome.Sharp.IconButton();
+            btnEncargusWeb = new FontAwesome.Sharp.IconButton();
+            btnEncargusNegocio = new FontAwesome.Sharp.IconButton();
             btnEncargues = new FontAwesome.Sharp.IconButton();
             SubmenuPedidos = new Panel();
             btnCategoria = new FontAwesome.Sharp.IconButton();
@@ -112,7 +114,7 @@
             SubmenuInfo.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuInfo.Controls.Add(btnInfo);
             SubmenuInfo.Dock = DockStyle.Top;
-            SubmenuInfo.Location = new Point(0, 925);
+            SubmenuInfo.Location = new Point(0, 1005);
             SubmenuInfo.Name = "SubmenuInfo";
             SubmenuInfo.Size = new Size(176, 40);
             SubmenuInfo.TabIndex = 18;
@@ -151,7 +153,7 @@
             btnAyuda.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnAyuda.IconSize = 30;
             btnAyuda.ImageAlign = ContentAlignment.MiddleLeft;
-            btnAyuda.Location = new Point(0, 880);
+            btnAyuda.Location = new Point(0, 960);
             btnAyuda.Name = "btnAyuda";
             btnAyuda.Padding = new Padding(5, 0, 0, 0);
             btnAyuda.Size = new Size(176, 45);
@@ -171,7 +173,7 @@
             SubmenuConfiguracion.Controls.Add(btnConfigEmpleados);
             SubmenuConfiguracion.Controls.Add(btnConfigProductos);
             SubmenuConfiguracion.Dock = DockStyle.Top;
-            SubmenuConfiguracion.Location = new Point(0, 600);
+            SubmenuConfiguracion.Location = new Point(0, 680);
             SubmenuConfiguracion.Name = "SubmenuConfiguracion";
             SubmenuConfiguracion.Size = new Size(176, 280);
             SubmenuConfiguracion.TabIndex = 16;
@@ -321,7 +323,7 @@
             btnConfiguracion.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnConfiguracion.IconSize = 30;
             btnConfiguracion.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfiguracion.Location = new Point(0, 555);
+            btnConfiguracion.Location = new Point(0, 635);
             btnConfiguracion.Name = "btnConfiguracion";
             btnConfiguracion.Padding = new Padding(5, 0, 0, 0);
             btnConfiguracion.Size = new Size(176, 45);
@@ -337,7 +339,7 @@
             SubmenuReabastecimiento.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuReabastecimiento.Controls.Add(btnInforme);
             SubmenuReabastecimiento.Dock = DockStyle.Top;
-            SubmenuReabastecimiento.Location = new Point(0, 515);
+            SubmenuReabastecimiento.Location = new Point(0, 595);
             SubmenuReabastecimiento.Name = "SubmenuReabastecimiento";
             SubmenuReabastecimiento.Size = new Size(176, 40);
             SubmenuReabastecimiento.TabIndex = 20;
@@ -378,7 +380,7 @@
             btnReabastecimiento.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnReabastecimiento.IconSize = 30;
             btnReabastecimiento.ImageAlign = ContentAlignment.MiddleLeft;
-            btnReabastecimiento.Location = new Point(0, 470);
+            btnReabastecimiento.Location = new Point(0, 550);
             btnReabastecimiento.Name = "btnReabastecimiento";
             btnReabastecimiento.Padding = new Padding(5, 0, 0, 0);
             btnReabastecimiento.Size = new Size(176, 45);
@@ -393,7 +395,7 @@
             SubmenuLocalidades.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuLocalidades.Controls.Add(btnArchivoLocalidades);
             SubmenuLocalidades.Dock = DockStyle.Top;
-            SubmenuLocalidades.Location = new Point(0, 430);
+            SubmenuLocalidades.Location = new Point(0, 510);
             SubmenuLocalidades.Name = "SubmenuLocalidades";
             SubmenuLocalidades.Size = new Size(176, 40);
             SubmenuLocalidades.TabIndex = 14;
@@ -434,7 +436,7 @@
             btnLocalidades.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnLocalidades.IconSize = 30;
             btnLocalidades.ImageAlign = ContentAlignment.MiddleLeft;
-            btnLocalidades.Location = new Point(0, 385);
+            btnLocalidades.Location = new Point(0, 465);
             btnLocalidades.Name = "btnLocalidades";
             btnLocalidades.Padding = new Padding(5, 0, 0, 0);
             btnLocalidades.Size = new Size(176, 45);
@@ -449,7 +451,7 @@
             SubmenuSalir.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuSalir.Controls.Add(btnSalirDelSistema);
             SubmenuSalir.Dock = DockStyle.Bottom;
-            SubmenuSalir.Location = new Point(0, 965);
+            SubmenuSalir.Location = new Point(0, 1045);
             SubmenuSalir.Name = "SubmenuSalir";
             SubmenuSalir.Size = new Size(176, 40);
             SubmenuSalir.TabIndex = 8;
@@ -488,7 +490,7 @@
             btnSalir.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnSalir.IconSize = 30;
             btnSalir.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSalir.Location = new Point(0, 1005);
+            btnSalir.Location = new Point(0, 1085);
             btnSalir.Name = "btnSalir";
             btnSalir.Padding = new Padding(5, 0, 0, 0);
             btnSalir.Size = new Size(176, 45);
@@ -503,7 +505,7 @@
             SubmenuDatos.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuDatos.Controls.Add(btnDatos);
             SubmenuDatos.Dock = DockStyle.Top;
-            SubmenuDatos.Location = new Point(0, 345);
+            SubmenuDatos.Location = new Point(0, 425);
             SubmenuDatos.Name = "SubmenuDatos";
             SubmenuDatos.Size = new Size(176, 40);
             SubmenuDatos.TabIndex = 6;
@@ -543,7 +545,7 @@
             btnNosotros.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnNosotros.IconSize = 29;
             btnNosotros.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNosotros.Location = new Point(0, 302);
+            btnNosotros.Location = new Point(0, 382);
             btnNosotros.Name = "btnNosotros";
             btnNosotros.Padding = new Padding(5, 0, 0, 0);
             btnNosotros.Size = new Size(176, 43);
@@ -557,36 +559,85 @@
             // SubmenuEncargues
             // 
             SubmenuEncargues.BackColor = Color.FromArgb(35, 32, 39);
-            SubmenuEncargues.Controls.Add(btnListaEncargues);
+            SubmenuEncargues.Controls.Add(btnEncargusMovil);
+            SubmenuEncargues.Controls.Add(btnEncargusWeb);
+            SubmenuEncargues.Controls.Add(btnEncargusNegocio);
             SubmenuEncargues.Dock = DockStyle.Top;
             SubmenuEncargues.Location = new Point(0, 262);
             SubmenuEncargues.Name = "SubmenuEncargues";
-            SubmenuEncargues.Size = new Size(176, 40);
+            SubmenuEncargues.Size = new Size(176, 120);
             SubmenuEncargues.TabIndex = 4;
             // 
-            // btnListaEncargues
+            // btnEncargusMovil
             // 
-            btnListaEncargues.BackColor = Color.FromArgb(35, 32, 39);
-            btnListaEncargues.Dock = DockStyle.Top;
-            btnListaEncargues.FlatAppearance.BorderSize = 0;
-            btnListaEncargues.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnListaEncargues.FlatStyle = FlatStyle.Flat;
-            btnListaEncargues.ForeColor = Color.White;
-            btnListaEncargues.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
-            btnListaEncargues.IconColor = Color.Fuchsia;
-            btnListaEncargues.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnListaEncargues.IconSize = 30;
-            btnListaEncargues.ImageAlign = ContentAlignment.MiddleLeft;
-            btnListaEncargues.Location = new Point(0, 0);
-            btnListaEncargues.Name = "btnListaEncargues";
-            btnListaEncargues.Padding = new Padding(20, 0, 0, 0);
-            btnListaEncargues.Size = new Size(176, 40);
-            btnListaEncargues.TabIndex = 0;
-            btnListaEncargues.Text = "Listado";
-            btnListaEncargues.TextAlign = ContentAlignment.MiddleLeft;
-            btnListaEncargues.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnListaEncargues.UseVisualStyleBackColor = false;
-            btnListaEncargues.Click += btnListaEncargues_Click;
+            btnEncargusMovil.BackColor = Color.FromArgb(35, 32, 39);
+            btnEncargusMovil.Dock = DockStyle.Top;
+            btnEncargusMovil.FlatAppearance.BorderSize = 0;
+            btnEncargusMovil.FlatAppearance.MouseOverBackColor = Color.Orchid;
+            btnEncargusMovil.FlatStyle = FlatStyle.Flat;
+            btnEncargusMovil.ForeColor = Color.White;
+            btnEncargusMovil.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
+            btnEncargusMovil.IconColor = Color.Fuchsia;
+            btnEncargusMovil.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEncargusMovil.IconSize = 30;
+            btnEncargusMovil.ImageAlign = ContentAlignment.MiddleLeft;
+            btnEncargusMovil.Location = new Point(0, 80);
+            btnEncargusMovil.Name = "btnEncargusMovil";
+            btnEncargusMovil.Padding = new Padding(20, 0, 0, 0);
+            btnEncargusMovil.Size = new Size(176, 40);
+            btnEncargusMovil.TabIndex = 2;
+            btnEncargusMovil.Text = "Movil";
+            btnEncargusMovil.TextAlign = ContentAlignment.MiddleLeft;
+            btnEncargusMovil.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnEncargusMovil.UseVisualStyleBackColor = false;
+            btnEncargusMovil.Click += btnEncargusMovil_Click;
+            // 
+            // btnEncargusWeb
+            // 
+            btnEncargusWeb.BackColor = Color.FromArgb(35, 32, 39);
+            btnEncargusWeb.Dock = DockStyle.Top;
+            btnEncargusWeb.FlatAppearance.BorderSize = 0;
+            btnEncargusWeb.FlatAppearance.MouseOverBackColor = Color.Orchid;
+            btnEncargusWeb.FlatStyle = FlatStyle.Flat;
+            btnEncargusWeb.ForeColor = Color.White;
+            btnEncargusWeb.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
+            btnEncargusWeb.IconColor = Color.Fuchsia;
+            btnEncargusWeb.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEncargusWeb.IconSize = 30;
+            btnEncargusWeb.ImageAlign = ContentAlignment.MiddleLeft;
+            btnEncargusWeb.Location = new Point(0, 40);
+            btnEncargusWeb.Name = "btnEncargusWeb";
+            btnEncargusWeb.Padding = new Padding(20, 0, 0, 0);
+            btnEncargusWeb.Size = new Size(176, 40);
+            btnEncargusWeb.TabIndex = 1;
+            btnEncargusWeb.Text = "Web";
+            btnEncargusWeb.TextAlign = ContentAlignment.MiddleLeft;
+            btnEncargusWeb.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnEncargusWeb.UseVisualStyleBackColor = false;
+            // 
+            // btnEncargusNegocio
+            // 
+            btnEncargusNegocio.BackColor = Color.FromArgb(35, 32, 39);
+            btnEncargusNegocio.Dock = DockStyle.Top;
+            btnEncargusNegocio.FlatAppearance.BorderSize = 0;
+            btnEncargusNegocio.FlatAppearance.MouseOverBackColor = Color.Orchid;
+            btnEncargusNegocio.FlatStyle = FlatStyle.Flat;
+            btnEncargusNegocio.ForeColor = Color.White;
+            btnEncargusNegocio.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
+            btnEncargusNegocio.IconColor = Color.Fuchsia;
+            btnEncargusNegocio.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEncargusNegocio.IconSize = 30;
+            btnEncargusNegocio.ImageAlign = ContentAlignment.MiddleLeft;
+            btnEncargusNegocio.Location = new Point(0, 0);
+            btnEncargusNegocio.Name = "btnEncargusNegocio";
+            btnEncargusNegocio.Padding = new Padding(20, 0, 0, 0);
+            btnEncargusNegocio.Size = new Size(176, 40);
+            btnEncargusNegocio.TabIndex = 0;
+            btnEncargusNegocio.Text = "Negocio";
+            btnEncargusNegocio.TextAlign = ContentAlignment.MiddleLeft;
+            btnEncargusNegocio.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnEncargusNegocio.UseVisualStyleBackColor = false;
+            btnEncargusNegocio.Click += btnListaEncargues_Click;
             // 
             // btnEncargues
             // 
@@ -789,7 +840,7 @@
         private Panel SubmenuDatos;
         private FontAwesome.Sharp.IconButton btnNosotros;
         private Panel SubmenuEncargues;
-        private FontAwesome.Sharp.IconButton btnListaEncargues;
+        private FontAwesome.Sharp.IconButton btnEncargusNegocio;
         private FontAwesome.Sharp.IconButton btnEncargues;
         private Panel SubmenuSalir;
         private FontAwesome.Sharp.IconButton btnSalirDelSistema;
@@ -817,5 +868,7 @@
         private Label label1;
         private FontAwesome.Sharp.IconButton btnCategoria;
         private FontAwesome.Sharp.IconButton btnTodos;
+        private FontAwesome.Sharp.IconButton btnEncargusMovil;
+        private FontAwesome.Sharp.IconButton btnEncargusWeb;
     }
 }

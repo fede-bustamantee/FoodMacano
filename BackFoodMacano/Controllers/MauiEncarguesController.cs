@@ -13,7 +13,29 @@ public class MauiEncarguesController : ControllerBase
     {
         _context = context;
     }
+    [HttpGet("summary/{userId}")]
+    public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesSummary(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return BadRequest("User ID is required");
+        }
 
+        var summaries = await _context.mauiEncargue
+            .Where(e => e.UserId == userId)
+            .Select(e => new MauiEncargue
+            {
+                Id = e.Id,
+                FechaEncargue = e.FechaEncargue,
+                Estado = e.Estado,
+                Total = e.Total,
+                Detalles = e.Detalles.Take(1).ToList()
+            })
+            .OrderByDescending(e => e.FechaEncargue)
+            .ToListAsync();
+
+        return Ok(summaries);
+    }
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetMauiEncargues()
     {
