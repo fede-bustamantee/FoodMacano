@@ -53,8 +53,6 @@
             btnDatos = new FontAwesome.Sharp.IconButton();
             btnNosotros = new FontAwesome.Sharp.IconButton();
             SubmenuEncargues = new Panel();
-            btnEncargusMovil = new FontAwesome.Sharp.IconButton();
-            btnEncargusWeb = new FontAwesome.Sharp.IconButton();
             btnEncargusNegocio = new FontAwesome.Sharp.IconButton();
             btnEncargues = new FontAwesome.Sharp.IconButton();
             SubmenuPedidos = new Panel();
@@ -66,6 +64,8 @@
             PanelFormulario = new Panel();
             label1 = new Label();
             pictureBox2 = new PictureBox();
+            btnEncargusWeb = new FontAwesome.Sharp.IconButton();
+            btnEncargusMovil = new FontAwesome.Sharp.IconButton();
             MenuLateral.SuspendLayout();
             SubmenuInfo.SuspendLayout();
             SubmenuConfiguracion.SuspendLayout();
@@ -568,53 +568,6 @@
             SubmenuEncargues.Size = new Size(176, 120);
             SubmenuEncargues.TabIndex = 4;
             // 
-            // btnEncargusMovil
-            // 
-            btnEncargusMovil.BackColor = Color.FromArgb(35, 32, 39);
-            btnEncargusMovil.Dock = DockStyle.Top;
-            btnEncargusMovil.FlatAppearance.BorderSize = 0;
-            btnEncargusMovil.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnEncargusMovil.FlatStyle = FlatStyle.Flat;
-            btnEncargusMovil.ForeColor = Color.White;
-            btnEncargusMovil.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
-            btnEncargusMovil.IconColor = Color.Fuchsia;
-            btnEncargusMovil.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnEncargusMovil.IconSize = 30;
-            btnEncargusMovil.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEncargusMovil.Location = new Point(0, 80);
-            btnEncargusMovil.Name = "btnEncargusMovil";
-            btnEncargusMovil.Padding = new Padding(20, 0, 0, 0);
-            btnEncargusMovil.Size = new Size(176, 40);
-            btnEncargusMovil.TabIndex = 2;
-            btnEncargusMovil.Text = "Movil";
-            btnEncargusMovil.TextAlign = ContentAlignment.MiddleLeft;
-            btnEncargusMovil.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnEncargusMovil.UseVisualStyleBackColor = false;
-            btnEncargusMovil.Click += btnEncargusMovil_Click;
-            // 
-            // btnEncargusWeb
-            // 
-            btnEncargusWeb.BackColor = Color.FromArgb(35, 32, 39);
-            btnEncargusWeb.Dock = DockStyle.Top;
-            btnEncargusWeb.FlatAppearance.BorderSize = 0;
-            btnEncargusWeb.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnEncargusWeb.FlatStyle = FlatStyle.Flat;
-            btnEncargusWeb.ForeColor = Color.White;
-            btnEncargusWeb.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
-            btnEncargusWeb.IconColor = Color.Fuchsia;
-            btnEncargusWeb.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnEncargusWeb.IconSize = 30;
-            btnEncargusWeb.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEncargusWeb.Location = new Point(0, 40);
-            btnEncargusWeb.Name = "btnEncargusWeb";
-            btnEncargusWeb.Padding = new Padding(20, 0, 0, 0);
-            btnEncargusWeb.Size = new Size(176, 40);
-            btnEncargusWeb.TabIndex = 1;
-            btnEncargusWeb.Text = "Web";
-            btnEncargusWeb.TextAlign = ContentAlignment.MiddleLeft;
-            btnEncargusWeb.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnEncargusWeb.UseVisualStyleBackColor = false;
-            // 
             // btnEncargusNegocio
             // 
             btnEncargusNegocio.BackColor = Color.FromArgb(35, 32, 39);
@@ -798,6 +751,52 @@
             pictureBox2.SizeMode = PictureBoxSizeMode.AutoSize;
             pictureBox2.TabIndex = 1;
             pictureBox2.TabStop = false;
+            // 
+            // btnEncargusWeb
+            // 
+            btnEncargusWeb.BackColor = Color.FromArgb(35, 32, 39);
+            btnEncargusWeb.Dock = DockStyle.Top;
+            btnEncargusWeb.FlatAppearance.BorderSize = 0;
+            btnEncargusWeb.FlatAppearance.MouseOverBackColor = Color.Orchid;
+            btnEncargusWeb.FlatStyle = FlatStyle.Flat;
+            btnEncargusWeb.ForeColor = Color.White;
+            btnEncargusWeb.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
+            btnEncargusWeb.IconColor = Color.Fuchsia;
+            btnEncargusWeb.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEncargusWeb.IconSize = 30;
+            btnEncargusWeb.ImageAlign = ContentAlignment.MiddleLeft;
+            btnEncargusWeb.Location = new Point(0, 40);
+            btnEncargusWeb.Name = "btnEncargusWeb";
+            btnEncargusWeb.Padding = new Padding(20, 0, 0, 0);
+            btnEncargusWeb.Size = new Size(176, 40);
+            btnEncargusWeb.TabIndex = 1;
+            btnEncargusWeb.Text = "Web";
+            btnEncargusWeb.TextAlign = ContentAlignment.MiddleLeft;
+            btnEncargusWeb.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnEncargusWeb.UseVisualStyleBackColor = false;
+            // 
+            // btnEncargusMovil
+            // 
+            btnEncargusMovil.BackColor = Color.FromArgb(35, 32, 39);
+            btnEncargusMovil.Dock = DockStyle.Top;
+            btnEncargusMovil.FlatAppearance.BorderSize = 0;
+            btnEncargusMovil.FlatAppearance.MouseOverBackColor = Color.Orchid;
+            btnEncargusMovil.FlatStyle = FlatStyle.Flat;
+            btnEncargusMovil.ForeColor = Color.White;
+            btnEncargusMovil.IconChar = FontAwesome.Sharp.IconChar.CartArrowDown;
+            btnEncargusMovil.IconColor = Color.Fuchsia;
+            btnEncargusMovil.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEncargusMovil.IconSize = 30;
+            btnEncargusMovil.ImageAlign = ContentAlignment.MiddleLeft;
+            btnEncargusMovil.Location = new Point(0, 80);
+            btnEncargusMovil.Name = "btnEncargusMovil";
+            btnEncargusMovil.Padding = new Padding(20, 0, 0, 0);
+            btnEncargusMovil.Size = new Size(176, 40);
+            btnEncargusMovil.TabIndex = 2;
+            btnEncargusMovil.Text = "Movil";
+            btnEncargusMovil.TextAlign = ContentAlignment.MiddleLeft;
+            btnEncargusMovil.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnEncargusMovil.UseVisualStyleBackColor = false;
             // 
             // MenuPrincipalView
             // 

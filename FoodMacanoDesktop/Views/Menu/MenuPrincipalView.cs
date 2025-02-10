@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using FoodMacanoDesktop.Views.Productos;
 using FoodMacanoDesktop.Views.DatosDelNegocio;
 using FoodMacanoDesktop.Views.Encargues;
-using FoodMacanoServices.Services;
 
 namespace FoodMacanoDesktop.Views.Menu
 {
@@ -21,9 +20,6 @@ namespace FoodMacanoDesktop.Views.Menu
         bool logueado = false;
         // Asegúrate de que este panel esté definido
         private Button botonActual; // Para rastrear el botón actualmente resaltado
-
-        private readonly MauiEncargueService _mauiEncargueService;
-        private string _currentUserId;
 
 
         public MenuPrincipalView()
@@ -120,9 +116,9 @@ namespace FoodMacanoDesktop.Views.Menu
         private void ResaltarEncabezadosAbiertos()
         {
             // Restablece el color de fondo de los botones
-            btnPedidos.BackColor =
-            btnEncargues.BackColor =
-            btnNosotros.BackColor =
+            btnPedidos.BackColor = 
+            btnEncargues.BackColor = 
+            btnNosotros.BackColor = 
             btnConfiguracion.BackColor = Color.Empty;
 
             // Resalta el encabezado si los submenús son visibles
@@ -184,12 +180,6 @@ namespace FoodMacanoDesktop.Views.Menu
         private void btnConfigProductos_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new ProductosView());
-            ResaltarBoton(btnConfigProductos);
-        }
-
-        private void btnEncargusMovil_Click(object sender, EventArgs e)
-        {
-            AbrirFormulariosHijos(new Movil(_mauiEncargueService, _currentUserId));
             ResaltarBoton(btnConfigProductos);
         }
     }

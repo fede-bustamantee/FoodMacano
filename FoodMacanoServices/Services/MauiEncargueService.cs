@@ -197,28 +197,25 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
-
-        public async Task<List<MauiEncargue>> GetEncarguesSummaryAsync(string firebaseUserId)
+        public async Task<List<MauiEncargue>> GetEncarguesParaAdminAsync()
         {
             try
             {
                 await SetAuthHeader();
-                var response = await _httpClient.GetAsync($"{_endpoint}/summary/{firebaseUserId}");
-                var content = await response.Content.ReadAsStringAsync();
+                var response = await _httpClient.GetAsync($"{_endpoint}/all");
 
                 if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error al obtener resumen de encargues: {response.StatusCode}");
-                }
+                    throw new HttpRequestException($"Error al obtener encargues: {response.StatusCode}");
 
-                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options)
-                    ?? new List<MauiEncargue>();
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<List<MauiEncargue>>(content, _options) ?? new List<MauiEncargue>();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al obtener resumen de encargues del usuario {firebaseUserId}: {ex}");
+                Console.WriteLine($"Error al obtener encargues para admin: {ex.Message}");
                 throw;
             }
         }
+
     }
 }
