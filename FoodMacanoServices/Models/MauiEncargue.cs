@@ -4,7 +4,6 @@
     {
         public int Id { get; set; }
         public DateTime FechaEncargue { get; set; }
-        public string Estado { get; set; } = "Pendiente";
         public decimal Total { get; set; }
         public string UserId { get; set; } = string.Empty;
         public string UserDisplayName { get; set; } = string.Empty;

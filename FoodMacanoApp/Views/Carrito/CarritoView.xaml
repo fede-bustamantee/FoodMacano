@@ -52,11 +52,11 @@
 
         <!-- Entrada de Direccion -->
         <Grid Grid.Row="3" Margin="0,10,0,0">
-            <Frame BackgroundColor="#333333" CornerRadius="20" Padding="15" WidthRequest="300">
+            <Frame BackgroundColor="#333333" CornerRadius="20" Padding="15" WidthRequest="300" BorderColor="#FFC107">
                 <Grid ColumnDefinitions="Auto,*">
-                    <Label Text="Dirección:" TextColor="White" FontSize="16" VerticalOptions="Center" Margin="10"/>
+                    <Label Text="Dirección:" TextColor="White" FontSize="18" VerticalOptions="Center" Margin="10"/>
                     <Entry Placeholder="ej: Belgrano 3045" Text="{Binding Direccion, Mode=TwoWay}" 
-                           BackgroundColor="Transparent" TextColor="White" FontSize="16" Margin="100,0,0,0"/>
+                           BackgroundColor="Transparent" TextColor="#FFC107" FontSize="16" Margin="95,0,0,0"/>
                 </Grid>
             </Frame>
         </Grid>

@@ -119,7 +119,6 @@ namespace FoodMacanoServices.Services
                 var nuevoEncargue = new MauiEncargue
                 {
                     FechaEncargue = DateTime.UtcNow,
-                    Estado = "Pendiente",
                     UserId = userId,
                     UserDisplayName = displayName ?? "Usuario desconocido",
                     Direccion = direccion, // Guardamos la dirección ingresada

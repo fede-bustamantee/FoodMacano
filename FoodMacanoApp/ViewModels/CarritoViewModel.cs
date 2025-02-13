@@ -187,6 +187,7 @@ namespace FoodMacanoApp.ViewModels
                 await _carritoService.CheckoutAsync(direccion);
                 ProductosCarrito.Clear();
                 TotalPrecio = 0;
+                Direccion = string.Empty;
                 MensajeEstado = "Pedido confirmado con éxito.";
             }
             catch (Exception ex)

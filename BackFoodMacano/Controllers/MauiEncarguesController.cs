@@ -42,7 +42,6 @@ public class MauiEncarguesController : ControllerBase
             {
                 Id = e.Id,
                 FechaEncargue = e.FechaEncargue,
-                Estado = e.Estado,
                 Total = e.Total,
                 UserId = e.UserId,
                 Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
@@ -71,7 +70,6 @@ public class MauiEncarguesController : ControllerBase
             {
                 Id = e.Id,
                 FechaEncargue = e.FechaEncargue,
-                Estado = e.Estado,
                 Total = e.Total,
                 UserId = e.UserId,
                 Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
