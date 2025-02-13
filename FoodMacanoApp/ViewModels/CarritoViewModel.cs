@@ -41,8 +41,18 @@ namespace FoodMacanoApp.ViewModels
 				}
 			}
 		}
+        private string _direccion;
+        public string Direccion
+        {
+            get => _direccion;
+            set
+            {
+                _direccion = value;
+                OnPropertyChanged();
+            }
+        }
 
-		public ICommand AumentarCantidadCommand { get; }
+        public ICommand AumentarCantidadCommand { get; }
 		public ICommand DisminuirCantidadCommand { get; }
 		public ICommand ConfirmarCommand { get; }
         public ICommand LimpiarCarritoCommand { get; }
@@ -56,7 +66,7 @@ namespace FoodMacanoApp.ViewModels
 
 			AumentarCantidadCommand = new Command<CarritoCompra>(async (item) => await AumentarCantidad(item));
 			DisminuirCantidadCommand = new Command<CarritoCompra>(async (item) => await DisminuirCantidad(item));
-			ConfirmarCommand = new Command(async () => await Confirmar());
+            ConfirmarCommand = new Command(async () => await Confirmar(Direccion));
             LimpiarCarritoCommand = new Command(() => LimpiarCarrito());
 
             Task.Run(async () => await CargarProductosCarrito());
@@ -163,21 +173,27 @@ namespace FoodMacanoApp.ViewModels
 			TotalPrecio = ProductosCarrito.Sum(item => item.Producto?.Precio * item.Cantidad ?? 0);
 		}
 
-		private async Task Confirmar()
-		{
-			try
-			{
-				MensajeEstado = "Procesando pedido...";
-				await _carritoService.CheckoutAsync();
-				ProductosCarrito.Clear();
-				TotalPrecio = 0;
-				MensajeEstado = "Pedido confirmado con éxito. Ver en Encargues";
-			}
-			catch (Exception ex)
-			{
-				MensajeEstado = $"Error al confirmar pedido: {ex.Message}";
-			}
-		}
+        private async Task Confirmar(string direccion)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(direccion))
+                {
+                    MensajeEstado = "Debe ingresar una dirección.";
+                    return;
+                }
+
+                MensajeEstado = "Procesando pedido...";
+                await _carritoService.CheckoutAsync(direccion);
+                ProductosCarrito.Clear();
+                TotalPrecio = 0;
+                MensajeEstado = "Pedido confirmado con éxito.";
+            }
+            catch (Exception ex)
+            {
+                MensajeEstado = $"Error al confirmar pedido: {ex.Message}";
+            }
+        }
         private async Task LimpiarCarrito()
         {
             try

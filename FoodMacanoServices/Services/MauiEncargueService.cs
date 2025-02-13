@@ -71,6 +71,13 @@ namespace FoodMacanoServices.Services
             try
             {
                 await SetAuthHeader();
+
+                // Verificar que la dirección esté presente
+                if (string.IsNullOrWhiteSpace(encargue.Direccion))
+                {
+                    throw new ArgumentException("La dirección no puede estar vacía.");
+                }
+
                 var response = await _httpClient.PostAsJsonAsync(_endpoint, encargue);
                 var content = await response.Content.ReadAsStringAsync();
 

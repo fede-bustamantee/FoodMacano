@@ -91,7 +91,7 @@ namespace FoodMacanoServices.Services
             await Task.CompletedTask;
         }
 
-        public async Task CheckoutAsync()
+        public async Task CheckoutAsync(string direccion)
         {
             if (!_carrito.Any())
             {
@@ -101,7 +101,7 @@ namespace FoodMacanoServices.Services
             try
             {
                 var userId = _authService.GetCurrentUserId();
-                var displayName = (await _authService.GetCurrentUser())?.DisplayName; // Obtener DisplayName del usuario
+                var displayName = (await _authService.GetCurrentUser())?.DisplayName;
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -121,7 +121,8 @@ namespace FoodMacanoServices.Services
                     FechaEncargue = DateTime.UtcNow,
                     Estado = "Pendiente",
                     UserId = userId,
-                    UserDisplayName = displayName ?? "Usuario desconocido", // Guardar DisplayName
+                    UserDisplayName = displayName ?? "Usuario desconocido",
+                    Direccion = direccion, // Guardamos la dirección ingresada
                     Detalles = detalles,
                     Total = detalles.Sum(d => d.Subtotal)
                 };
@@ -134,6 +135,5 @@ namespace FoodMacanoServices.Services
                 throw new Exception($"Error al procesar el pedido: {ex.Message}", ex);
             }
         }
-
     }
 }
