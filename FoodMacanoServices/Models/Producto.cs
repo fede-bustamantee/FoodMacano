@@ -1,4 +1,6 @@
-﻿namespace FoodMacanoServices.Models
+﻿using FoodMacanoServices.Interfaces;
+
+namespace FoodMacanoServices.Models
 {
     public class Producto
     {

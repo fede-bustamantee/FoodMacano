@@ -7,8 +7,7 @@
         public string Estado { get; set; } = "Pendiente";
         public decimal Total { get; set; }
         public string UserId { get; set; } = string.Empty;
-
-        // Configuración explícita de la relación
+        public string UserDisplayName { get; set; } = string.Empty;
         public virtual ICollection<MauiEncargueDetalle> Detalles { get; set; } = new List<MauiEncargueDetalle>();
     }
 }

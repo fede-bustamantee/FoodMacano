@@ -1,17 +1,10 @@
 ﻿using FoodMacanoDesktop.Views.Login;
-using FoodMacanoDesktop.Views;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using FoodMacanoDesktop.Views.Productos;
 using FoodMacanoDesktop.Views.DatosDelNegocio;
 using FoodMacanoDesktop.Views.Encargues;
+using FoodMacanoDesktop.Views.Configuracion.Categorias;
+using FoodMacanoDesktop.ViewReports;
+using FoodMacanoServices.Services;
 
 namespace FoodMacanoDesktop.Views.Menu
 {
@@ -19,13 +12,18 @@ namespace FoodMacanoDesktop.Views.Menu
     {
         bool logueado = false;
         // Asegúrate de que este panel esté definido
-        private Button botonActual; // Para rastrear el botón actualmente resaltado
+        private Button botonActual;
+        private ProductoService productoService;
+        private NegocioService negocioService;
 
 
         public MenuPrincipalView()
         {
             InitializeComponent();
             SubMenu();
+            productoService = new ProductoService();
+            negocioService = new NegocioService();
+            this.IsMdiContainer = true;
         }
         private void MenuPrincipalView_Activated(object sender, EventArgs e)
         {
@@ -187,6 +185,67 @@ namespace FoodMacanoDesktop.Views.Menu
         {
             AbrirFormulariosHijos(new MovilView());
             ResaltarBoton(btnConfigProductos);
+        }
+
+        private void btnEncargusWeb_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new WebView());
+            ResaltarBoton(btnConfigProductos);
+        }
+
+        private void btnConfigEmpleados_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new CategoriasView());
+            ResaltarBoton(btnConfigEmpleados);
+        }
+
+        private void btnConfigSector_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new DatosView());
+            ResaltarBoton(btnConfigSector);
+        }
+
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
+            MostrarSubmenu(SubmenuSalir);
+            ResaltarEncabezadosAbiertos();
+        }
+
+        private void btnSalirDelSistema_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+            ResaltarBoton(btnSalirDelSistema);
+        }
+
+        private async void btnArchivoLocalidades_Click(object sender, EventArgs e)
+        {
+            // Obtener la lista de productos directamente desde el servicio
+            var productos = await productoService.GetAllAsync();
+            ProductosViewReports reporteProductos = new ProductosViewReports(this, productos);
+            AbrirFormulariosHijos(reporteProductos); // Muestra el formulario de reporte
+            ResaltarBoton(btnArchivoLocalidades); // Resalta el botón si es necesario
+
+        }
+
+        private void btnLocalidades_Click(object sender, EventArgs e)
+        {
+            MostrarSubmenu(SubmenuLocalidades);
+            ResaltarEncabezadosAbiertos();
+        }
+
+        private async void btnInforme_Click(object sender, EventArgs e)
+        {
+            // Obtener la lista de productos directamente desde el servicio
+            var negocio = await negocioService.GetAllAsync();
+            NegocioViewReports reporteNegocio = new NegocioViewReports(this, negocio);
+            AbrirFormulariosHijos(reporteNegocio); // Muestra el formulario de reporte
+            ResaltarBoton(btnInforme); // Resalta el botón si es necesario
+        }
+
+        private void btnReabastecimiento_Click(object sender, EventArgs e)
+        {
+            MostrarSubmenu(SubmenuReabastecimiento);
+            ResaltarEncabezadosAbiertos();
         }
     }
 }

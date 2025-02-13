@@ -1,6 +1,7 @@
 ﻿using FoodMacanoServices.Class;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
+using System.Linq.Expressions;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -129,6 +130,15 @@ namespace FoodMacanoServices.Services
                 throw new ApplicationException(content?.ToString());
             }
             return JsonSerializer.Deserialize<List<T>>(content, options);
+        }
+        public async Task<List<T>> GetWithFilterAsync(Expression<Func<T, bool>> filter)
+        {
+            var allItems = await GetAllAsync();
+            if (allItems == null) return new List<T>();
+
+            // Aplica el filtro usando LINQ
+            var filteredItems = allItems.AsQueryable().Where(filter).ToList();
+            return filteredItems;
         }
     }
 }

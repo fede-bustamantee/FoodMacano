@@ -25,14 +25,15 @@ namespace FoodMacanoDesktop.Views.Productos
         private async void CargarDatosProductos()
         {
             productos = await productoService.GetAllAsync();
-            FiltrarProductos("");
+            FiltrarProductos(""); // Mostrar todos los productos al inicio
         }
 
         private void FiltrarProductos(string filtro)
         {
             var productosFiltrados = productos
-                .Where(p => p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            .Where(p => p.Nombre.Contains(filtro, StringComparison.OrdinalIgnoreCase) ||
+                       (p.DescripcionProducto?.DescripcionLarga?.Contains(filtro, StringComparison.OrdinalIgnoreCase) ?? false))
+            .ToList();
 
             flowLayoutPanel1.Controls.Clear();
             int panelWidth = 155, panelHeight = 230;
@@ -112,14 +113,18 @@ namespace FoodMacanoDesktop.Views.Productos
             infoView.ShowDialog();
         }
 
-        private void txtBoxBuscar_TextChanged(object sender, EventArgs e)
-        {
-            FiltrarProductos(txtBoxBuscar.Text.Trim());
-        }
-
         private void AgregarAlCarrito(Producto producto)
         {
             carritoControl.AgregarProducto(producto);
+        }
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            RealizarBusqueda();
+        }
+        private void RealizarBusqueda()
+        {
+            string textoBusqueda = txtBoxBuscar.Text.Trim();
+            FiltrarProductos(textoBusqueda);
         }
     }
 }

@@ -65,15 +65,6 @@
                         </Frame>
                     </VerticalStackLayout>
 
-                    <!-- Recordar clave -->
-                    <HorizontalStackLayout Spacing="0">
-                        <CheckBox IsChecked="{Binding RecordarContraseña}"
-                                 Color="Orange"/>
-                        <Label Text="Recordar Sesion"
-                               TextColor="White"
-                               VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
-
                     <!-- Botones -->
                     <Button Text="Iniciar sesion"
                             Command="{Binding IniciarSesionCommand}"

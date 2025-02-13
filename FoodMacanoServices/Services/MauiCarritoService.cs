@@ -101,6 +101,8 @@ namespace FoodMacanoServices.Services
             try
             {
                 var userId = _authService.GetCurrentUserId();
+                var displayName = (await _authService.GetCurrentUser())?.DisplayName; // Obtener DisplayName del usuario
+
                 if (string.IsNullOrEmpty(userId))
                 {
                     throw new InvalidOperationException("Usuario no autenticado.");
@@ -119,6 +121,7 @@ namespace FoodMacanoServices.Services
                     FechaEncargue = DateTime.UtcNow,
                     Estado = "Pendiente",
                     UserId = userId,
+                    UserDisplayName = displayName ?? "Usuario desconocido", // Guardar DisplayName
                     Detalles = detalles,
                     Total = detalles.Sum(d => d.Subtotal)
                 };
@@ -131,5 +134,6 @@ namespace FoodMacanoServices.Services
                 throw new Exception($"Error al procesar el pedido: {ex.Message}", ex);
             }
         }
+
     }
 }

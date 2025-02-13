@@ -1,4 +1,6 @@
-﻿namespace FoodMacanoServices.Interfaces
+﻿using System.Linq.Expressions;
+
+namespace FoodMacanoServices.Interfaces
 {
     public interface IGenericService<T> where T : class
     {

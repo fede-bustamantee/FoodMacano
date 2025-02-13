@@ -34,6 +34,7 @@
             label2 = new Label();
             label1 = new Label();
             txtBoxBuscar = new TextBox();
+            btnBuscar = new FontAwesome.Sharp.IconButton();
             flowLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -101,11 +102,25 @@
             txtBoxBuscar.Size = new Size(496, 23);
             txtBoxBuscar.TabIndex = 3;
             // 
+            // btnBuscar
+            // 
+            btnBuscar.IconChar = FontAwesome.Sharp.IconChar.None;
+            btnBuscar.IconColor = Color.Black;
+            btnBuscar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnBuscar.Location = new Point(492, 36);
+            btnBuscar.Name = "btnBuscar";
+            btnBuscar.Size = new Size(75, 23);
+            btnBuscar.TabIndex = 4;
+            btnBuscar.Text = "iconButton1";
+            btnBuscar.UseVisualStyleBackColor = true;
+            btnBuscar.Click += btnBuscar_Click;
+            // 
             // TodosLosProductos
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(948, 527);
+            Controls.Add(btnBuscar);
             Controls.Add(txtBoxBuscar);
             Controls.Add(flowLayoutPanel1);
             Name = "TodosLosProductos";
@@ -136,6 +151,6 @@
         private Panel panel1;
         private Label label1;
         private TextBox txtBoxBuscar;
-
+        private FontAwesome.Sharp.IconButton btnBuscar;
     }
 }

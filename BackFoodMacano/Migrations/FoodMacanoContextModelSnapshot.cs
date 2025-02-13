@@ -288,6 +288,10 @@ namespace BackFoodMacano.Migrations
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(65,30)");
 
+                    b.Property<string>("UserDisplayName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("longtext");

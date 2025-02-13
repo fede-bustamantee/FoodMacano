@@ -31,12 +31,8 @@
             MenuLateral = new Panel();
             SubmenuInfo = new Panel();
             btnInfo = new FontAwesome.Sharp.IconButton();
-            btnAyuda = new FontAwesome.Sharp.IconButton();
             SubmenuConfiguracion = new Panel();
-            btnConfigProvincia = new FontAwesome.Sharp.IconButton();
-            btnConfigLocalidad = new FontAwesome.Sharp.IconButton();
             btnConfigSector = new FontAwesome.Sharp.IconButton();
-            btnConfigAbastecedor = new FontAwesome.Sharp.IconButton();
             btnConfigEmpleados = new FontAwesome.Sharp.IconButton();
             btnConfigProductos = new FontAwesome.Sharp.IconButton();
             btnConfiguracion = new FontAwesome.Sharp.IconButton();
@@ -87,7 +83,6 @@
             MenuLateral.BackColor = Color.Black;
             MenuLateral.BorderStyle = BorderStyle.Fixed3D;
             MenuLateral.Controls.Add(SubmenuInfo);
-            MenuLateral.Controls.Add(btnAyuda);
             MenuLateral.Controls.Add(SubmenuConfiguracion);
             MenuLateral.Controls.Add(btnConfiguracion);
             MenuLateral.Controls.Add(SubmenuReabastecimiento);
@@ -114,7 +109,7 @@
             SubmenuInfo.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuInfo.Controls.Add(btnInfo);
             SubmenuInfo.Dock = DockStyle.Top;
-            SubmenuInfo.Location = new Point(0, 1005);
+            SubmenuInfo.Location = new Point(0, 800);
             SubmenuInfo.Name = "SubmenuInfo";
             SubmenuInfo.Size = new Size(176, 40);
             SubmenuInfo.TabIndex = 18;
@@ -141,86 +136,17 @@
             btnInfo.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnInfo.UseVisualStyleBackColor = true;
             // 
-            // btnAyuda
-            // 
-            btnAyuda.Dock = DockStyle.Top;
-            btnAyuda.FlatAppearance.BorderSize = 0;
-            btnAyuda.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnAyuda.FlatStyle = FlatStyle.Flat;
-            btnAyuda.ForeColor = Color.White;
-            btnAyuda.IconChar = FontAwesome.Sharp.IconChar.CircleQuestion;
-            btnAyuda.IconColor = Color.Orange;
-            btnAyuda.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnAyuda.IconSize = 30;
-            btnAyuda.ImageAlign = ContentAlignment.MiddleLeft;
-            btnAyuda.Location = new Point(0, 960);
-            btnAyuda.Name = "btnAyuda";
-            btnAyuda.Padding = new Padding(5, 0, 0, 0);
-            btnAyuda.Size = new Size(176, 45);
-            btnAyuda.TabIndex = 17;
-            btnAyuda.Text = "Ayuda";
-            btnAyuda.TextAlign = ContentAlignment.MiddleLeft;
-            btnAyuda.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnAyuda.UseVisualStyleBackColor = true;
-            // 
             // SubmenuConfiguracion
             // 
             SubmenuConfiguracion.BackColor = Color.FromArgb(35, 32, 39);
-            SubmenuConfiguracion.Controls.Add(btnConfigProvincia);
-            SubmenuConfiguracion.Controls.Add(btnConfigLocalidad);
             SubmenuConfiguracion.Controls.Add(btnConfigSector);
-            SubmenuConfiguracion.Controls.Add(btnConfigAbastecedor);
             SubmenuConfiguracion.Controls.Add(btnConfigEmpleados);
             SubmenuConfiguracion.Controls.Add(btnConfigProductos);
             SubmenuConfiguracion.Dock = DockStyle.Top;
             SubmenuConfiguracion.Location = new Point(0, 680);
             SubmenuConfiguracion.Name = "SubmenuConfiguracion";
-            SubmenuConfiguracion.Size = new Size(176, 280);
+            SubmenuConfiguracion.Size = new Size(176, 120);
             SubmenuConfiguracion.TabIndex = 16;
-            // 
-            // btnConfigProvincia
-            // 
-            btnConfigProvincia.Dock = DockStyle.Top;
-            btnConfigProvincia.FlatAppearance.BorderSize = 0;
-            btnConfigProvincia.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnConfigProvincia.FlatStyle = FlatStyle.Flat;
-            btnConfigProvincia.ForeColor = Color.White;
-            btnConfigProvincia.IconChar = FontAwesome.Sharp.IconChar.MapMarkerAlt;
-            btnConfigProvincia.IconColor = Color.Fuchsia;
-            btnConfigProvincia.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnConfigProvincia.IconSize = 28;
-            btnConfigProvincia.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfigProvincia.Location = new Point(0, 200);
-            btnConfigProvincia.Name = "btnConfigProvincia";
-            btnConfigProvincia.Padding = new Padding(20, 0, 0, 0);
-            btnConfigProvincia.Size = new Size(176, 40);
-            btnConfigProvincia.TabIndex = 7;
-            btnConfigProvincia.Text = "Provincia";
-            btnConfigProvincia.TextAlign = ContentAlignment.MiddleLeft;
-            btnConfigProvincia.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnConfigProvincia.UseVisualStyleBackColor = true;
-            // 
-            // btnConfigLocalidad
-            // 
-            btnConfigLocalidad.Dock = DockStyle.Top;
-            btnConfigLocalidad.FlatAppearance.BorderSize = 0;
-            btnConfigLocalidad.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnConfigLocalidad.FlatStyle = FlatStyle.Flat;
-            btnConfigLocalidad.ForeColor = Color.White;
-            btnConfigLocalidad.IconChar = FontAwesome.Sharp.IconChar.MapPin;
-            btnConfigLocalidad.IconColor = Color.Fuchsia;
-            btnConfigLocalidad.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnConfigLocalidad.IconSize = 25;
-            btnConfigLocalidad.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfigLocalidad.Location = new Point(0, 160);
-            btnConfigLocalidad.Name = "btnConfigLocalidad";
-            btnConfigLocalidad.Padding = new Padding(20, 0, 0, 0);
-            btnConfigLocalidad.Size = new Size(176, 40);
-            btnConfigLocalidad.TabIndex = 6;
-            btnConfigLocalidad.Text = "Localidad";
-            btnConfigLocalidad.TextAlign = ContentAlignment.MiddleLeft;
-            btnConfigLocalidad.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnConfigLocalidad.UseVisualStyleBackColor = true;
             // 
             // btnConfigSector
             // 
@@ -234,37 +160,16 @@
             btnConfigSector.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnConfigSector.IconSize = 30;
             btnConfigSector.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfigSector.Location = new Point(0, 120);
+            btnConfigSector.Location = new Point(0, 80);
             btnConfigSector.Name = "btnConfigSector";
             btnConfigSector.Padding = new Padding(20, 0, 0, 0);
             btnConfigSector.Size = new Size(176, 40);
             btnConfigSector.TabIndex = 5;
-            btnConfigSector.Text = "Sector";
+            btnConfigSector.Text = "Datos";
             btnConfigSector.TextAlign = ContentAlignment.MiddleLeft;
             btnConfigSector.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnConfigSector.UseVisualStyleBackColor = true;
-            // 
-            // btnConfigAbastecedor
-            // 
-            btnConfigAbastecedor.Dock = DockStyle.Top;
-            btnConfigAbastecedor.FlatAppearance.BorderSize = 0;
-            btnConfigAbastecedor.FlatAppearance.MouseOverBackColor = Color.Orchid;
-            btnConfigAbastecedor.FlatStyle = FlatStyle.Flat;
-            btnConfigAbastecedor.ForeColor = Color.White;
-            btnConfigAbastecedor.IconChar = FontAwesome.Sharp.IconChar.Truck;
-            btnConfigAbastecedor.IconColor = Color.Fuchsia;
-            btnConfigAbastecedor.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnConfigAbastecedor.IconSize = 30;
-            btnConfigAbastecedor.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfigAbastecedor.Location = new Point(0, 80);
-            btnConfigAbastecedor.Name = "btnConfigAbastecedor";
-            btnConfigAbastecedor.Padding = new Padding(20, 0, 0, 0);
-            btnConfigAbastecedor.Size = new Size(176, 40);
-            btnConfigAbastecedor.TabIndex = 4;
-            btnConfigAbastecedor.Text = "Abastecedores";
-            btnConfigAbastecedor.TextAlign = ContentAlignment.MiddleLeft;
-            btnConfigAbastecedor.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnConfigAbastecedor.UseVisualStyleBackColor = true;
+            btnConfigSector.Click += btnConfigSector_Click;
             // 
             // btnConfigEmpleados
             // 
@@ -283,10 +188,11 @@
             btnConfigEmpleados.Padding = new Padding(20, 0, 0, 0);
             btnConfigEmpleados.Size = new Size(176, 40);
             btnConfigEmpleados.TabIndex = 3;
-            btnConfigEmpleados.Text = "Empleados";
+            btnConfigEmpleados.Text = "Categorias";
             btnConfigEmpleados.TextAlign = ContentAlignment.MiddleLeft;
             btnConfigEmpleados.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnConfigEmpleados.UseVisualStyleBackColor = true;
+            btnConfigEmpleados.Click += btnConfigEmpleados_Click;
             // 
             // btnConfigProductos
             // 
@@ -365,6 +271,7 @@
             btnInforme.TextAlign = ContentAlignment.MiddleLeft;
             btnInforme.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnInforme.UseVisualStyleBackColor = true;
+            btnInforme.Click += btnInforme_Click;
             // 
             // btnReabastecimiento
             // 
@@ -389,6 +296,7 @@
             btnReabastecimiento.TextAlign = ContentAlignment.MiddleLeft;
             btnReabastecimiento.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnReabastecimiento.UseVisualStyleBackColor = true;
+            btnReabastecimiento.Click += btnReabastecimiento_Click;
             // 
             // SubmenuLocalidades
             // 
@@ -417,10 +325,11 @@
             btnArchivoLocalidades.Padding = new Padding(20, 0, 0, 0);
             btnArchivoLocalidades.Size = new Size(176, 40);
             btnArchivoLocalidades.TabIndex = 0;
-            btnArchivoLocalidades.Text = "Archivo";
+            btnArchivoLocalidades.Text = "Todos";
             btnArchivoLocalidades.TextAlign = ContentAlignment.MiddleLeft;
             btnArchivoLocalidades.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnArchivoLocalidades.UseVisualStyleBackColor = true;
+            btnArchivoLocalidades.Click += btnArchivoLocalidades_Click;
             // 
             // btnLocalidades
             // 
@@ -441,17 +350,18 @@
             btnLocalidades.Padding = new Padding(5, 0, 0, 0);
             btnLocalidades.Size = new Size(176, 45);
             btnLocalidades.TabIndex = 13;
-            btnLocalidades.Text = "Informaciones";
+            btnLocalidades.Text = "Productos";
             btnLocalidades.TextAlign = ContentAlignment.MiddleLeft;
             btnLocalidades.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnLocalidades.UseVisualStyleBackColor = true;
+            btnLocalidades.Click += btnLocalidades_Click;
             // 
             // SubmenuSalir
             // 
             SubmenuSalir.BackColor = Color.FromArgb(35, 32, 39);
             SubmenuSalir.Controls.Add(btnSalirDelSistema);
             SubmenuSalir.Dock = DockStyle.Bottom;
-            SubmenuSalir.Location = new Point(0, 1045);
+            SubmenuSalir.Location = new Point(0, 840);
             SubmenuSalir.Name = "SubmenuSalir";
             SubmenuSalir.Size = new Size(176, 40);
             SubmenuSalir.TabIndex = 8;
@@ -477,6 +387,7 @@
             btnSalirDelSistema.TextAlign = ContentAlignment.MiddleLeft;
             btnSalirDelSistema.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnSalirDelSistema.UseVisualStyleBackColor = true;
+            btnSalirDelSistema.Click += btnSalirDelSistema_Click;
             // 
             // btnSalir
             // 
@@ -490,7 +401,7 @@
             btnSalir.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnSalir.IconSize = 30;
             btnSalir.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSalir.Location = new Point(0, 1085);
+            btnSalir.Location = new Point(0, 880);
             btnSalir.Name = "btnSalir";
             btnSalir.Padding = new Padding(5, 0, 0, 0);
             btnSalir.Size = new Size(176, 45);
@@ -499,6 +410,7 @@
             btnSalir.TextAlign = ContentAlignment.MiddleLeft;
             btnSalir.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnSalir.UseVisualStyleBackColor = true;
+            btnSalir.Click += btnSalir_Click;
             // 
             // SubmenuDatos
             // 
@@ -614,6 +526,7 @@
             btnEncargusWeb.TextAlign = ContentAlignment.MiddleLeft;
             btnEncargusWeb.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnEncargusWeb.UseVisualStyleBackColor = false;
+            btnEncargusWeb.Click += btnEncargusWeb_Click;
             // 
             // btnEncargusNegocio
             // 
@@ -773,7 +686,7 @@
             PanelFormulario.BackColor = Color.FromArgb(32, 35, 39);
             PanelFormulario.Controls.Add(label1);
             PanelFormulario.Controls.Add(pictureBox2);
-            PanelFormulario.Location = new Point(197, 0);
+            PanelFormulario.Location = new Point(197, -1);
             PanelFormulario.Name = "PanelFormulario";
             PanelFormulario.Size = new Size(1057, 696);
             PanelFormulario.TabIndex = 1;
@@ -849,15 +762,6 @@
         private FontAwesome.Sharp.IconButton btnLocalidades;
         private Panel SubmenuInfo;
         private FontAwesome.Sharp.IconButton btnInfo;
-        private FontAwesome.Sharp.IconButton btnAyuda;
-        private Panel SubmenuConfiguracion;
-        private FontAwesome.Sharp.IconButton btnConfigProvincia;
-        private FontAwesome.Sharp.IconButton btnConfigLocalidad;
-        private FontAwesome.Sharp.IconButton btnConfigSector;
-        private FontAwesome.Sharp.IconButton btnConfigAbastecedor;
-        private FontAwesome.Sharp.IconButton btnConfigEmpleados;
-        private FontAwesome.Sharp.IconButton btnConfigProductos;
-        private FontAwesome.Sharp.IconButton btnConfiguracion;
         private Panel SubmenuLocalidades;
         private FontAwesome.Sharp.IconButton btnArchivoLocalidades;
         private Panel SubmenuReabastecimiento;
@@ -870,5 +774,10 @@
         private FontAwesome.Sharp.IconButton btnTodos;
         private FontAwesome.Sharp.IconButton btnEncargusMovil;
         private FontAwesome.Sharp.IconButton btnEncargusWeb;
+        private Panel SubmenuConfiguracion;
+        private FontAwesome.Sharp.IconButton btnConfigSector;
+        private FontAwesome.Sharp.IconButton btnConfigEmpleados;
+        private FontAwesome.Sharp.IconButton btnConfigProductos;
+        private FontAwesome.Sharp.IconButton btnConfiguracion;
     }
 }

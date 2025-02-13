@@ -9,16 +9,42 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bunifu.UI.WinForms" Version="5.3.0" />
-    <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
-    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <None Remove="Reportes\ProductosReport.rdlc" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Reportes\NegocioReport.rdlc" />
+    <EmbeddedResource Include="Reportes\ProductosReport.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FirebaseAuthentication.net" Version="4.1.0" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="ReportViewerCore.WinForms" Version="15.1.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BackFoodMacano\BackFoodMacano.csproj" />
     <ProjectReference Include="..\FoodMacanoServices\FoodMacanoServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Microsoft.ReportViewer.Common">
+      <HintPath>Paquetes\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms">
+      <HintPath>Paquetes\Microsoft.ReportViewer.WinForms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Data\MacanoFoodDataSet.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MacanoFoodDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -39,6 +65,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\MacanoFoodDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>MacanoFoodDataSet.Designer.cs</LastGenOutput>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

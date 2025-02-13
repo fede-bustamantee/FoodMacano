@@ -17,40 +17,17 @@
 
         private void InitializeComponent()
         {
-            panel1 = new Panel();
-            labelTitle = new Label();
             panel2 = new Panel();
             btnRefresh = new Button();
             labelTotal = new Label();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             dataGridViewEncargues = new DataGridView();
-            panel1.SuspendLayout();
+            cboFecha = new ComboBox();
             panel2.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewEncargues).BeginInit();
             SuspendLayout();
-            // 
-            // panel1
-            // 
-            panel1.BackColor = Color.FromArgb(0, 122, 204);
-            panel1.Controls.Add(labelTitle);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(800, 60);
-            panel1.TabIndex = 1;
-            // 
-            // labelTitle
-            // 
-            labelTitle.AutoSize = true;
-            labelTitle.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold);
-            labelTitle.ForeColor = Color.White;
-            labelTitle.Location = new Point(12, 15);
-            labelTitle.Name = "labelTitle";
-            labelTitle.Size = new Size(194, 30);
-            labelTitle.TabIndex = 0;
-            labelTitle.Text = "Encargues Móviles";
             // 
             // panel2
             // 
@@ -104,21 +81,28 @@
             dataGridViewEncargues.Size = new Size(668, 308);
             dataGridViewEncargues.TabIndex = 4;
             // 
+            // cboFecha
+            // 
+            cboFecha.FormattingEnabled = true;
+            cboFecha.Location = new Point(265, 23);
+            cboFecha.Name = "cboFecha";
+            cboFecha.Size = new Size(121, 23);
+            cboFecha.TabIndex = 5;
+            cboFecha.SelectedIndexChanged += cboFecha_SelectedIndexChanged;
+            // 
             // MovilView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(cboFecha);
             Controls.Add(dataGridViewEncargues);
-            Controls.Add(panel1);
             Controls.Add(panel2);
             Controls.Add(statusStrip1);
             MinimumSize = new Size(816, 489);
             Name = "MovilView";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Visualizador de Encargues Móviles";
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             statusStrip1.ResumeLayout(false);
@@ -129,14 +113,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Label labelTotal;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private DataGridView dataGridViewEncargues;
+        private ComboBox cboFecha;
     }
 }
