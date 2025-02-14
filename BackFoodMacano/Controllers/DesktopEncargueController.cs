@@ -128,12 +128,13 @@ namespace BackFoodMacano.Controllers
 
             try
             {
-                // Actualizar los valores
+                // Actualizar los valores, incluyendo la mesa
                 encargueExistente.ProductoId = encargue.ProductoId;
                 encargueExistente.NombreProducto = encargue.NombreProducto;
                 encargueExistente.Cantidad = encargue.Cantidad;
                 encargueExistente.PrecioUnitario = encargue.PrecioUnitario;
                 encargueExistente.Total = encargue.Total;
+                encargueExistente.NumeroMesa = encargue.NumeroMesa;
 
                 _context.Entry(encargueExistente).State = EntityState.Modified;
                 await _context.SaveChangesAsync();

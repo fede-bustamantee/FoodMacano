@@ -31,8 +31,8 @@
             dgvEncargues = new DataGridView();
             btnEditar = new FontAwesome.Sharp.IconButton();
             btnEliminar = new FontAwesome.Sharp.IconButton();
-            btnAgregar = new FontAwesome.Sharp.IconButton();
             dtpFecha = new DateTimePicker();
+            cboMesas = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvEncargues).BeginInit();
             SuspendLayout();
             // 
@@ -74,33 +74,28 @@
             btnEliminar.UseVisualStyleBackColor = true;
             btnEliminar.Click += btnEliminar_Click;
             // 
-            // btnAgregar
-            // 
-            btnAgregar.IconChar = FontAwesome.Sharp.IconChar.None;
-            btnAgregar.IconColor = Color.Black;
-            btnAgregar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnAgregar.Location = new Point(336, 464);
-            btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(75, 23);
-            btnAgregar.TabIndex = 12;
-            btnAgregar.Text = "Agregar";
-            btnAgregar.UseVisualStyleBackColor = true;
-            btnAgregar.Click += btnAgregar_Click;
-            // 
             // dtpFecha
             // 
-            dtpFecha.Location = new Point(336, 12);
+            dtpFecha.Location = new Point(282, 12);
             dtpFecha.Name = "dtpFecha";
             dtpFecha.Size = new Size(241, 23);
             dtpFecha.TabIndex = 16;
             // 
+            // cboMesas
+            // 
+            cboMesas.FormattingEnabled = true;
+            cboMesas.Location = new Point(549, 12);
+            cboMesas.Name = "cboMesas";
+            cboMesas.Size = new Size(121, 23);
+            cboMesas.TabIndex = 17;
+            // 
             // EncarguesView
             // 
             ClientSize = new Size(1000, 600);
+            Controls.Add(cboMesas);
             Controls.Add(dtpFecha);
             Controls.Add(btnEditar);
             Controls.Add(btnEliminar);
-            Controls.Add(btnAgregar);
             Controls.Add(dgvEncargues);
             Name = "EncarguesView";
             StartPosition = FormStartPosition.CenterScreen;
@@ -115,7 +110,7 @@
         private DataGridView dgvEncargues;
         private FontAwesome.Sharp.IconButton btnEditar;
         private FontAwesome.Sharp.IconButton btnEliminar;
-        private FontAwesome.Sharp.IconButton btnAgregar;
         private DateTimePicker dtpFecha;
+        private ComboBox cboMesas;
     }
 }

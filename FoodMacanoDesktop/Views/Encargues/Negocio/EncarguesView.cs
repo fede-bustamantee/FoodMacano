@@ -13,6 +13,7 @@ namespace FoodMacanoDesktop.Views.Encargues
     {
         private DesktopEncargueService _encargueService = new DesktopEncargueService();
         public BindingSource listaEncargues = new BindingSource();
+        private List<DesktopEncargue> encarguesOriginales = new List<DesktopEncargue>();
 
         public EncarguesView()
         {
@@ -23,6 +24,7 @@ namespace FoodMacanoDesktop.Views.Encargues
 
             // Eventos
             dtpFecha.ValueChanged += dtpFecha_ValueChanged;
+            cboMesas.SelectedIndexChanged += cboMesas_SelectedIndexChanged;
 
             // Cargar encargues iniciales
             LoadEncarguesPorFecha(dtpFecha.Value);
@@ -33,11 +35,9 @@ namespace FoodMacanoDesktop.Views.Encargues
             try
             {
                 var encargues = await _encargueService.GetEncarguesAsync();
-                var encarguesFiltrados = encargues
-                    .Where(e => e.FechaEncargue.Date == fecha.Date)
-                    .ToList();
-
-                listaEncargues.DataSource = encarguesFiltrados;
+                encarguesOriginales = encargues.Where(e => e.FechaEncargue.Date == fecha.Date).ToList();
+                listaEncargues.DataSource = new List<DesktopEncargue>(encarguesOriginales); // Clonamos para evitar modificar el original
+                LoadMesasDisponibles(encarguesOriginales);
             }
             catch (Exception ex)
             {
@@ -45,9 +45,40 @@ namespace FoodMacanoDesktop.Views.Encargues
             }
         }
 
+        private void LoadMesasDisponibles(List<DesktopEncargue> encarguesFiltrados)
+        {
+            cboMesas.SelectedIndexChanged -= cboMesas_SelectedIndexChanged; // Desvincular evento
+
+            var mesas = encarguesFiltrados.Select(e => e.NumeroMesa).Distinct().ToList();
+            mesas.Insert(0, "Todas");
+            cboMesas.DataSource = mesas;
+
+            cboMesas.SelectedIndexChanged += cboMesas_SelectedIndexChanged; // Volver a vincular evento
+        }
+
         private void dtpFecha_ValueChanged(object sender, EventArgs e)
         {
             LoadEncarguesPorFecha(dtpFecha.Value);
+        }
+
+        private void cboMesas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            FiltrarEncargues();
+        }
+
+        private void FiltrarEncargues()
+        {
+            var fechaSeleccionada = dtpFecha.Value.Date;
+            var mesaSeleccionada = cboMesas.SelectedItem?.ToString();
+
+            var encarguesFiltrados = encarguesOriginales.Where(e => e.FechaEncargue.Date == fechaSeleccionada).ToList();
+
+            if (!string.IsNullOrEmpty(mesaSeleccionada) && mesaSeleccionada != "Todas")
+            {
+                encarguesFiltrados = encarguesFiltrados.Where(e => e.NumeroMesa == mesaSeleccionada).ToList();
+            }
+
+            listaEncargues.DataSource = encarguesFiltrados;
         }
 
         private async void btnEliminar_Click(object sender, EventArgs e)
@@ -83,11 +114,6 @@ namespace FoodMacanoDesktop.Views.Encargues
             AgregarEditarEncargueView agregarEditarEncargueView = new AgregarEditarEncargueView(encargue);
             agregarEditarEncargueView.ShowDialog();
             LoadEncarguesPorFecha(dtpFecha.Value);
-        }
-
-        private void btnAgregar_Click(object sender, EventArgs e)
-        {
-            
         }
     }
 }
