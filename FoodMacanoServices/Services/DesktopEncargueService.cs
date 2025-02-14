@@ -56,5 +56,71 @@ namespace FoodMacanoServices.Services
                 throw;
             }
         }
+        public async Task<bool> UpdateEncargueAsync(DesktopEncargue encargue)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{_endpoint}/{encargue.Id}", encargue);
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Código de estado: {response.StatusCode}");
+                Console.WriteLine($"Respuesta: {responseBody}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar el encargo: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteEncargueAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_endpoint}/{id}");
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Código de estado: {response.StatusCode}");
+                Console.WriteLine($"Respuesta: {responseBody}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar el encargo: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<bool> AddEncargueAsync(DesktopEncargue encargue)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"{_endpoint}/single", encargue);
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Código de estado: {response.StatusCode}");
+                Console.WriteLine($"Respuesta: {responseBody}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al agregar el encargo: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<DesktopEncargue> GetEncargueByIdAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_endpoint}/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<DesktopEncargue>();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener el encargo: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

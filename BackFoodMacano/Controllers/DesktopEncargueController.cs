@@ -111,5 +111,40 @@ namespace BackFoodMacano.Controllers
                 return StatusCode(500, new { message = "Error interno al eliminar el encargue.", error = ex.Message });
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEncargue(int id, [FromBody] DesktopEncargue encargue)
+        {
+            if (id != encargue.Id)
+            {
+                return BadRequest("El ID en la URL no coincide con el ID del objeto.");
+            }
+
+            var encargueExistente = await _context.desktopEncargues.FindAsync(id);
+            if (encargueExistente == null)
+            {
+                return NotFound($"No se encontró un encargo con ID {id}");
+            }
+
+            try
+            {
+                // Actualizar los valores
+                encargueExistente.ProductoId = encargue.ProductoId;
+                encargueExistente.NombreProducto = encargue.NombreProducto;
+                encargueExistente.Cantidad = encargue.Cantidad;
+                encargueExistente.PrecioUnitario = encargue.PrecioUnitario;
+                encargueExistente.Total = encargue.Total;
+
+                _context.Entry(encargueExistente).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Encargo actualizado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno al actualizar el encargo.", error = ex.Message });
+            }
+        }
+
     }
 }

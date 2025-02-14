@@ -63,9 +63,39 @@ namespace FoodMacanoDesktop.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap flogo {
+            get {
+                object obj = ResourceManager.GetObject("flogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Hambuerguesa {
             get {
                 object obj = ResourceManager.GetObject("Hambuerguesa", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap logoo1 {
+            get {
+                object obj = ResourceManager.GetObject("logoo1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MACANO {
+            get {
+                object obj = ResourceManager.GetObject("MACANO", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

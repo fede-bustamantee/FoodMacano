@@ -25,33 +25,15 @@ namespace FoodMacanoDesktop.Views.Menu
             negocioService = new NegocioService();
             this.IsMdiContainer = true;
         }
-        private void MenuPrincipalView_Activated(object sender, EventArgs e)
-        {
-            if (!logueado)
-            {
-                IniciarSesionView iniciarSesionView = new IniciarSesionView();
-                iniciarSesionView.ShowDialog(); // Muestra el formulario de inicio de sesión
-                if (!iniciarSesionView.loginSuccessfull)
-                {
-                    Application.Exit(); // Cierra la aplicación si no se inicia sesión
-                }
-                else
-                {
-                    logueado = true; // Marca al usuario como logueado
-                }
-            }
-        }
         //Metodo sin retorno que oculta todos los submenus cuando se llama
         private void SubMenu()
         {
             SubmenuPedidos.Visible = false;//establece que la propiedad bool en false
             SubmenuEncargues.Visible = false;
-            SubmenuDatos.Visible = false;
-            SubmenuLocalidades.Visible = false;
+            SubmenuProductos.Visible = false;
             SubmenuConfiguracion.Visible = false;
-            SubmenuInfo.Visible = false;
             SubmenuSalir.Visible = false;
-            SubmenuReabastecimiento.Visible = false;
+            submenuDatos.Visible = false;
         }
 
         //Metodo de tipo vacio oculta cualquier submenú que esté visible. se va a utilizar en los botones
@@ -60,12 +42,10 @@ namespace FoodMacanoDesktop.Views.Menu
             //Verifica si cada submenú está visible y lo oculta si es necesario.
             if (SubmenuPedidos.Visible == true) SubmenuPedidos.Visible = false;
             if (SubmenuEncargues.Visible == true) SubmenuEncargues.Visible = false;
-            if (SubmenuDatos.Visible == true) SubmenuDatos.Visible = false;
-            if (SubmenuLocalidades.Visible == true) SubmenuLocalidades.Visible = false;
+            if (SubmenuProductos.Visible == true) SubmenuProductos.Visible = false;
             if (SubmenuConfiguracion.Visible == true) SubmenuConfiguracion.Visible = false;
-            if (SubmenuInfo.Visible == true) SubmenuInfo.Visible = false;
             if (SubmenuSalir.Visible == true) SubmenuSalir.Visible = false;
-            if (SubmenuReabastecimiento.Visible == true) SubmenuReabastecimiento.Visible = false;
+            if (submenuDatos.Visible == true) submenuDatos.Visible = false;
         }
 
         //Metodo de tipo vacio para alternar visibilidad de los submenus
@@ -106,7 +86,7 @@ namespace FoodMacanoDesktop.Views.Menu
             }
 
             // Resaltar el nuevo botón
-            botonSeleccionado.BackColor = Color.Gold; // Color para el botón seleccionado
+            botonSeleccionado.BackColor = Color.Red; // Color para el botón seleccionado
 
             // Actualiza la referencia del botón actual
             botonActual = botonSeleccionado;
@@ -117,13 +97,19 @@ namespace FoodMacanoDesktop.Views.Menu
             btnPedidos.BackColor =
             btnEncargues.BackColor =
             btnNosotros.BackColor =
+            btnProductos.BackColor =
+            btnNosotros.BackColor =
+            btnSalir.BackColor =
             btnConfiguracion.BackColor = Color.Empty;
 
+
             // Resalta el encabezado si los submenús son visibles
-            if (SubmenuPedidos.Visible) btnPedidos.BackColor = Color.Pink;
-            if (SubmenuEncargues.Visible) btnEncargues.BackColor = Color.Pink;
-            if (SubmenuDatos.Visible) btnNosotros.BackColor = Color.Pink;
-            if (SubmenuConfiguracion.Visible) btnConfiguracion.BackColor = Color.Pink;
+            if (SubmenuPedidos.Visible) btnPedidos.BackColor = Color.Maroon;
+            if (SubmenuEncargues.Visible) btnEncargues.BackColor = Color.Maroon;
+            if (SubmenuConfiguracion.Visible) btnConfiguracion.BackColor = Color.Maroon;
+            if (SubmenuProductos.Visible) btnProductos.BackColor = Color.Maroon;
+            if (submenuDatos.Visible) btnNosotros.BackColor = Color.Maroon;
+            if (SubmenuSalir.Visible) btnSalir.BackColor = Color.Maroon;
         }
 
         //botones que abren los submenus y formularios hijos
@@ -133,76 +119,40 @@ namespace FoodMacanoDesktop.Views.Menu
             ResaltarEncabezadosAbiertos();
         }
 
-        private void btnTodos_Click(object sender, EventArgs e)
-        {
-            AbrirFormulariosHijos(new TodosLosProductos());
-            ResaltarBoton(btnTodos);
-        }
-
-        private void btnCategoria_Click(object sender, EventArgs e)
-        {
-            AbrirFormulariosHijos(new PorCategoriaView());
-            ResaltarBoton(btnCategoria);
-        }
-
         private void btnEncargues_Click(object sender, EventArgs e)
         {
             MostrarSubmenu(SubmenuEncargues);
             ResaltarEncabezadosAbiertos();
         }
 
-        private void btnListaEncargues_Click(object sender, EventArgs e)
-        {
-            AbrirFormulariosHijos(new EncarguesView());
-            ResaltarBoton(btnEncargusNegocio);
-        }
-
-        private void btnNosotros_Click(object sender, EventArgs e)
-        {
-            MostrarSubmenu(SubmenuDatos);
-            ResaltarEncabezadosAbiertos();
-        }
-
-        private void btnDatos_Click(object sender, EventArgs e)
-        {
-            AbrirFormulariosHijos(new DatosView());
-            ResaltarBoton(btnDatos);
-        }
-
-        private void btnConfiguracion_Click_1(object sender, EventArgs e)
-        {
-            MostrarSubmenu(SubmenuConfiguracion);
-            ResaltarEncabezadosAbiertos();
-        }
-
         private void btnConfigProductos_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new ProductosView());
-            ResaltarBoton(btnConfigProductos);
+            ResaltarBoton(btnConfigProducto);
         }
 
         private void btnEncargusMovil_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new MovilView());
-            ResaltarBoton(btnConfigProductos);
+            ResaltarBoton(btnEncargusMovil);
         }
 
         private void btnEncargusWeb_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new WebView());
-            ResaltarBoton(btnConfigProductos);
+            ResaltarBoton(btnEncargusWeb);
         }
 
-        private void btnConfigEmpleados_Click(object sender, EventArgs e)
+        private void btnConfigCategorias_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new CategoriasView());
-            ResaltarBoton(btnConfigEmpleados);
+            ResaltarBoton(btnConfigCategorias);
         }
 
-        private void btnConfigSector_Click(object sender, EventArgs e)
+        private void btnConfigDatos_Click(object sender, EventArgs e)
         {
             AbrirFormulariosHijos(new DatosView());
-            ResaltarBoton(btnConfigSector);
+            ResaltarBoton(btnConfigDatos);
         }
 
         private void btnSalir_Click(object sender, EventArgs e)
@@ -217,34 +167,64 @@ namespace FoodMacanoDesktop.Views.Menu
             ResaltarBoton(btnSalirDelSistema);
         }
 
-        private async void btnArchivoLocalidades_Click(object sender, EventArgs e)
+        private async void btnTodosProductos_Click(object sender, EventArgs e)
         {
             // Obtener la lista de productos directamente desde el servicio
             var productos = await productoService.GetAllAsync();
             ProductosViewReports reporteProductos = new ProductosViewReports(this, productos);
             AbrirFormulariosHijos(reporteProductos); // Muestra el formulario de reporte
-            ResaltarBoton(btnArchivoLocalidades); // Resalta el botón si es necesario
+            ResaltarBoton(btnTodosProductos); // Resalta el botón si es necesario
 
         }
 
         private void btnLocalidades_Click(object sender, EventArgs e)
         {
-            MostrarSubmenu(SubmenuLocalidades);
+            MostrarSubmenu(SubmenuProductos);
             ResaltarEncabezadosAbiertos();
         }
 
-        private async void btnInforme_Click(object sender, EventArgs e)
+        private void btnNosotros_Click(object sender, EventArgs e)
+        {
+            MostrarSubmenu(submenuDatos);
+            ResaltarEncabezadosAbiertos();
+        }
+
+        private void btnTodosPedidos_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new TodosLosProductos());
+            ResaltarBoton(btnTodosPedidos);
+        }
+
+        private void btnPorCategoria_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new PorCategoriaView());
+            ResaltarBoton(btnPorCategoria);
+        }
+
+        private void btnEncargusNegocio_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new EncarguesView());
+            ResaltarBoton(btnEncargusNegocio);
+        }
+
+        private void btnProductos_Click(object sender, EventArgs e)
+        {
+            MostrarSubmenu(SubmenuProductos);
+            ResaltarEncabezadosAbiertos();
+        }
+
+        private async void btnNDatos_Click(object sender, EventArgs e)
         {
             // Obtener la lista de productos directamente desde el servicio
             var negocio = await negocioService.GetAllAsync();
             NegocioViewReports reporteNegocio = new NegocioViewReports(this, negocio);
             AbrirFormulariosHijos(reporteNegocio); // Muestra el formulario de reporte
-            ResaltarBoton(btnInforme); // Resalta el botón si es necesario
+            ResaltarBoton(btnNDatos); // Resalta el botón si es necesario
         }
 
-        private void btnReabastecimiento_Click(object sender, EventArgs e)
+        private void btnConfiguracion_Click(object sender, EventArgs e)
         {
-            MostrarSubmenu(SubmenuReabastecimiento);
+            MostrarSubmenu(SubmenuConfiguracion);
             ResaltarEncabezadosAbiertos();
         }
     }
