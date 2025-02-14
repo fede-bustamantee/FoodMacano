@@ -24,9 +24,13 @@
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             dataGridViewEncargues = new DataGridView();
             cboFecha = new ComboBox();
+            dataGridViewDetalles = new DataGridView();
+            btnEditar = new FontAwesome.Sharp.IconButton();
+            btnEliminar = new FontAwesome.Sharp.IconButton();
             panel2.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewEncargues).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewDetalles).BeginInit();
             SuspendLayout();
             // 
             // panel2
@@ -78,7 +82,7 @@
             dataGridViewEncargues.Location = new Point(31, 66);
             dataGridViewEncargues.Name = "dataGridViewEncargues";
             dataGridViewEncargues.ReadOnly = true;
-            dataGridViewEncargues.Size = new Size(668, 308);
+            dataGridViewEncargues.Size = new Size(668, 135);
             dataGridViewEncargues.TabIndex = 4;
             // 
             // cboFecha
@@ -90,11 +94,51 @@
             cboFecha.TabIndex = 5;
             cboFecha.SelectedIndexChanged += cboFecha_SelectedIndexChanged;
             // 
+            // dataGridViewDetalles
+            // 
+            dataGridViewDetalles.AllowUserToAddRows = false;
+            dataGridViewDetalles.AllowUserToDeleteRows = false;
+            dataGridViewDetalles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewDetalles.Location = new Point(31, 203);
+            dataGridViewDetalles.Name = "dataGridViewDetalles";
+            dataGridViewDetalles.ReadOnly = true;
+            dataGridViewDetalles.Size = new Size(676, 150);
+            dataGridViewDetalles.TabIndex = 6;
+            // 
+            // btnEditar
+            // 
+            btnEditar.IconChar = FontAwesome.Sharp.IconChar.None;
+            btnEditar.IconColor = Color.Black;
+            btnEditar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEditar.Location = new Point(256, 359);
+            btnEditar.Name = "btnEditar";
+            btnEditar.Size = new Size(75, 23);
+            btnEditar.TabIndex = 16;
+            btnEditar.Text = "Editar";
+            btnEditar.UseVisualStyleBackColor = true;
+            btnEditar.Click += btnEditar_Click;
+            // 
+            // btnEliminar
+            // 
+            btnEliminar.IconChar = FontAwesome.Sharp.IconChar.None;
+            btnEliminar.IconColor = Color.Black;
+            btnEliminar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnEliminar.Location = new Point(367, 359);
+            btnEliminar.Name = "btnEliminar";
+            btnEliminar.Size = new Size(75, 23);
+            btnEliminar.TabIndex = 15;
+            btnEliminar.Text = "Eliminar";
+            btnEliminar.UseVisualStyleBackColor = true;
+            btnEliminar.Click += btnEliminar_Click;
+            // 
             // MovilView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnEditar);
+            Controls.Add(btnEliminar);
+            Controls.Add(dataGridViewDetalles);
             Controls.Add(cboFecha);
             Controls.Add(dataGridViewEncargues);
             Controls.Add(panel2);
@@ -108,6 +152,7 @@
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewEncargues).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewDetalles).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -120,5 +165,8 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private DataGridView dataGridViewEncargues;
         private ComboBox cboFecha;
+        private DataGridView dataGridViewDetalles;
+        private FontAwesome.Sharp.IconButton btnEditar;
+        private FontAwesome.Sharp.IconButton btnEliminar;
     }
 }

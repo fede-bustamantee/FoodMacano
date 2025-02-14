@@ -150,4 +150,44 @@ public class MauiEncarguesController : ControllerBase
 
         return NoContent();
     }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutMauiEncargue(int id, MauiEncargue mauiEncargue)
+    {
+        if (id != mauiEncargue.Id)
+        {
+            return BadRequest();
+        }
+            // Obtener el encargue existente con sus detalles
+            var encargueExistente = await _context.mauiEncargue
+                .Include(e => e.Detalles)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (encargueExistente == null)
+            {
+                return NotFound();
+            }
+
+            // Actualizar las propiedades principales del encargue
+            encargueExistente.UserDisplayName = mauiEncargue.UserDisplayName;
+            encargueExistente.Direccion = mauiEncargue.Direccion;
+            encargueExistente.FechaEncargue = mauiEncargue.FechaEncargue;
+            encargueExistente.Total = mauiEncargue.Total;
+
+            // Actualizar los detalles
+            foreach (var detalle in mauiEncargue.Detalles)
+            {
+                var detalleExistente = encargueExistente.Detalles
+                    .FirstOrDefault(d => d.Id == detalle.Id);
+
+                if (detalleExistente != null)
+                {
+                    detalleExistente.Cantidad = detalle.Cantidad;
+                    detalleExistente.PrecioUnitario = detalle.PrecioUnitario;
+                    detalleExistente.NombreProducto = detalle.NombreProducto;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+    }
 }

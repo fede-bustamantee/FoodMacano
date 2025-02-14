@@ -54,6 +54,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Negocio
                     encargue.Cantidad = (int)nudCantidad.Value;
                     encargue.PrecioUnitario = productoSeleccionado.Precio;
                     encargue.Total = encargue.Cantidad * encargue.PrecioUnitario;
+                    encargue.NumeroMesa = txtMesa.Text.Trim(); // <-- Agregar esto para actualizar la mesa
 
                     await encargueService.UpdateEncargueAsync(encargue);
                     this.Close();

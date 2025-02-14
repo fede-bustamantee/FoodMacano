@@ -1,5 +1,6 @@
 ﻿using FoodMacanoServices.Class;
 using FoodMacanoServices.Models;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -39,6 +40,19 @@ namespace FoodMacanoServices.Services
                 Console.WriteLine($"Error al obtener encargues: {ex.Message}");
                 return new List<MauiEncargue>();
             }
+        }
+        public async Task UpdateEncargueAsync(MauiEncargue encargue)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"{_endpoint}/{encargue.Id}", encargue);
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Error al actualizar el encargue: {response.StatusCode}");
+        }
+
+        public async Task DeleteEncargueAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"{_endpoint}/{id}");
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Error al eliminar el encargue: {response.StatusCode}");
         }
     }
 }
