@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BCrypt.Net;
 
 namespace FoodMacanoServices.Controllers
 {
@@ -18,6 +19,7 @@ namespace FoodMacanoServices.Controllers
         {
             _context = context;
         }
+
         // GET: api/Usuarios/email/{email}
         [HttpGet("email/{email}")]
         public async Task<ActionResult<Usuario>> GetUsuarioByEmail(string email)
@@ -30,6 +32,8 @@ namespace FoodMacanoServices.Controllers
                 return NotFound();
             }
 
+            // No devolver la contraseña en la respuesta
+            usuario.Password = "";
             return usuario;
         }
 
@@ -37,7 +41,13 @@ namespace FoodMacanoServices.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
-            return await _context.usuarios.ToListAsync();
+            var usuarios = await _context.usuarios.ToListAsync();
+            // No devolver las contraseñas en la respuesta
+            foreach (var usuario in usuarios)
+            {
+                usuario.Password = "";
+            }
+            return usuarios;
         }
 
         // GET: api/Usuarios/5
@@ -52,6 +62,8 @@ namespace FoodMacanoServices.Controllers
                 return NotFound();
             }
 
+            // No devolver la contraseña en la respuesta
+            usuario.Password = "";
             return usuario;
         }
 
@@ -59,10 +71,17 @@ namespace FoodMacanoServices.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
+            // Encriptar la contraseña antes de guardar
+            usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
+
             _context.usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
+            // No devolver la contraseña en la respuesta
+            var usuarioResponse = usuario;
+            usuarioResponse.Password = "";
+
+            return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuarioResponse);
         }
 
         // PUT: api/Usuarios/5
@@ -74,6 +93,25 @@ namespace FoodMacanoServices.Controllers
                 return BadRequest();
             }
 
+            // Obtener usuario existente
+            var existingUser = await _context.usuarios.FindAsync(id);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            // Solo encriptar la contraseña si se proporcionó una nueva
+            if (!string.IsNullOrEmpty(usuario.Password) && usuario.Password != existingUser.Password)
+            {
+                usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
+            }
+            else
+            {
+                // Mantener la contraseña existente si no se proporciona una nueva
+                usuario.Password = existingUser.Password;
+            }
+
+            _context.Entry(existingUser).State = EntityState.Detached;
             _context.Entry(usuario).State = EntityState.Modified;
 
             try
