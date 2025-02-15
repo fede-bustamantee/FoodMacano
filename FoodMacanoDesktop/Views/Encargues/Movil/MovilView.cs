@@ -34,7 +34,6 @@ namespace FoodMacanoDesktop.Views.Encargues
             // Agregar columnas
             dataGridViewEncargues.Columns.Clear();
             dataGridViewEncargues.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "ID", DataPropertyName = "Id" });
-            dataGridViewEncargues.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Cliente", DataPropertyName = "UserDisplayName" });
             dataGridViewEncargues.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Dirección", DataPropertyName = "Direccion" });
             dataGridViewEncargues.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Fecha", DataPropertyName = "FechaEncargue" });
             dataGridViewEncargues.Columns.Add(new DataGridViewTextBoxColumn { HeaderText = "Total", DataPropertyName = "Total", DefaultCellStyle = { Format = "C2" } });
@@ -107,11 +106,13 @@ namespace FoodMacanoDesktop.Views.Encargues
             if (encargue == null) return;
 
             var editarEncargueView = new EditarMovilView(encargue);
-            editarEncargueView.ShowDialog();
-            // Recargar datos después de editar
-            LoadEncarguesAsync();
-        }
 
+            if (editarEncargueView.ShowDialog() == DialogResult.OK)
+            {
+                // Refrescar los datos después de la edición
+                bindingSource.ResetBindings(false);
+            }
+        }
         private async void btnEliminar_Click(object sender, EventArgs e)
         {
             var encargue = bindingSource.Current as MauiEncargue;

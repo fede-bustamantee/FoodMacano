@@ -32,9 +32,10 @@
             txtTotal = new TextBox();
             txtDireccion = new TextBox();
             dtpFecha = new DateTimePicker();
-            dataGridViewDetalles = new DataGridView();
             btnGuardar = new FontAwesome.Sharp.IconButton();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewDetalles).BeginInit();
+            panelDetalles = new FlowLayoutPanel();
+            DetalleEncargue = new ComboBox();
+            panelDetalles.SuspendLayout();
             SuspendLayout();
             // 
             // txtCliente
@@ -65,17 +66,6 @@
             dtpFecha.Size = new Size(241, 23);
             dtpFecha.TabIndex = 17;
             // 
-            // dataGridViewDetalles
-            // 
-            dataGridViewDetalles.AllowUserToAddRows = false;
-            dataGridViewDetalles.AllowUserToDeleteRows = false;
-            dataGridViewDetalles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewDetalles.Location = new Point(47, 167);
-            dataGridViewDetalles.Name = "dataGridViewDetalles";
-            dataGridViewDetalles.ReadOnly = true;
-            dataGridViewDetalles.Size = new Size(700, 211);
-            dataGridViewDetalles.TabIndex = 18;
-            // 
             // btnGuardar
             // 
             btnGuardar.IconChar = FontAwesome.Sharp.IconChar.None;
@@ -89,20 +79,36 @@
             btnGuardar.UseVisualStyleBackColor = true;
             btnGuardar.Click += btnGuardar_Click;
             // 
+            // panelDetalles
+            // 
+            panelDetalles.Controls.Add(DetalleEncargue);
+            panelDetalles.Location = new Point(93, 166);
+            panelDetalles.Name = "panelDetalles";
+            panelDetalles.Size = new Size(646, 216);
+            panelDetalles.TabIndex = 20;
+            // 
+            // DetalleEncargue
+            // 
+            DetalleEncargue.FormattingEnabled = true;
+            DetalleEncargue.Location = new Point(3, 3);
+            DetalleEncargue.Name = "DetalleEncargue";
+            DetalleEncargue.Size = new Size(121, 23);
+            DetalleEncargue.TabIndex = 0;
+            // 
             // EditarMovilView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(panelDetalles);
             Controls.Add(btnGuardar);
-            Controls.Add(dataGridViewDetalles);
             Controls.Add(dtpFecha);
             Controls.Add(txtDireccion);
             Controls.Add(txtTotal);
             Controls.Add(txtCliente);
             Name = "EditarMovilView";
             Text = "EditarMovilView";
-            ((System.ComponentModel.ISupportInitialize)dataGridViewDetalles).EndInit();
+            panelDetalles.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -113,7 +119,8 @@
         private TextBox txtTotal;
         private TextBox txtDireccion;
         private DateTimePicker dtpFecha;
-        private DataGridView dataGridViewDetalles;
         private FontAwesome.Sharp.IconButton btnGuardar;
+        private FlowLayoutPanel panelDetalles;
+        private ComboBox DetalleEncargue;
     }
 }

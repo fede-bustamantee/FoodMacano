@@ -15,15 +15,47 @@ public class MauiEncarguesController : ControllerBase
     }
 
     [HttpGet]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetMauiEncargues()
     {
-        var encargues = await _context.mauiEncargue
-            .Include(e => e.Detalles) // Incluir detalles del encargue
-            .ThenInclude(d => d.Producto) // Incluir productos en los detalles
-            .OrderByDescending(e => e.FechaEncargue)
-            .ToListAsync();
+        try
+        {
+            var encargues = await _context.mauiEncargue
+                .Include(e => e.Detalles)
+                .ThenInclude(d => d.Producto)
+                .OrderByDescending(e => e.FechaEncargue)
+                .ToListAsync();
 
-        return Ok(encargues);
+            // Verificar y corregir la información del producto en cada detalle
+            foreach (var encargue in encargues)
+            {
+                foreach (var detalle in encargue.Detalles)
+                {
+                    if (detalle.Producto != null)
+                    {
+                        // Asegurar que el nombre del producto en el detalle coincida con el producto real
+                        detalle.NombreProducto = detalle.Producto.Nombre;
+                        // Log para debugging
+                        Console.WriteLine($"Encargue {encargue.Id} - Detalle ProductoId: {detalle.ProductoId}, " +
+                                        $"Nombre en detalle: {detalle.NombreProducto}, " +
+                                        $"Nombre en producto: {detalle.Producto.Nombre}");
+                    }
+                    else
+                    {
+                        // Log para debugging
+                        Console.WriteLine($"Encargue {encargue.Id} - Detalle ProductoId: {detalle.ProductoId} " +
+                                        $"no tiene producto asociado");
+                    }
+                }
+            }
+
+            return Ok(encargues);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en GetMauiEncargues: {ex}");
+            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+        }
     }
 
 
