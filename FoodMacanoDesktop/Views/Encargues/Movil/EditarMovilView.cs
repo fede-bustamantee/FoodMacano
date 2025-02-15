@@ -76,23 +76,23 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 {
                     Location = new Point(80, yPos),
                     Width = 150,
-                    DataSource = new List<Producto>(productos), // Crear nueva lista para evitar referencias compartidas
+                    DataSource = productos,
                     DisplayMember = "Nombre",
                     ValueMember = "Id",
-                    Tag = detalle
+                    Tag = detalle // Guardar el detalle para actualizarlo después
                 };
 
-                // Asegurarse de que se seleccione el producto correcto
-                var productoCorrespondiente = productos.FirstOrDefault(p => p.Id == detalle.ProductoId);
-                if (productoCorrespondiente != null)
+                // Verificar si el producto existe en la lista antes de asignar SelectedValue
+                if (productos.Any(p => p.Id == detalle.ProductoId))
                 {
-                    cboProducto.SelectedValue = productoCorrespondiente.Id;
-                    Console.WriteLine($"Producto seleccionado: {productoCorrespondiente.Nombre} para detalle con ProductoId: {detalle.ProductoId}");
+                    cboProducto.SelectedValue = detalle.ProductoId;
+                    cboProducto.Refresh(); // Forzar actualización
                 }
                 else
                 {
-                    Console.WriteLine($"ADVERTENCIA: No se encontró el producto con ID {detalle.ProductoId}");
+                    Console.WriteLine($"El ProductoId {detalle.ProductoId} no está en la lista de productos disponibles.");
                 }
+
                 cboProducto.SelectedIndexChanged += (s, e) =>
                 {
                     var combo = (ComboBox)s;
