@@ -45,5 +45,40 @@ namespace FoodMacanoServices.Models
                 return new List<Encargue>();
             }
         }
+        public async Task<Encargue> UpdateEncargueAsync(Encargue encargue)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(encargue, _options);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PutAsync($"{_endpoint}/{encargue.Id}", content);
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Error al actualizar encargue: {response.StatusCode}");
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<Encargue>(responseContent, _options);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al actualizar encargue: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task DeleteEncargueAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_endpoint}/{id}");
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Error al eliminar encargue: {response.StatusCode}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al eliminar encargue: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

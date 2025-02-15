@@ -1,5 +1,4 @@
-﻿
-using FoodMacanoDesktop.Views.Encargues.Movil;
+﻿using FoodMacanoDesktop.Views.Encargues.Movil;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
@@ -97,7 +96,7 @@ namespace FoodMacanoDesktop.Views.Encargues
         {
             // Asignar los detalles del encargue al DataGridViewDetalles
             dataGridViewDetalles.DataSource = null;
-            dataGridViewDetalles.DataSource = encargue.Detalles;
+            dataGridViewDetalles.DataSource = encargue?.Detalles ?? new List<MauiEncargueDetalle>();
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
@@ -111,8 +110,16 @@ namespace FoodMacanoDesktop.Views.Encargues
             {
                 // Refrescar los datos después de la edición
                 bindingSource.ResetBindings(false);
+
+                // Actualizar detalles
+                var encargueActualizado = bindingSource.Current as MauiEncargue;
+                if (encargueActualizado != null)
+                {
+                    MostrarDetalles(encargueActualizado);  // Refrescar los detalles
+                }
             }
         }
+
         private async void btnEliminar_Click(object sender, EventArgs e)
         {
             var encargue = bindingSource.Current as MauiEncargue;
@@ -130,8 +137,11 @@ namespace FoodMacanoDesktop.Views.Encargues
                 try
                 {
                     await _encarguesService.DeleteEncargueAsync(encargue.Id);
-                    LoadEncarguesAsync();
+                    LoadEncarguesAsync();  // Recargar la lista de encargues
                     MessageBox.Show("Encargue eliminado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Si el encargue eliminado era el seleccionado, borrar los detalles
+                    MostrarDetalles(null);  // Limpiar los detalles
                 }
                 catch (Exception ex)
                 {

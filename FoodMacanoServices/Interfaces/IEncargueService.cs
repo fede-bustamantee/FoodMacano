@@ -9,5 +9,6 @@ namespace FoodMacanoServices.Interfaces
         Task<Encargue> GetEncargueByIdAsync(int id);
         Task UpdateEncargueAsync(Encargue encargue);
         Task DeleteEncargueAsync(int id);
+        Task<int> GetNextEncargueNumberAsync();
     }
 }

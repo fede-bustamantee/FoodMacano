@@ -19,7 +19,8 @@ public class EncarguesController : ControllerBase
     public async Task<ActionResult<IEnumerable<Encargue>>> GetEncargues()
     {
         return await _context.encargues
-            .Include(e => e.Producto)
+            .Include(e => e.EncargueDetalles)
+            .ThenInclude(ed => ed.Producto)
             .Include(e => e.Usuario)
             .ToListAsync();
     }
@@ -29,7 +30,8 @@ public class EncarguesController : ControllerBase
     public async Task<ActionResult<Encargue>> GetEncargue(int id)
     {
         var encargue = await _context.encargues
-            .Include(e => e.Producto)
+            .Include(e => e.EncargueDetalles)
+            .ThenInclude(ed => ed.Producto)
             .Include(e => e.Usuario)
             .FirstOrDefaultAsync(e => e.Id == id);
 
@@ -47,53 +49,46 @@ public class EncarguesController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || encargue.EncargueDetalles == null || !encargue.EncargueDetalles.Any())
             {
-                return BadRequest(ModelState);
+                return BadRequest("Encargue debe contener al menos un producto.");
             }
 
-            // Verificar existencia de Producto y Usuario
-            var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
             var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargue.UsuarioId);
-
-            if (!productoExiste || !usuarioExiste)
+            if (!usuarioExiste)
             {
-                return BadRequest(new
-                {
-                    errors = new Dictionary<string, string[]>
-                {
-                    { productoExiste ? null : "Producto", new[] { "El producto especificado no existe." } },
-                    { usuarioExiste ? null : "Usuario", new[] { "El usuario especificado no existe." } }
-                }.Where(kvp => kvp.Key != null)
-                });
+                return BadRequest("El usuario especificado no existe.");
             }
 
-            // Crear nuevo encargue
+            // Crear un nuevo encargue
             var nuevoEncargue = new Encargue
             {
-                ProductoId = encargue.ProductoId,
                 UsuarioId = encargue.UsuarioId,
-                Cantidad = encargue.Cantidad,
-                FechaEncargue = DateTime.UtcNow
+                FechaEncargue = DateTime.UtcNow,
+                NumeroEncargue = await _context.encargues.CountAsync() + 1
             };
 
             _context.encargues.Add(nuevoEncargue);
             await _context.SaveChangesAsync();
 
-            // Cargar las relaciones después de guardar
-            await _context.Entry(nuevoEncargue)
-                .Reference(e => e.Producto)
-                .LoadAsync();
-            await _context.Entry(nuevoEncargue)
-                .Reference(e => e.Usuario)
-                .LoadAsync();
+            // Agregar los productos al EncargueDetalle
+            foreach (var detalle in encargue.EncargueDetalles)
+            {
+                var productoExiste = await _context.productos.AnyAsync(p => p.Id == detalle.ProductoId);
+                if (!productoExiste)
+                    return BadRequest($"El producto con ID {detalle.ProductoId} no existe.");
 
+                detalle.EncargueId = nuevoEncargue.Id;
+                _context.encargueDetalles.Add(detalle);
+            }
+
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEncargue), new { id = nuevoEncargue.Id }, nuevoEncargue);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error al crear encargue: {ex.Message}");
-            return StatusCode(500, new { message = "Error interno al procesar el encargue.", error = ex.Message });
+            return StatusCode(500, "Error interno al procesar el encargue.");
         }
     }
 
@@ -106,25 +101,18 @@ public class EncarguesController : ControllerBase
             return BadRequest();
         }
 
-        var existingEncargue = await _context.encargues.FindAsync(id);
+        var existingEncargue = await _context.encargues.Include(e => e.EncargueDetalles).FirstOrDefaultAsync(e => e.Id == id);
         if (existingEncargue == null)
         {
             return NotFound();
         }
 
-        // Verificar existencia de Producto y Usuario
-        var productoExiste = await _context.productos.AnyAsync(p => p.Id == encargue.ProductoId);
-        var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargue.UsuarioId);
-
-        if (!productoExiste || !usuarioExiste)
-        {
-            return BadRequest("Producto o Usuario no existe");
-        }
-
-        // Actualizar solo las propiedades permitidas
-        existingEncargue.ProductoId = encargue.ProductoId;
         existingEncargue.UsuarioId = encargue.UsuarioId;
-        existingEncargue.Cantidad = encargue.Cantidad;
+        existingEncargue.FechaEncargue = DateTime.UtcNow;
+
+        // Actualizar productos
+        _context.encargueDetalles.RemoveRange(existingEncargue.EncargueDetalles);
+        existingEncargue.EncargueDetalles = encargue.EncargueDetalles;
 
         try
         {
@@ -145,12 +133,13 @@ public class EncarguesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEncargue(int id)
     {
-        var encargue = await _context.encargues.FindAsync(id);
+        var encargue = await _context.encargues.Include(e => e.EncargueDetalles).FirstOrDefaultAsync(e => e.Id == id);
         if (encargue == null)
         {
             return NotFound();
         }
 
+        _context.encargueDetalles.RemoveRange(encargue.EncargueDetalles);
         _context.encargues.Remove(encargue);
         await _context.SaveChangesAsync();
 

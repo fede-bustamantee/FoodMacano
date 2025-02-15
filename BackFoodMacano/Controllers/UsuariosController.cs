@@ -117,7 +117,8 @@ namespace FoodMacanoServices.Controllers
         {
             var encargues = await _context.encargues
                 .Where(e => e.UsuarioId == id)
-                .Include(e => e.Producto)
+                .Include(e => e.EncargueDetalles)
+                .ThenInclude(ed => ed.Producto)
                 .ToListAsync();
 
             if (encargues == null)

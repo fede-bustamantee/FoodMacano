@@ -58,27 +58,25 @@ namespace FoodMacanoServices.Services
 
         public async Task AddEncargueAsync(Encargue encargue)
         {
-            if (encargue == null)
-                throw new ArgumentNullException(nameof(encargue));
+            if (encargue == null || encargue.EncargueDetalles == null || !encargue.EncargueDetalles.Any())
+                throw new ArgumentException("El encargue debe contener al menos un producto.");
 
             try
             {
-                // Asegurarnos de que tenemos todos los datos necesarios
                 var request = new
                 {
-                    ProductoId = encargue.ProductoId,
                     UsuarioId = encargue.UsuarioId,
-                    Cantidad = encargue.Cantidad,
-                    FechaEncargue = DateTime.UtcNow
+                    FechaEncargue = DateTime.UtcNow,
+                    NumeroEncargue = await GetNextEncargueNumberAsync(),
+                    EncargueDetalles = encargue.EncargueDetalles.Select(d => new
+                    {
+                        ProductoId = d.ProductoId,
+                        Cantidad = d.Cantidad
+                    }).ToList()
                 };
 
                 var response = await _client.PostAsJsonAsync(_endpoint, request);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new ApplicationException($"Error del servidor: {response.StatusCode}, Detalles: {errorContent}");
-                }
+                response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
             {
@@ -138,6 +136,19 @@ namespace FoodMacanoServices.Services
             {
                 Console.WriteLine($"Error en DeleteEncargueAsync: {ex.Message}");
                 throw;
+            }
+        }
+        public async Task<int> GetNextEncargueNumberAsync()
+        {
+            try
+            {
+                var encargues = await _client.GetFromJsonAsync<List<Encargue>>(_endpoint);
+                return (encargues?.Max(e => e.NumeroEncargue) ?? 0) + 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en GetNextEncargueNumberAsync: {ex.Message}");
+                return 1; // Si hay un error, asigna 1 como número de encargue inicial
             }
         }
     }

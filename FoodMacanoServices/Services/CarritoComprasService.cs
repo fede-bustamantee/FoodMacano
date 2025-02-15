@@ -1,235 +1,119 @@
-﻿using FoodMacanoServices.Class;
-using FoodMacanoServices.Interfaces;
+﻿using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
-using System.Net.Http.Json;
-using System.Text.Json;
+using FoodMacanoServices.Services;
 
-namespace FoodMacanoServices.Services
+public class CarritoService : ICarritoService
 {
-    public class CarritoService : GenericService<CarritoCompra>, ICarritoService
+    private readonly FirebaseAuthService _authService;
+    private readonly UsuarioMappingService _usuarioMappingService;
+    private readonly IEncargueService _encargueService;
+
+    public CarritoService(
+        FirebaseAuthService authService,
+        UsuarioMappingService usuarioMappingService,
+        IEncargueService encargueService)
     {
-        private readonly HttpClient client;
-        private readonly JsonSerializerOptions options;
-        private readonly string _endpoint;
-        private readonly FirebaseAuthService _authService;
-        private readonly UsuarioMappingService _usuarioMappingService;
-        private readonly IGenericService<CarritoCompra> _carritoService;
-        private readonly IEncargueService _encargueService; // Cambiado a IEncargueService
+        _authService = authService;
+        _usuarioMappingService = usuarioMappingService;
+        _encargueService = encargueService;
+    }
 
-        public CarritoService(
-            FirebaseAuthService authService,
-            UsuarioMappingService usuarioMappingService,
-            IGenericService<CarritoCompra> carritoService,
-            IEncargueService encargueService) // Cambiado a IEncargueService
+    public async Task<List<CarritoCompra>> GetCartItemsAsync()
+    {
+        var firebaseId = await _authService.GetUserId();
+        return CarritoStore.GetCarrito(firebaseId);
+    }
+
+    public async Task AddToCartAsync(Producto producto)
+    {
+        var firebaseId = await _authService.GetUserId();
+        if (string.IsNullOrEmpty(firebaseId))
         {
-            client = new HttpClient();
-            options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-            var urlApi = Properties.Resources.UrlApi;
-            _endpoint = urlApi + ApiEndPoints.GetEndpoint(nameof(CarritoCompra));
-            _authService = authService;
-            _usuarioMappingService = usuarioMappingService;
-            _carritoService = carritoService;
-            _encargueService = encargueService;
+            throw new InvalidOperationException("Usuario no autenticado");
         }
 
-        public async Task<List<CarritoCompra>> GetCartItemsAsync()
+        var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
+        var carrito = CarritoStore.GetCarrito(firebaseId);
+        var existingItem = carrito.FirstOrDefault(i => i.ProductoId == producto.Id);
+
+        if (existingItem != null)
         {
-            try
-            {
-                var firebaseId = await _authService.GetUserId();
-                if (string.IsNullOrEmpty(firebaseId))
-                {
-                    throw new InvalidOperationException("Usuario no autenticado");
-                }
-
-                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
-                var response = await client.GetAsync($"{_endpoint}?usuarioId={userId}");
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
-
-                var items = JsonSerializer.Deserialize<List<CarritoCompra>>(content, options);
-                return items ?? new List<CarritoCompra>();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en GetCartItemsAsync: {ex.Message}");
-                throw;
-            }
+            existingItem.Cantidad++;
         }
-
-        public async Task AddToCartAsync(Producto producto)
+        else
         {
-            try
+            carrito.Add(new CarritoCompra
             {
-                var firebaseId = await _authService.GetUserId();
-                if (string.IsNullOrEmpty(firebaseId))
-                {
-                    throw new InvalidOperationException("Usuario no autenticado");
-                }
-
-                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
-
-                var cartItems = await GetCartItemsAsync();
-                var existingItem = cartItems.FirstOrDefault(i => i.ProductoId == producto.Id);
-
-                if (existingItem != null)
-                {
-                    existingItem.Cantidad++;
-                    await UpdateCartItemAsync(existingItem);
-                }
-                else
-                {
-                    var newItem = new CarritoCompra
-                    {
-                        ProductoId = producto.Id,
-                        Cantidad = 1,
-                        UsuarioId = userId
-                    };
-
-                    var response = await client.PostAsJsonAsync(_endpoint, newItem);
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en AddToCartAsync: {ex.Message}");
-                throw;
-            }
+                Id = CarritoStore.GetNextId(),
+                ProductoId = producto.Id,
+                Cantidad = 1,
+                UsuarioId = userId,
+                Producto = producto
+            });
         }
+    }
 
-        public async Task UpdateCartItemAsync(CarritoCompra item)
+    public async Task RemoveFromCartAsync(int itemId)
+    {
+        var firebaseId = await _authService.GetUserId();
+        var carrito = CarritoStore.GetCarrito(firebaseId);
+        var item = carrito.FirstOrDefault(i => i.Id == itemId);
+        if (item != null)
         {
-            try
-            {
-                var response = await client.PutAsJsonAsync($"{_endpoint}/{item.Id}", item);
-                var content = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en UpdateCartItemAsync: {ex.Message}");
-                throw;
-            }
+            carrito.Remove(item);
         }
+    }
 
-        public async Task RemoveFromCartAsync(int itemId)
+    public async Task CheckoutAsync()
+{
+    try
+    {
+        var firebaseId = await _authService.GetUserId();
+        if (string.IsNullOrEmpty(firebaseId))
+            throw new InvalidOperationException("Usuario no autenticado.");
+
+        var carrito = CarritoStore.GetCarrito(firebaseId);
+        if (!carrito.Any())
+            throw new InvalidOperationException("El carrito está vacío. No se puede realizar el checkout.");
+
+        var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
+
+        // Crear un solo encargue con todos los productos del carrito
+        var nuevoEncargue = new Encargue
         {
-            try
+            UsuarioId = userId,
+            FechaEncargue = DateTime.UtcNow,
+            NumeroEncargue = await _encargueService.GetNextEncargueNumberAsync(),
+            EncargueDetalles = carrito.Select(item => new EncargueDetalle
             {
-                var response = await client.DeleteAsync($"{_endpoint}/{itemId}");
-                if (!response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    throw new ApplicationException($"Error: {response.StatusCode}, Details: {content}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en RemoveFromCartAsync: {ex.Message}");
-                throw;
-            }
-        }
+                ProductoId = item.ProductoId,
+                Cantidad = item.Cantidad
+            }).ToList()
+        };
 
-        public async Task<int> GetCartItemCountAsync()
-        {
-            try
-            {
-                var items = await GetCartItemsAsync();
-                return items.Sum(item => item.Cantidad);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en GetCartItemCountAsync: {ex.Message}");
-                return 0;
-            }
-        }
+        await _encargueService.AddEncargueAsync(nuevoEncargue);
 
-        public async Task CheckoutAsync()
-        {
-            try
-            {
-                var cartItems = await GetCartItemsAsync();
-                if (!cartItems.Any())
-                    throw new InvalidOperationException("El carrito está vacío. No se puede realizar el checkout.");
-
-                var firebaseId = await _authService.GetUserId();
-                if (string.IsNullOrEmpty(firebaseId))
-                    throw new InvalidOperationException("Usuario no autenticado.");
-
-                var userId = await _usuarioMappingService.GetUsuarioIdFromFirebaseId(firebaseId);
-
-                foreach (var item in cartItems)
-                {
-                    try
-                    {
-                        Console.WriteLine($"Procesando ítem: ID={item.Id}, ProductoId={item.ProductoId}, Cantidad={item.Cantidad}");
-
-                        var encargue = new Encargue
-                        {
-                            ProductoId = item.ProductoId,
-                            UsuarioId = userId,
-                            Cantidad = item.Cantidad,
-                            FechaEncargue = DateTime.UtcNow
-                        };
-
-                        Console.WriteLine($"Creando Encargue: ProductoId={encargue.ProductoId}, UsuarioId={encargue.UsuarioId}, Cantidad={encargue.Cantidad}, FechaEncargue={encargue.FechaEncargue}");
-
-                        await _encargueService.AddEncargueAsync(encargue);
-                        await RemoveFromCartAsync(item.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new ApplicationException($"Error al procesar el ítem {item.Id}: {ex.Message}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en CheckoutAsync: {ex.Message}");
-                throw;
-            }
-        }
-
-
-        public async Task<int> GetUniqueItemCountAsync()
-        {
-            try
-            {
-                var cartItems = await GetCartItemsAsync();
-                return cartItems.Count;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en GetUniqueItemCountAsync: {ex.Message}");
-                throw;
-            }
-        }
-
-        public async Task UpdateAsync(CarritoCompra carritoCompra)
-        {
-            try
-            {
-                await UpdateCartItemAsync(carritoCompra);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error en UpdateAsync: {ex.Message}");
-                throw;
-            }
-        }
+        // Vaciar el carrito después de realizar el checkout
+        CarritoStore.ClearCarrito(firebaseId);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error en CheckoutAsync: {ex.Message}");
+        throw;
     }
 }
 
+    public async Task<int> GetCartItemCountAsync()
+    {
+        var firebaseId = await _authService.GetUserId();
+        var carrito = CarritoStore.GetCarrito(firebaseId);
+        return carrito.Sum(item => item.Cantidad);
+    }
+
+    public async Task<int> GetUniqueItemCountAsync()
+    {
+        var firebaseId = await _authService.GetUserId();
+        var carrito = CarritoStore.GetCarrito(firebaseId);
+        return carrito.Count;
+    }
+}

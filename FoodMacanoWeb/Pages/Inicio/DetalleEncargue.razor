@@ -16,7 +16,7 @@
         {
             NumeroEncargue = index + 1,
             FechaCompleta = group.Key,
-            Items = group.ToList()
+            Items = group.SelectMany(e => e.EncargueDetalles).ToList()
         })
         .ToList();
     }

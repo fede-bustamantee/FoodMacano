@@ -1,4 +1,5 @@
-﻿using FoodMacanoServices.Models;
+﻿using FoodMacanoServices.Interfaces;
+using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
         private readonly DesktopMovilService _encarguesService;
         private readonly MauiEncargue _encargue;
         private BindingSource _detallesBindingSource;
+        private readonly ProductoService productoService;
 
         public EditarMovilView(MauiEncargue encargue)
         {
@@ -24,6 +26,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
             _encarguesService = new DesktopMovilService();
             _encargue = encargue;
             _detallesBindingSource = new BindingSource();
+            productoService = new ProductoService();
 
             ConfigurarFormulario();
             CargarDatos();
@@ -41,7 +44,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
             CargarDetalles();
         }
 
-        private void CargarDetalles()
+        private async void CargarDetalles()
         {
             var detalles = _encargue.Detalles.ToList();
             panelDetalles.Controls.Clear();
@@ -49,6 +52,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
 
             foreach (var detalle in detalles)
             {
+                // Etiqueta Producto
                 Label lblProducto = new Label
                 {
                     Text = "Producto:",
@@ -57,6 +61,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 };
                 panelDetalles.Controls.Add(lblProducto);
 
+                // TextBox para Producto
                 TextBox txtProducto = new TextBox
                 {
                     Text = detalle.NombreProducto,
@@ -65,11 +70,26 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                     ReadOnly = true // Hacer que no sea editable
                 };
                 panelDetalles.Controls.Add(txtProducto);
-                yPos += 30;
 
+                // Botón para seleccionar Producto
+                Button btnSelectProduct = new Button
+                {
+                    Text = "Seleccionar Producto", // Cambiar el texto para que sea más claro
+                    Location = new Point(240, yPos),
+                    Width = 200,  // Aumentar el ancho del botón
+                    Height = 40,  // Aumentar la altura del botón
+                    Font = new Font("Arial", 12, FontStyle.Bold)  // Cambiar el tamaño de la fuente para hacerlo más visible
+                };
+                btnSelectProduct.Click += async (s, e) => await MostrarProductosAsync(txtProducto, detalle);
+                panelDetalles.Controls.Add(btnSelectProduct);
+
+                yPos += 60; // Ajustar la distancia entre controles
+
+                // Etiqueta Cantidad
                 Label lblCantidad = new Label { Text = "Cantidad:", Location = new Point(10, yPos), AutoSize = true };
                 panelDetalles.Controls.Add(lblCantidad);
 
+                // TextBox para Cantidad
                 TextBox txtCantidad = new TextBox
                 {
                     Text = detalle.Cantidad.ToString(),
@@ -87,9 +107,11 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 panelDetalles.Controls.Add(txtCantidad);
                 yPos += 30;
 
+                // Etiqueta Precio
                 Label lblPrecio = new Label { Text = "Precio:", Location = new Point(10, yPos), AutoSize = true };
                 panelDetalles.Controls.Add(lblPrecio);
 
+                // TextBox para Precio
                 TextBox txtPrecio = new TextBox
                 {
                     Text = detalle.PrecioUnitario.ToString("C2"),
@@ -107,9 +129,11 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 panelDetalles.Controls.Add(txtPrecio);
                 yPos += 30;
 
+                // Etiqueta Subtotal
                 Label lblSubtotal = new Label { Text = "Subtotal:", Location = new Point(10, yPos), AutoSize = true };
                 panelDetalles.Controls.Add(lblSubtotal);
 
+                // TextBox para Subtotal
                 TextBox txtSubtotal = new TextBox
                 {
                     Text = detalle.Subtotal.ToString("C2"),
@@ -119,8 +143,48 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 };
                 panelDetalles.Controls.Add(txtSubtotal);
                 yPos += 40;
+                _detallesBindingSource.ResetBindings(false);
             }
         }
+        private async Task MostrarProductosAsync(TextBox txtProducto, MauiEncargueDetalle detalle)
+        {
+            // Obtener la lista de productos disponibles
+            var productos = await productoService.GetAllAsync();
+
+            // Crear el formulario para seleccionar el producto
+            using (var selectProductForm = new Form())
+            {
+                ListBox listBox = new ListBox
+                {
+                    DataSource = productos,
+                    DisplayMember = "Nombre", // Muestra el nombre del producto
+                    ValueMember = "Id", // Usa el Id para identificar el producto seleccionado
+                    Dock = DockStyle.Fill
+                };
+                selectProductForm.Controls.Add(listBox);
+
+                Button btnSelect = new Button
+                {
+                    Text = "Seleccionar",
+                    Dock = DockStyle.Bottom
+                };
+                selectProductForm.Controls.Add(btnSelect);
+
+                // Al hacer clic en "Seleccionar", actualizamos el TextBox
+                btnSelect.Click += (s, e) =>
+                {
+                    if (listBox.SelectedItem is Producto selectedProduct)
+                    {
+                        detalle.NombreProducto = selectedProduct.Nombre; // Actualizamos el nombre del producto en el detalle
+                        txtProducto.Text = selectedProduct.Nombre; // Actualizamos el TextBox
+                        selectProductForm.Close();
+                    }
+                };
+
+                selectProductForm.ShowDialog(); // Muestra el formulario
+            }
+        }
+
 
         private void CargarDatos()
         {
@@ -134,9 +198,14 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
 
             await _encarguesService.UpdateEncargueAsync(_encargue);
 
+            // Actualizar los detalles
+            CargarDetalles(); // Esto recargará los detalles en la vista
+            _detallesBindingSource.ResetBindings(false);
+
             // Notificar que los datos fueron actualizados
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
     }
 }
