@@ -41,28 +41,14 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
             CargarDetalles();
         }
 
-        private async void CargarDetalles()
+        private void CargarDetalles()
         {
             var detalles = _encargue.Detalles.ToList();
             panelDetalles.Controls.Clear();
             int yPos = 10;
 
-            // Obtener productos disponibles
-            var productoService = new ProductoService();
-            var productos = await productoService.GetAllAsync(); // Método para obtener productos
-
-            // Verificar si la lista de productos está vacía
-            if (productos == null || !productos.Any())
-            {
-                Console.WriteLine("No se encontraron productos en la lista.");
-                return;
-            }
-
             foreach (var detalle in detalles)
             {
-                Console.WriteLine($"Cargando detalle: ProductoId={detalle.ProductoId}, NombreProducto={detalle.NombreProducto}");
-
-                // Label para Producto
                 Label lblProducto = new Label
                 {
                     Text = "Producto:",
@@ -71,48 +57,16 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 };
                 panelDetalles.Controls.Add(lblProducto);
 
-                // ComboBox para seleccionar productos
-                ComboBox cboProducto = new ComboBox
+                TextBox txtProducto = new TextBox
                 {
+                    Text = detalle.NombreProducto,
                     Location = new Point(80, yPos),
                     Width = 150,
-                    DataSource = productos,
-                    DisplayMember = "Nombre",
-                    ValueMember = "Id",
-                    Tag = detalle // Guardar el detalle para actualizarlo después
+                    ReadOnly = true // Hacer que no sea editable
                 };
-
-                // Verificar si el producto existe en la lista antes de asignar SelectedValue
-                if (productos.Any(p => p.Id == detalle.ProductoId))
-                {
-                    cboProducto.SelectedValue = detalle.ProductoId;
-                    cboProducto.Refresh(); // Forzar actualización
-                }
-                else
-                {
-                    Console.WriteLine($"El ProductoId {detalle.ProductoId} no está en la lista de productos disponibles.");
-                }
-
-                cboProducto.SelectedIndexChanged += (s, e) =>
-                {
-                    var combo = (ComboBox)s;
-                    var detalleActualizado = (MauiEncargueDetalle)combo.Tag;
-
-                    // Obtener el producto seleccionado
-                    var productoSeleccionado = (Producto)combo.SelectedItem;
-
-                    if (productoSeleccionado != null)
-                    {
-                        detalleActualizado.ProductoId = productoSeleccionado.Id;
-                        detalleActualizado.NombreProducto = productoSeleccionado.Nombre;
-                        Console.WriteLine($"Producto seleccionado: {productoSeleccionado.Nombre}");
-                    }
-                };
-
-                panelDetalles.Controls.Add(cboProducto);
+                panelDetalles.Controls.Add(txtProducto);
                 yPos += 30;
 
-                // Label y TextBox para cantidad (editable)
                 Label lblCantidad = new Label { Text = "Cantidad:", Location = new Point(10, yPos), AutoSize = true };
                 panelDetalles.Controls.Add(lblCantidad);
 
@@ -133,7 +87,6 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 panelDetalles.Controls.Add(txtCantidad);
                 yPos += 30;
 
-                // Label y TextBox para precio unitario (editable)
                 Label lblPrecio = new Label { Text = "Precio:", Location = new Point(10, yPos), AutoSize = true };
                 panelDetalles.Controls.Add(lblPrecio);
 
@@ -154,7 +107,6 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 panelDetalles.Controls.Add(txtPrecio);
                 yPos += 30;
 
-                // Label y TextBox para subtotal (solo lectura)
                 Label lblSubtotal = new Label { Text = "Subtotal:", Location = new Point(10, yPos), AutoSize = true };
                 panelDetalles.Controls.Add(lblSubtotal);
 

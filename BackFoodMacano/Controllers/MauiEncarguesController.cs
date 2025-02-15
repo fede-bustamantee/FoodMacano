@@ -18,13 +18,14 @@ public class MauiEncarguesController : ControllerBase
     public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetMauiEncargues()
     {
         var encargues = await _context.mauiEncargue
-            .Include(e => e.Detalles)
-                .ThenInclude(d => d.Producto) // Asegurar que se incluye el producto
+            .Include(e => e.Detalles) // Incluir detalles del encargue
+            .ThenInclude(d => d.Producto) // Incluir productos en los detalles
             .OrderByDescending(e => e.FechaEncargue)
             .ToListAsync();
 
         return Ok(encargues);
     }
+
 
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<IEnumerable<MauiEncargue>>> GetEncarguesByUser(string userId)
@@ -37,7 +38,23 @@ public class MauiEncarguesController : ControllerBase
         var encargues = await _context.mauiEncargue
             .Where(e => e.UserId == userId)
             .Include(e => e.Detalles)
-                .ThenInclude(d => d.Producto) // Incluir el producto en los detalles
+            .Select(e => new MauiEncargue
+            {
+                Id = e.Id,
+                FechaEncargue = e.FechaEncargue,
+                Total = e.Total,
+                UserId = e.UserId,
+                Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
+                {
+                    Id = d.Id,
+                    EncargueId = d.EncargueId,
+                    ProductoId = d.ProductoId,
+                    NombreProducto = d.NombreProducto,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Cantidad = d.Cantidad,
+                    Producto = _context.productos.FirstOrDefault(p => p.Id == d.ProductoId)
+                }).ToList()
+            })
             .OrderByDescending(e => e.FechaEncargue)
             .ToListAsync();
 
@@ -49,7 +66,23 @@ public class MauiEncarguesController : ControllerBase
     {
         var mauiEncargue = await _context.mauiEncargue
             .Include(e => e.Detalles)
-                .ThenInclude(d => d.Producto) // Asegurar que se carga el producto
+            .Select(e => new MauiEncargue
+            {
+                Id = e.Id,
+                FechaEncargue = e.FechaEncargue,
+                Total = e.Total,
+                UserId = e.UserId,
+                Detalles = e.Detalles.Select(d => new MauiEncargueDetalle
+                {
+                    Id = d.Id,
+                    EncargueId = d.EncargueId,
+                    ProductoId = d.ProductoId,
+                    NombreProducto = d.NombreProducto,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Cantidad = d.Cantidad,
+                    Producto = _context.productos.FirstOrDefault(p => p.Id == d.ProductoId)
+                }).ToList()
+            })
             .FirstOrDefaultAsync(e => e.Id == id);
 
         if (mauiEncargue == null)
@@ -57,7 +90,7 @@ public class MauiEncarguesController : ControllerBase
             return NotFound();
         }
 
-        return Ok(mauiEncargue);
+        return mauiEncargue;
     }
 
     [HttpPost]
@@ -75,7 +108,7 @@ public class MauiEncarguesController : ControllerBase
 
         try
         {
-            // Asignar correctamente los datos de los productos
+            // Verificar y asignar datos de productos en los detalles
             foreach (var detalle in mauiEncargue.Detalles)
             {
                 var producto = await _context.productos.FindAsync(detalle.ProductoId);
@@ -84,12 +117,15 @@ public class MauiEncarguesController : ControllerBase
                     return BadRequest($"Producto no encontrado: {detalle.ProductoId}");
                 }
 
+                // Asegurar que cada detalle está vinculado con el encargue
+                detalle.Encargue = mauiEncargue;
+                detalle.EncargueId = mauiEncargue.Id; // EF Core lo actualizará automáticamente
                 detalle.NombreProducto = producto.Nombre;
                 detalle.PrecioUnitario = producto.Precio;
             }
 
             _context.mauiEncargue.Add(mauiEncargue);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // EF Core maneja la transacción automáticamente
 
             return CreatedAtAction(nameof(GetMauiEncargue), new { id = mauiEncargue.Id }, mauiEncargue);
         }
@@ -99,48 +135,7 @@ public class MauiEncarguesController : ControllerBase
             return StatusCode(500, $"Error interno del servidor: {ex.Message}");
         }
     }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutMauiEncargue(int id, MauiEncargue mauiEncargue)
-    {
-        if (id != mauiEncargue.Id)
-        {
-            return BadRequest();
-        }
-
-        var encargueExistente = await _context.mauiEncargue
-            .Include(e => e.Detalles)
-            .FirstOrDefaultAsync(e => e.Id == id);
-
-        if (encargueExistente == null)
-        {
-            return NotFound();
-        }
-
-        // Actualizar propiedades principales
-        encargueExistente.UserDisplayName = mauiEncargue.UserDisplayName;
-        encargueExistente.Direccion = mauiEncargue.Direccion;
-        encargueExistente.FechaEncargue = mauiEncargue.FechaEncargue;
-        encargueExistente.Total = mauiEncargue.Total;
-
-        // Actualizar detalles
-        foreach (var detalle in mauiEncargue.Detalles)
-        {
-            var detalleExistente = encargueExistente.Detalles.FirstOrDefault(d => d.Id == detalle.Id);
-
-            if (detalleExistente != null)
-            {
-                var producto = await _context.productos.FindAsync(detalle.ProductoId);
-                detalleExistente.NombreProducto = producto?.Nombre ?? detalle.NombreProducto; // Asegurar nombre correcto
-                detalleExistente.Cantidad = detalle.Cantidad;
-                detalleExistente.PrecioUnitario = detalle.PrecioUnitario;
-            }
-        }
-
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
+    // DELETE: api/MauiEncargues/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteMauiEncargue(int id)
     {
@@ -154,5 +149,45 @@ public class MauiEncarguesController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutMauiEncargue(int id, MauiEncargue mauiEncargue)
+    {
+        if (id != mauiEncargue.Id)
+        {
+            return BadRequest();
+        }
+            // Obtener el encargue existente con sus detalles
+            var encargueExistente = await _context.mauiEncargue
+                .Include(e => e.Detalles)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (encargueExistente == null)
+            {
+                return NotFound();
+            }
+
+            // Actualizar las propiedades principales del encargue
+            encargueExistente.UserDisplayName = mauiEncargue.UserDisplayName;
+            encargueExistente.Direccion = mauiEncargue.Direccion;
+            encargueExistente.FechaEncargue = mauiEncargue.FechaEncargue;
+            encargueExistente.Total = mauiEncargue.Total;
+
+            // Actualizar los detalles
+            foreach (var detalle in mauiEncargue.Detalles)
+            {
+                var detalleExistente = encargueExistente.Detalles
+                    .FirstOrDefault(d => d.Id == detalle.Id);
+
+                if (detalleExistente != null)
+                {
+                    detalleExistente.Cantidad = detalle.Cantidad;
+                    detalleExistente.PrecioUnitario = detalle.PrecioUnitario;
+                    detalleExistente.NombreProducto = detalle.NombreProducto;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return NoContent();
     }
 }
