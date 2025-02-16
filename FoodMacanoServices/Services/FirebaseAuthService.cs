@@ -75,16 +75,19 @@ namespace FoodMacanoServices.Services
         {
             try
             {
-                var result = await _jsRuntime.InvokeAsync<object>("firebaseAuth.getCurrentUser");
-                if (result != null)
+                var result = await _jsRuntime.InvokeAsync<JsonElement>("firebaseAuth.getCurrentUser");
+
+                if (result.ValueKind == JsonValueKind.Null)
                 {
-                    var userDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(result.ToString());
-                    return (
-                        userDict["uid"].ToString(),
-                        Convert.ToBoolean(userDict["emailVerified"])
-                    );
+                    return (null, false);
                 }
-                return (null, false);
+
+                string userId = result.GetProperty("uid").GetString() ?? string.Empty;
+                bool isEmailVerified = result.TryGetProperty("emailVerified", out JsonElement emailVerifiedElement)
+                    && emailVerifiedElement.ValueKind == JsonValueKind.True
+                    || (emailVerifiedElement.ValueKind == JsonValueKind.String && bool.TryParse(emailVerifiedElement.GetString(), out bool parsedValue) && parsedValue);
+
+                return (userId, isEmailVerified);
             }
             catch (Exception error)
             {
@@ -92,6 +95,8 @@ namespace FoodMacanoServices.Services
                 return (null, false);
             }
         }
+
+
 
         public async Task<string> RegisterWithEmailPassword(string email, string password)
         {

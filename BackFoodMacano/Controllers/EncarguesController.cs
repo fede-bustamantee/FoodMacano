@@ -13,16 +13,24 @@ public class EncarguesController : ControllerBase
     {
         _context = context;
     }
-
     // GET: api/Encargues
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Encargue>>> GetEncargues()
+    public async Task<ActionResult<IEnumerable<Encargue>>> GetEncargues([FromQuery] int? usuarioId)
     {
-        return await _context.encargues
+        // Filtrar los encargues por usuarioId si se proporciona
+        var encarguesQuery = _context.encargues
             .Include(e => e.EncargueDetalles)
             .ThenInclude(ed => ed.Producto)
             .Include(e => e.Usuario)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (usuarioId.HasValue)
+        {
+            encarguesQuery = encarguesQuery.Where(e => e.UsuarioId == usuarioId.Value);
+        }
+
+        var encargues = await encarguesQuery.ToListAsync();
+        return encargues;
     }
 
     // GET: api/Encargues/5
