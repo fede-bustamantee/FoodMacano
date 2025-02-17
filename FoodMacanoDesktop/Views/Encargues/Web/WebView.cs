@@ -1,6 +1,4 @@
 ﻿using FoodMacanoDesktop.Views.Encargues.Web;
-using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
 using FoodMacanoServices.Services;
 using System;
 using System.Data;
@@ -82,7 +80,6 @@ namespace FoodMacanoDesktop.Views.Encargues
                 }
 
                 bindingSource.DataSource = _encargues;
-                labelTotal.Text = $"Total de encargues: {_encargues.Count}";
             }
             catch (Exception ex)
             {
@@ -104,24 +101,29 @@ namespace FoodMacanoDesktop.Views.Encargues
             _detallesTable.Rows.Clear();
 
             // Información del Encargue
+            // Información del Encargue
             _detallesTable.Rows.Add("=== DATOS DEL ENCARGUE ===", "");
             _detallesTable.Rows.Add("ID Encargue", encargue.Id);
             _detallesTable.Rows.Add("Número de Encargue", encargue.NumeroEncargue);
             _detallesTable.Rows.Add("Fecha y Hora", encargue.FechaEncargue.ToString("dd/MM/yyyy HH:mm:ss"));
-            _detallesTable.Rows.Add("Cantidad", encargue.Cantidad);
 
             // Información del Producto
-            if (encargue.Producto != null)
+            if (encargue.EncargueDetalles.Any())
             {
                 _detallesTable.Rows.Add("", "");
-                _detallesTable.Rows.Add("=== DATOS DEL PRODUCTO ===", "");
-                _detallesTable.Rows.Add("ID Producto", encargue.Producto.Id);
-                _detallesTable.Rows.Add("Nombre Producto", encargue.Producto.Nombre);
-                _detallesTable.Rows.Add("Precio Unitario", $"${encargue.Producto.Precio:N2}");
-                _detallesTable.Rows.Add("Calidad", encargue.Producto.Calidad);
-                _detallesTable.Rows.Add("Calorías", $"{encargue.Producto.Calorias} cal");
-                _detallesTable.Rows.Add("Categoría ID", encargue.Producto.CategoriaId);
-                _detallesTable.Rows.Add("Descripción ID", encargue.Producto.DescripcionProductoId);
+                _detallesTable.Rows.Add("=== PRODUCTOS DEL ENCARGUE ===", "");
+
+                foreach (var detalle in encargue.EncargueDetalles)
+                {
+                    if (detalle.Producto != null)
+                    {
+                        _detallesTable.Rows.Add("ID Producto", detalle.Producto.Id);
+                        _detallesTable.Rows.Add("Nombre Producto", detalle.Producto.Nombre);
+                        _detallesTable.Rows.Add("Cantidad", detalle.Cantidad);
+                        _detallesTable.Rows.Add("Precio Unitario", $"${detalle.Producto.Precio:N2}");
+                        _detallesTable.Rows.Add("", "------------------");
+                    }
+                }
             }
 
             // Información del Usuario
@@ -139,8 +141,16 @@ namespace FoodMacanoDesktop.Views.Encargues
             // Total del Encargue
             _detallesTable.Rows.Add("", "");
             _detallesTable.Rows.Add("=== TOTAL ===", "");
-            decimal total = (encargue.Producto?.Precio ?? 0) * encargue.Cantidad;
+
+            decimal total = 0;
+
+            foreach (var detalle in encargue.EncargueDetalles) // Asegúrate de que Encargue tiene una lista de EncargueDetalles
+            {
+                total += (detalle.Producto?.Precio ?? 0) * detalle.Cantidad;
+            }
+
             _detallesTable.Rows.Add("Total del Encargue", $"${total:N2}");
+
 
             // Refrescar el DataGridView
             dgvDetalles.Refresh();
@@ -158,78 +168,48 @@ namespace FoodMacanoDesktop.Views.Encargues
                 .ToList();
 
             bindingSource.DataSource = encarguesFiltrados;
-            labelTotal.Text = $"Total de encargues: {encarguesFiltrados.Count}";
-        }
-
-        private void btnCerrar_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
-            // Verificar la selección de manera más robusta
-            if (dataGridViewEncargues.CurrentRow != null && dataGridViewEncargues.CurrentRow.Index != -1)
+            var encargue = bindingSource.Current as Encargue;
+            if (encargue == null) return;
+
+            var editarEncargueView = new EditarWebView(encargue);
+            if (editarEncargueView.ShowDialog() == DialogResult.OK)
             {
-                var encargueSeleccionado = dataGridViewEncargues.CurrentRow.DataBoundItem as Encargue;
-                if (encargueSeleccionado != null)
-                {
-                    using (var editarForm = new EditarWebView(encargueSeleccionado))
-                    {
-                        if (editarForm.ShowDialog() == DialogResult.OK)
-                        {
-                            LoadEncarguesAsync();
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Error al obtener el encargue seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Seleccione un encargue para editar.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LoadEncarguesAsync();  // Recargar la lista
+                ShowEncargueDetails(encargue);  // Actualizar los detalles
             }
         }
 
-        // Aplicar el mismo patrón para el botón eliminar
         private async void btnEliminar_Click(object sender, EventArgs e)
         {
-            if (dataGridViewEncargues.CurrentRow != null && dataGridViewEncargues.CurrentRow.Index != -1)
-            {
-                var encargueSeleccionado = dataGridViewEncargues.CurrentRow.DataBoundItem as Encargue;
-                if (encargueSeleccionado != null)
-                {
-                    var confirmResult = MessageBox.Show(
-                        $"¿Está seguro de eliminar el encargue N° {encargueSeleccionado.NumeroEncargue}?",
-                        "Confirmar Eliminación",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
+            // Obtener el encargue seleccionado
+            var encargue = bindingSource.Current as Encargue;
+            if (encargue == null) return;
 
-                    if (confirmResult == DialogResult.Yes)
-                    {
-                        try
-                        {
-                            await _encarguesService.DeleteEncargueAsync(encargueSeleccionado.Id);
-                            LoadEncarguesAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Error al eliminar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Error al obtener el encargue seleccionado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
+            var respuesta = MessageBox.Show(
+                $"¿Está seguro que desea eliminar el encargue #{encargue.NumeroEncargue}?",
+                "Confirmar eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (respuesta == DialogResult.Yes)
             {
-                MessageBox.Show("Seleccione un encargue para eliminar.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                try
+                {
+                    await _encarguesService.DeleteEncargueAsync(encargue.Id);
+                    LoadEncarguesAsync();  // Recargar la lista
+                    _detallesTable.Clear(); // Limpiar los detalles
+                    MessageBox.Show("Encargue eliminado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al eliminar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
-
     }
 }

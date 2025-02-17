@@ -30,7 +30,6 @@
         {
             dataGridViewEncargues = new DataGridView();
             cboFecha = new ComboBox();
-            labelTotal = new Label();
             dgvDetalles = new DataGridView();
             btnEditar = new FontAwesome.Sharp.IconButton();
             btnEliminar = new FontAwesome.Sharp.IconButton();
@@ -46,35 +45,26 @@
             dataGridViewEncargues.Location = new Point(31, 48);
             dataGridViewEncargues.Name = "dataGridViewEncargues";
             dataGridViewEncargues.ReadOnly = true;
-            dataGridViewEncargues.Size = new Size(710, 121);
+            dataGridViewEncargues.Size = new Size(710, 80);
             dataGridViewEncargues.TabIndex = 0;
             // 
             // cboFecha
             // 
             cboFecha.FormattingEnabled = true;
-            cboFecha.Location = new Point(330, 12);
+            cboFecha.Location = new Point(311, 12);
             cboFecha.Name = "cboFecha";
-            cboFecha.Size = new Size(121, 23);
+            cboFecha.Size = new Size(179, 23);
             cboFecha.TabIndex = 1;
-            // 
-            // labelTotal
-            // 
-            labelTotal.AutoSize = true;
-            labelTotal.Location = new Point(60, 402);
-            labelTotal.Name = "labelTotal";
-            labelTotal.Size = new Size(38, 15);
-            labelTotal.TabIndex = 2;
-            labelTotal.Text = "label1";
             // 
             // dgvDetalles
             // 
             dgvDetalles.AllowUserToAddRows = false;
             dgvDetalles.AllowUserToDeleteRows = false;
             dgvDetalles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDetalles.Location = new Point(31, 188);
+            dgvDetalles.Location = new Point(31, 134);
             dgvDetalles.Name = "dgvDetalles";
             dgvDetalles.ReadOnly = true;
-            dgvDetalles.Size = new Size(710, 121);
+            dgvDetalles.Size = new Size(710, 383);
             dgvDetalles.TabIndex = 3;
             // 
             // btnEditar
@@ -82,10 +72,10 @@
             btnEditar.IconChar = FontAwesome.Sharp.IconChar.None;
             btnEditar.IconColor = Color.Black;
             btnEditar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnEditar.Location = new Point(309, 357);
+            btnEditar.Location = new Point(251, 548);
             btnEditar.Name = "btnEditar";
             btnEditar.Size = new Size(75, 23);
-            btnEditar.TabIndex = 13;
+            btnEditar.TabIndex = 4;
             btnEditar.Text = "Editar";
             btnEditar.UseVisualStyleBackColor = true;
             btnEditar.Click += btnEditar_Click;
@@ -95,11 +85,11 @@
             btnEliminar.IconChar = FontAwesome.Sharp.IconChar.None;
             btnEliminar.IconColor = Color.Black;
             btnEliminar.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            btnEliminar.Location = new Point(420, 357);
+            btnEliminar.Location = new Point(402, 548);
             btnEliminar.Name = "btnEliminar";
             btnEliminar.Size = new Size(75, 23);
-            btnEliminar.TabIndex = 12;
-            btnEliminar.Text = "Eliminar";
+            btnEliminar.TabIndex = 5;
+            btnEliminar.Text = "borrar";
             btnEliminar.UseVisualStyleBackColor = true;
             btnEliminar.Click += btnEliminar_Click;
             // 
@@ -107,11 +97,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(btnEditar);
+            ClientSize = new Size(800, 617);
             Controls.Add(btnEliminar);
+            Controls.Add(btnEditar);
             Controls.Add(dgvDetalles);
-            Controls.Add(labelTotal);
             Controls.Add(cboFecha);
             Controls.Add(dataGridViewEncargues);
             Name = "WebView";
@@ -119,14 +108,12 @@
             ((System.ComponentModel.ISupportInitialize)dataGridViewEncargues).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvDetalles).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private DataGridView dataGridViewEncargues;
         private ComboBox cboFecha;
-        private Label labelTotal;
         private DataGridView dgvDetalles;
         private FontAwesome.Sharp.IconButton btnEditar;
         private FontAwesome.Sharp.IconButton btnEliminar;

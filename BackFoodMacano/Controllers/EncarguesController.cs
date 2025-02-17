@@ -100,27 +100,64 @@ public class EncarguesController : ControllerBase
         }
     }
 
-    // PUT: api/Encargues/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutEncargue(int id, Encargue encargue)
+    public async Task<IActionResult> PutEncargue(int id, Encargue encargueActualizado)
     {
-        if (id != encargue.Id)
+        if (id != encargueActualizado.Id)
         {
-            return BadRequest();
+            return BadRequest("El ID en la URL no coincide con el ID en el objeto.");
         }
 
-        var existingEncargue = await _context.encargues.Include(e => e.EncargueDetalles).FirstOrDefaultAsync(e => e.Id == id);
-        if (existingEncargue == null)
+        var encargueExistente = await _context.encargues
+            .Include(e => e.EncargueDetalles)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (encargueExistente == null)
         {
-            return NotFound();
+            return NotFound($"No se encontró ningún encargue con ID {id}.");
         }
 
-        existingEncargue.UsuarioId = encargue.UsuarioId;
-        existingEncargue.FechaEncargue = DateTime.UtcNow;
+        // Solo actualiza los campos específicos que deseas modificar
+        // Por ejemplo, si solo quieres actualizar el UsuarioId:
+        if (encargueActualizado.UsuarioId != 0)
+        {
+            // Verifica que el nuevo usuario exista
+            var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargueActualizado.UsuarioId);
+            if (!usuarioExiste)
+            {
+                return BadRequest($"El usuario con ID {encargueActualizado.UsuarioId} no existe.");
+            }
 
-        // Actualizar productos
-        _context.encargueDetalles.RemoveRange(existingEncargue.EncargueDetalles);
-        existingEncargue.EncargueDetalles = encargue.EncargueDetalles;
+            encargueExistente.UsuarioId = encargueActualizado.UsuarioId;
+        }
+
+        // Si deseas actualizar los detalles, procede solo si hay detalles para actualizar
+        if (encargueActualizado.EncargueDetalles != null && encargueActualizado.EncargueDetalles.Any())
+        {
+            // Verifica que todos los productos existan
+            foreach (var detalle in encargueActualizado.EncargueDetalles)
+            {
+                var productoExiste = await _context.productos.AnyAsync(p => p.Id == detalle.ProductoId);
+                if (!productoExiste)
+                {
+                    return BadRequest($"El producto con ID {detalle.ProductoId} no existe.");
+                }
+            }
+
+            // Elimina los detalles actuales
+            _context.encargueDetalles.RemoveRange(encargueExistente.EncargueDetalles);
+
+            // Agrega los nuevos detalles
+            foreach (var detalle in encargueActualizado.EncargueDetalles)
+            {
+                _context.encargueDetalles.Add(new EncargueDetalle
+                {
+                    EncargueId = id,
+                    ProductoId = detalle.ProductoId,
+                    Cantidad = detalle.Cantidad
+                });
+            }
+        }
 
         try
         {
@@ -134,6 +171,10 @@ public class EncarguesController : ControllerBase
                 return NotFound();
             }
             throw;
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error interno al actualizar el encargue: {ex.Message}");
         }
     }
 
