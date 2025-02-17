@@ -101,58 +101,44 @@ public class EncarguesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutEncargue(int id, Encargue encargueActualizado)
+    public async Task<IActionResult> PutEncargue(int id, Encargue encargue)
     {
-        if (id != encargueActualizado.Id)
+        if (id != encargue.Id)
         {
-            return BadRequest("El ID en la URL no coincide con el ID en el objeto.");
+            return BadRequest("El ID del encargue no coincide.");
         }
 
-        var encargueExistente = await _context.encargues
+        var existingEncargue = await _context.encargues
             .Include(e => e.EncargueDetalles)
             .FirstOrDefaultAsync(e => e.Id == id);
 
-        if (encargueExistente == null)
+        if (existingEncargue == null)
         {
-            return NotFound($"No se encontró ningún encargue con ID {id}.");
+            return NotFound("Encargue no encontrado.");
         }
 
-        // Solo actualiza los campos específicos que deseas modificar
-        // Por ejemplo, si solo quieres actualizar el UsuarioId:
-        if (encargueActualizado.UsuarioId != 0)
+        // Actualizar los datos del encargue
+        existingEncargue.UsuarioId = encargue.UsuarioId;
+        existingEncargue.FechaEncargue = encargue.FechaEncargue;
+
+        // Actualizar detalles sin eliminarlos
+        foreach (var detalle in encargue.EncargueDetalles)
         {
-            // Verifica que el nuevo usuario exista
-            var usuarioExiste = await _context.usuarios.AnyAsync(u => u.Id == encargueActualizado.UsuarioId);
-            if (!usuarioExiste)
+            var detalleExistente = existingEncargue.EncargueDetalles
+                .FirstOrDefault(d => d.Id == detalle.Id);
+
+            if (detalleExistente != null)
             {
-                return BadRequest($"El usuario con ID {encargueActualizado.UsuarioId} no existe.");
+                // Actualizar los datos del detalle existente
+                detalleExistente.Cantidad = detalle.Cantidad;
+                detalleExistente.ProductoId = detalle.ProductoId;
             }
-
-            encargueExistente.UsuarioId = encargueActualizado.UsuarioId;
-        }
-
-        // Si deseas actualizar los detalles, procede solo si hay detalles para actualizar
-        if (encargueActualizado.EncargueDetalles != null && encargueActualizado.EncargueDetalles.Any())
-        {
-            // Verifica que todos los productos existan
-            foreach (var detalle in encargueActualizado.EncargueDetalles)
+            else
             {
-                var productoExiste = await _context.productos.AnyAsync(p => p.Id == detalle.ProductoId);
-                if (!productoExiste)
+                // Agregar nuevos detalles si no existen
+                existingEncargue.EncargueDetalles.Add(new EncargueDetalle
                 {
-                    return BadRequest($"El producto con ID {detalle.ProductoId} no existe.");
-                }
-            }
-
-            // Elimina los detalles actuales
-            _context.encargueDetalles.RemoveRange(encargueExistente.EncargueDetalles);
-
-            // Agrega los nuevos detalles
-            foreach (var detalle in encargueActualizado.EncargueDetalles)
-            {
-                _context.encargueDetalles.Add(new EncargueDetalle
-                {
-                    EncargueId = id,
+                    EncargueId = existingEncargue.Id,
                     ProductoId = detalle.ProductoId,
                     Cantidad = detalle.Cantidad
                 });
@@ -166,15 +152,7 @@ public class EncarguesController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!EncargueExists(id))
-            {
-                return NotFound();
-            }
-            throw;
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Error interno al actualizar el encargue: {ex.Message}");
+            return StatusCode(500, "Error al actualizar el encargue.");
         }
     }
 

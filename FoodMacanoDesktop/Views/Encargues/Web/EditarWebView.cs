@@ -311,6 +311,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
                 }
 
                 await _encarguesService.UpdateEncargueAsync(_encargue);
+
                 MessageBox.Show("Encargue actualizado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;
                 Close();
@@ -320,5 +321,6 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
                 MessageBox.Show($"Error al actualizar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
     }
 }
