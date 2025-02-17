@@ -1,11 +1,8 @@
 ﻿using FoodMacanoServices.Class;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
+using FoodMacanoServices.Models;
+using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace FoodMacanoServices.Services
 {
@@ -35,8 +32,7 @@ namespace FoodMacanoServices.Services
                 if (!response.IsSuccessStatusCode)
                     throw new Exception($"Error al obtener encargues: {response.StatusCode}");
 
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<Encargue>>(content, _options) ??
+                return await response.Content.ReadFromJsonAsync<List<Encargue>>(_options) ??
                        new List<Encargue>();
             }
             catch (Exception ex)
@@ -45,19 +41,14 @@ namespace FoodMacanoServices.Services
                 return new List<Encargue>();
             }
         }
-        public async Task<Encargue> UpdateEncargueAsync(Encargue encargue)
+
+        public async Task UpdateEncargueAsync(Encargue encargue)
         {
             try
             {
-                var json = JsonSerializer.Serialize(encargue, _options);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PutAsync($"{_endpoint}/{encargue.Id}", content);
+                var response = await _httpClient.PutAsJsonAsync($"{_endpoint}/{encargue.Id}", encargue);
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Error al actualizar encargue: {response.StatusCode}");
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<Encargue>(responseContent, _options);
+                    throw new Exception($"Error al actualizar el encargue: {response.StatusCode}");
             }
             catch (Exception ex)
             {
@@ -72,7 +63,7 @@ namespace FoodMacanoServices.Services
             {
                 var response = await _httpClient.DeleteAsync($"{_endpoint}/{id}");
                 if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Error al eliminar encargue: {response.StatusCode}");
+                    throw new Exception($"Error al eliminar el encargue: {response.StatusCode}");
             }
             catch (Exception ex)
             {

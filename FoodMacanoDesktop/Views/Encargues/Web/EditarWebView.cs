@@ -300,7 +300,7 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
             this.StartPosition = FormStartPosition.CenterScreen;
         }
 
-        private async void btnGuardar_Click(object sender, EventArgs e)
+        private async void btnGuardar_Click_1(object sender, EventArgs e)
         {
             try
             {
@@ -311,7 +311,6 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
                 }
 
                 await _encarguesService.UpdateEncargueAsync(_encargue);
-
                 MessageBox.Show("Encargue actualizado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;
                 Close();
@@ -321,6 +320,5 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
                 MessageBox.Show($"Error al actualizar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
     }
 }

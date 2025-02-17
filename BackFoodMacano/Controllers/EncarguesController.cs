@@ -100,50 +100,27 @@ public class EncarguesController : ControllerBase
         }
     }
 
+    // PUT: api/Encargues/5
     [HttpPut("{id}")]
     public async Task<IActionResult> PutEncargue(int id, Encargue encargue)
     {
         if (id != encargue.Id)
         {
-            return BadRequest("El ID del encargue no coincide.");
+            return BadRequest();
         }
 
-        var existingEncargue = await _context.encargues
-            .Include(e => e.EncargueDetalles)
-            .FirstOrDefaultAsync(e => e.Id == id);
-
+        var existingEncargue = await _context.encargues.Include(e => e.EncargueDetalles).FirstOrDefaultAsync(e => e.Id == id);
         if (existingEncargue == null)
         {
-            return NotFound("Encargue no encontrado.");
+            return NotFound();
         }
 
-        // Actualizar los datos del encargue
         existingEncargue.UsuarioId = encargue.UsuarioId;
-        existingEncargue.FechaEncargue = encargue.FechaEncargue;
+        existingEncargue.FechaEncargue = DateTime.UtcNow;
 
-        // Actualizar detalles sin eliminarlos
-        foreach (var detalle in encargue.EncargueDetalles)
-        {
-            var detalleExistente = existingEncargue.EncargueDetalles
-                .FirstOrDefault(d => d.Id == detalle.Id);
-
-            if (detalleExistente != null)
-            {
-                // Actualizar los datos del detalle existente
-                detalleExistente.Cantidad = detalle.Cantidad;
-                detalleExistente.ProductoId = detalle.ProductoId;
-            }
-            else
-            {
-                // Agregar nuevos detalles si no existen
-                existingEncargue.EncargueDetalles.Add(new EncargueDetalle
-                {
-                    EncargueId = existingEncargue.Id,
-                    ProductoId = detalle.ProductoId,
-                    Cantidad = detalle.Cantidad
-                });
-            }
-        }
+        // Actualizar productos
+        _context.encargueDetalles.RemoveRange(existingEncargue.EncargueDetalles);
+        existingEncargue.EncargueDetalles = encargue.EncargueDetalles;
 
         try
         {
@@ -152,7 +129,11 @@ public class EncarguesController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            return StatusCode(500, "Error al actualizar el encargue.");
+            if (!EncargueExists(id))
+            {
+                return NotFound();
+            }
+            throw;
         }
     }
 

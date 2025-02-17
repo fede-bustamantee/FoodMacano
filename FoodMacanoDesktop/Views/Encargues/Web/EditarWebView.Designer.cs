@@ -39,7 +39,7 @@
             btnGuardar.TabIndex = 0;
             btnGuardar.Text = "guardarr";
             btnGuardar.UseVisualStyleBackColor = true;
-            btnGuardar.Click += btnGuardar_Click;
+            btnGuardar.Click += btnGuardar_Click_1;
             // 
             // EditarWebView
             // 
