@@ -122,9 +122,6 @@
                               Parameters="@(new Dictionary<string, object> { { "encargues", encargues } })" />
         </div>
     </div>
-    <div class="sidebar--footer">
-        <div class="checkout-btn" @onclick="CancelarEncargues">Cancelar Encargues</div>
-    </div>
 </div>
 
 <script>
@@ -226,20 +223,6 @@
         {
             Console.WriteLine($"Error al inicializar el componente: {ex.Message}");
         }
-    }
-
-
-    // Método para eliminar todos los encargues
-    private async Task CancelarEncargues()
-    {
-        // Recorre y elimina todos los encargues
-        foreach (var encargue in encargues)
-        {
-            await encarguesService.DeleteEncargueAsync(encargue.Id);
-        }
-
-        // Refresca la lista de encargues
-        encargues = new List<Encargue>();
     }
 
     private void TogglePopup()
