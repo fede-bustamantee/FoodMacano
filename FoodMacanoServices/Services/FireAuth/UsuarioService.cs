@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FoodMacanoServices.Enums;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
-using FoodMacanoServices.Models.FireAuth;
 
 namespace FoodMacanoServices.Services.FireAuth
 {
@@ -59,7 +58,7 @@ namespace FoodMacanoServices.Services.FireAuth
                 FirebaseId = firebaseId,
                 Email = email,
                 User = nombreUsuario,
-                Password = password, // La contraseña no se enviará en respuestas JSON gracias al atributo JsonIgnore
+                Password = password, // En producción, utiliza contraseñas encriptadas
                 TipoUsuario = tipoUsuario
             };
 
@@ -73,26 +72,9 @@ namespace FoodMacanoServices.Services.FireAuth
             return await _usuarioService.GetAllAsync();
         }
 
-        // Obtener todos los usuarios como DTO (sin contraseña)
-        public async Task<List<UsuarioDTO>> ObtenerTodosLosUsuariosDTOAsync()
-        {
-            var usuarios = await _usuarioService.GetAllAsync();
-            return usuarios.Select(u => UsuarioDTO.FromUsuario(u)).ToList();
-        }
-
         // Actualizar un usuario existente
         public async Task ActualizarUsuarioAsync(Usuario usuario)
         {
-            // Si es una actualización sin cambiar la contraseña, primero obtenemos la contraseña actual
-            if (string.IsNullOrEmpty(usuario.Password))
-            {
-                var usuarioActual = await _usuarioService.GetByIdAsync(usuario.Id);
-                if (usuarioActual != null)
-                {
-                    usuario.Password = usuarioActual.Password;
-                }
-            }
-
             await _usuarioService.UpdateAsync(usuario);
         }
 
@@ -101,18 +83,10 @@ namespace FoodMacanoServices.Services.FireAuth
         {
             await _usuarioService.DeleteAsync(id);
         }
-
         public async Task<Usuario> ObtenerUsuarioPorEmailAsync(string email)
         {
             var usuarios = await _usuarioService.GetAllAsync(u => u.Email == email);
             return usuarios.FirstOrDefault();
-        }
-
-        // Obtener usuario por ID como DTO (sin contraseña)
-        public async Task<UsuarioDTO> ObtenerUsuarioDTOPorIdAsync(int id)
-        {
-            var usuario = await _usuarioService.GetByIdAsync(id);
-            return usuario != null ? UsuarioDTO.FromUsuario(usuario) : null;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using FoodMacanoServices.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace FoodMacanoServices.Models
 {
@@ -17,7 +16,6 @@ namespace FoodMacanoServices.Models
 
         [Required(ErrorMessage = "La contraseña es requerida")]
         [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
-        [JsonIgnore] // Evita que la contraseña se serialice en las respuestas JSON
         public string Password { get; set; } = string.Empty;
 
         public TipoUsuarioEnum TipoUsuario { get; set; }
