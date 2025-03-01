@@ -28,276 +28,341 @@
         /// </summary>
         private void InitializeComponent()
         {
-            txtCategoria = new TextBox();
-            label2 = new Label();
-            txtProducto = new TextBox();
-            label1 = new Label();
-            btnCancelar = new FontAwesome.Sharp.IconButton();
+            btnVolver = new FontAwesome.Sharp.IconButton();
+            panel1 = new Panel();
             btnGuardar = new FontAwesome.Sharp.IconButton();
+            txtProducto = new TextBox();
             txtImagen = new TextBox();
-            label3 = new Label();
-            txtPrecio = new TextBox();
-            label4 = new Label();
-            txtCalorias = new TextBox();
-            label5 = new Label();
-            txtCalidad = new TextBox();
-            label6 = new Label();
-            txtDescripcionCorta = new TextBox();
-            label7 = new Label();
             txtDescripcionLarga = new TextBox();
-            label8 = new Label();
+            txtDescripcionCorta = new TextBox();
+            txtCalorias = new TextBox();
+            txtCalidad = new TextBox();
+            txtPrecio = new TextBox();
+            txtCategoria = new TextBox();
             cboCategorias = new ComboBox();
+            label17 = new Label();
+            label16 = new Label();
+            label14 = new Label();
+            label13 = new Label();
+            label12 = new Label();
+            label11 = new Label();
+            label10 = new Label();
+            label9 = new Label();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
-            // txtCategoria
+            // btnVolver
             // 
-            txtCategoria.Enabled = false;
-            txtCategoria.Font = new Font("Segoe UI", 11F);
-            txtCategoria.Location = new Point(329, 28);
-            txtCategoria.Margin = new Padding(1);
-            txtCategoria.Name = "txtCategoria";
-            txtCategoria.Size = new Size(225, 27);
-            txtCategoria.TabIndex = 24;
+            btnVolver.BackColor = Color.Gray;
+            btnVolver.Cursor = Cursors.Hand;
+            btnVolver.FlatAppearance.BorderSize = 0;
+            btnVolver.FlatAppearance.MouseDownBackColor = Color.FromArgb(255, 192, 192);
+            btnVolver.FlatAppearance.MouseOverBackColor = Color.FromArgb(255, 192, 192);
+            btnVolver.FlatStyle = FlatStyle.Flat;
+            btnVolver.IconChar = FontAwesome.Sharp.IconChar.ArrowLeft;
+            btnVolver.IconColor = Color.Maroon;
+            btnVolver.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnVolver.IconSize = 35;
+            btnVolver.Location = new Point(63, 43);
+            btnVolver.Name = "btnVolver";
+            btnVolver.Size = new Size(35, 33);
+            btnVolver.TabIndex = 54;
+            btnVolver.UseVisualStyleBackColor = false;
+            btnVolver.Click += btnVolver_Click;
             // 
-            // label2
+            // panel1
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 11F);
-            label2.Location = new Point(243, 32);
-            label2.Margin = new Padding(1, 0, 1, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(77, 20);
-            label2.TabIndex = 23;
-            label2.Text = "Categoria:";
-            // 
-            // txtProducto
-            // 
-            txtProducto.Font = new Font("Segoe UI", 11F);
-            txtProducto.Location = new Point(329, 74);
-            txtProducto.Margin = new Padding(1);
-            txtProducto.Name = "txtProducto";
-            txtProducto.Size = new Size(225, 27);
-            txtProducto.TabIndex = 22;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 11F);
-            label1.Location = new Point(243, 77);
-            label1.Margin = new Padding(1, 0, 1, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(72, 20);
-            label1.TabIndex = 21;
-            label1.Text = "Producto:";
-            // 
-            // btnCancelar
-            // 
-            btnCancelar.IconChar = FontAwesome.Sharp.IconChar.Close;
-            btnCancelar.IconColor = Color.Black;
-            btnCancelar.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            btnCancelar.IconSize = 30;
-            btnCancelar.ImageAlign = ContentAlignment.MiddleLeft;
-            btnCancelar.Location = new Point(424, 379);
-            btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(111, 30);
-            btnCancelar.TabIndex = 20;
-            btnCancelar.Text = "Cancelar";
-            btnCancelar.UseVisualStyleBackColor = true;
+            panel1.Anchor = AnchorStyles.Top;
+            panel1.BackColor = Color.Silver;
+            panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Controls.Add(btnGuardar);
+            panel1.Controls.Add(txtProducto);
+            panel1.Controls.Add(txtImagen);
+            panel1.Controls.Add(txtDescripcionLarga);
+            panel1.Controls.Add(txtDescripcionCorta);
+            panel1.Controls.Add(txtCalorias);
+            panel1.Controls.Add(txtCalidad);
+            panel1.Controls.Add(txtPrecio);
+            panel1.Controls.Add(txtCategoria);
+            panel1.Controls.Add(cboCategorias);
+            panel1.Controls.Add(label17);
+            panel1.Controls.Add(label16);
+            panel1.Controls.Add(label14);
+            panel1.Controls.Add(label13);
+            panel1.Controls.Add(label12);
+            panel1.Controls.Add(label11);
+            panel1.Controls.Add(label10);
+            panel1.Controls.Add(label9);
+            panel1.Location = new Point(213, 121);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(419, 465);
+            panel1.TabIndex = 57;
             // 
             // btnGuardar
             // 
-            btnGuardar.IconChar = FontAwesome.Sharp.IconChar.Save;
+            btnGuardar.Anchor = AnchorStyles.Top;
+            btnGuardar.BackColor = Color.Orange;
+            btnGuardar.FlatStyle = FlatStyle.Flat;
+            btnGuardar.Font = new Font("Segoe UI Semibold", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnGuardar.IconChar = FontAwesome.Sharp.IconChar.None;
             btnGuardar.IconColor = Color.Black;
-            btnGuardar.IconFont = FontAwesome.Sharp.IconFont.Solid;
-            btnGuardar.IconSize = 30;
-            btnGuardar.ImageAlign = ContentAlignment.MiddleLeft;
-            btnGuardar.Location = new Point(283, 379);
+            btnGuardar.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnGuardar.Location = new Point(163, 409);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(111, 30);
-            btnGuardar.TabIndex = 19;
+            btnGuardar.Size = new Size(75, 37);
+            btnGuardar.TabIndex = 74;
             btnGuardar.Text = "Guardar";
-            btnGuardar.UseVisualStyleBackColor = true;
+            btnGuardar.UseVisualStyleBackColor = false;
             btnGuardar.Click += btnGuardar_Click;
+            // 
+            // txtProducto
+            // 
+            txtProducto.Anchor = AnchorStyles.Top;
+            txtProducto.BackColor = Color.FromArgb(64, 64, 64);
+            txtProducto.Font = new Font("Segoe UI", 11F);
+            txtProducto.ForeColor = Color.White;
+            txtProducto.Location = new Point(163, 84);
+            txtProducto.Margin = new Padding(1);
+            txtProducto.Name = "txtProducto";
+            txtProducto.Size = new Size(212, 27);
+            txtProducto.TabIndex = 73;
             // 
             // txtImagen
             // 
+            txtImagen.Anchor = AnchorStyles.Top;
+            txtImagen.BackColor = Color.FromArgb(64, 64, 64);
             txtImagen.Font = new Font("Segoe UI", 11F);
-            txtImagen.Location = new Point(329, 114);
+            txtImagen.ForeColor = Color.White;
+            txtImagen.Location = new Point(163, 124);
             txtImagen.Margin = new Padding(1);
             txtImagen.Name = "txtImagen";
-            txtImagen.Size = new Size(225, 27);
-            txtImagen.TabIndex = 26;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 11F);
-            label3.Location = new Point(243, 117);
-            label3.Margin = new Padding(1, 0, 1, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(62, 20);
-            label3.TabIndex = 25;
-            label3.Text = "Imagen:";
-            // 
-            // txtPrecio
-            // 
-            txtPrecio.Font = new Font("Segoe UI", 11F);
-            txtPrecio.Location = new Point(329, 152);
-            txtPrecio.Margin = new Padding(1);
-            txtPrecio.Name = "txtPrecio";
-            txtPrecio.Size = new Size(225, 27);
-            txtPrecio.TabIndex = 28;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 11F);
-            label4.Location = new Point(243, 155);
-            label4.Margin = new Padding(1, 0, 1, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(53, 20);
-            label4.TabIndex = 27;
-            label4.Text = "Precio:";
-            // 
-            // txtCalorias
-            // 
-            txtCalorias.Font = new Font("Segoe UI", 11F);
-            txtCalorias.Location = new Point(331, 231);
-            txtCalorias.Margin = new Padding(1);
-            txtCalorias.Name = "txtCalorias";
-            txtCalorias.Size = new Size(225, 27);
-            txtCalorias.TabIndex = 32;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 11F);
-            label5.Location = new Point(245, 234);
-            label5.Margin = new Padding(1, 0, 1, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(65, 20);
-            label5.TabIndex = 31;
-            label5.Text = "Calorias:";
-            // 
-            // txtCalidad
-            // 
-            txtCalidad.Font = new Font("Segoe UI", 11F);
-            txtCalidad.Location = new Point(331, 193);
-            txtCalidad.Margin = new Padding(1);
-            txtCalidad.Name = "txtCalidad";
-            txtCalidad.Size = new Size(225, 27);
-            txtCalidad.TabIndex = 30;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 11F);
-            label6.Location = new Point(245, 196);
-            label6.Margin = new Padding(1, 0, 1, 0);
-            label6.Name = "label6";
-            label6.Size = new Size(63, 20);
-            label6.TabIndex = 29;
-            label6.Text = "Calidad:";
-            // 
-            // txtDescripcionCorta
-            // 
-            txtDescripcionCorta.Font = new Font("Segoe UI", 11F);
-            txtDescripcionCorta.Location = new Point(331, 272);
-            txtDescripcionCorta.Margin = new Padding(1);
-            txtDescripcionCorta.Name = "txtDescripcionCorta";
-            txtDescripcionCorta.Size = new Size(225, 27);
-            txtDescripcionCorta.TabIndex = 34;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 11F);
-            label7.Location = new Point(190, 275);
-            label7.Margin = new Padding(1, 0, 1, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(130, 20);
-            label7.TabIndex = 33;
-            label7.Text = "Descripcion Corta:";
+            txtImagen.Size = new Size(212, 27);
+            txtImagen.TabIndex = 72;
             // 
             // txtDescripcionLarga
             // 
+            txtDescripcionLarga.Anchor = AnchorStyles.Top;
+            txtDescripcionLarga.BackColor = Color.FromArgb(64, 64, 64);
             txtDescripcionLarga.Font = new Font("Segoe UI", 11F);
-            txtDescripcionLarga.Location = new Point(331, 321);
+            txtDescripcionLarga.ForeColor = Color.White;
+            txtDescripcionLarga.Location = new Point(163, 335);
             txtDescripcionLarga.Margin = new Padding(1);
             txtDescripcionLarga.Name = "txtDescripcionLarga";
-            txtDescripcionLarga.Size = new Size(225, 27);
-            txtDescripcionLarga.TabIndex = 36;
+            txtDescripcionLarga.Size = new Size(212, 27);
+            txtDescripcionLarga.TabIndex = 71;
             // 
-            // label8
+            // txtDescripcionCorta
             // 
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI", 11F);
-            label8.Location = new Point(184, 321);
-            label8.Margin = new Padding(1, 0, 1, 0);
-            label8.Name = "label8";
-            label8.Size = new Size(131, 20);
-            label8.TabIndex = 35;
-            label8.Text = "Descripcion Larga:";
+            txtDescripcionCorta.Anchor = AnchorStyles.Top;
+            txtDescripcionCorta.BackColor = Color.FromArgb(64, 64, 64);
+            txtDescripcionCorta.Font = new Font("Segoe UI", 11F);
+            txtDescripcionCorta.ForeColor = Color.White;
+            txtDescripcionCorta.Location = new Point(163, 286);
+            txtDescripcionCorta.Margin = new Padding(1);
+            txtDescripcionCorta.Name = "txtDescripcionCorta";
+            txtDescripcionCorta.Size = new Size(212, 27);
+            txtDescripcionCorta.TabIndex = 70;
+            // 
+            // txtCalorias
+            // 
+            txtCalorias.Anchor = AnchorStyles.Top;
+            txtCalorias.BackColor = Color.FromArgb(64, 64, 64);
+            txtCalorias.Font = new Font("Segoe UI", 11F);
+            txtCalorias.ForeColor = Color.White;
+            txtCalorias.Location = new Point(163, 245);
+            txtCalorias.Margin = new Padding(1);
+            txtCalorias.Name = "txtCalorias";
+            txtCalorias.Size = new Size(212, 27);
+            txtCalorias.TabIndex = 69;
+            // 
+            // txtCalidad
+            // 
+            txtCalidad.Anchor = AnchorStyles.Top;
+            txtCalidad.BackColor = Color.FromArgb(64, 64, 64);
+            txtCalidad.Font = new Font("Segoe UI", 11F);
+            txtCalidad.ForeColor = Color.White;
+            txtCalidad.Location = new Point(163, 203);
+            txtCalidad.Margin = new Padding(1);
+            txtCalidad.Name = "txtCalidad";
+            txtCalidad.Size = new Size(212, 27);
+            txtCalidad.TabIndex = 68;
+            // 
+            // txtPrecio
+            // 
+            txtPrecio.Anchor = AnchorStyles.Top;
+            txtPrecio.BackColor = Color.FromArgb(64, 64, 64);
+            txtPrecio.Font = new Font("Segoe UI", 11F);
+            txtPrecio.ForeColor = Color.White;
+            txtPrecio.Location = new Point(163, 166);
+            txtPrecio.Margin = new Padding(1);
+            txtPrecio.Name = "txtPrecio";
+            txtPrecio.Size = new Size(212, 27);
+            txtPrecio.TabIndex = 67;
+            // 
+            // txtCategoria
+            // 
+            txtCategoria.Anchor = AnchorStyles.Top;
+            txtCategoria.BackColor = Color.FromArgb(64, 64, 64);
+            txtCategoria.Font = new Font("Segoe UI", 11F);
+            txtCategoria.ForeColor = Color.White;
+            txtCategoria.Location = new Point(163, 42);
+            txtCategoria.Margin = new Padding(1);
+            txtCategoria.Name = "txtCategoria";
+            txtCategoria.ReadOnly = true;
+            txtCategoria.Size = new Size(212, 27);
+            txtCategoria.TabIndex = 66;
             // 
             // cboCategorias
             // 
+            cboCategorias.Anchor = AnchorStyles.Top;
+            cboCategorias.BackColor = Color.FromArgb(64, 64, 64);
+            cboCategorias.FlatStyle = FlatStyle.Flat;
+            cboCategorias.ForeColor = Color.White;
             cboCategorias.FormattingEnabled = true;
-            cboCategorias.Location = new Point(329, 29);
+            cboCategorias.Location = new Point(163, 46);
             cboCategorias.Name = "cboCategorias";
-            cboCategorias.Size = new Size(225, 23);
-            cboCategorias.TabIndex = 37;
-            cboCategorias.SelectedIndexChanged += cboCategorias_SelectedIndexChanged;
+            cboCategorias.Size = new Size(212, 23);
+            cboCategorias.TabIndex = 65;
+            // 
+            // label17
+            // 
+            label17.Anchor = AnchorStyles.Top;
+            label17.AutoSize = true;
+            label17.BackColor = Color.Maroon;
+            label17.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label17.ForeColor = Color.White;
+            label17.Location = new Point(25, 288);
+            label17.Name = "label17";
+            label17.Size = new Size(133, 21);
+            label17.TabIndex = 64;
+            label17.Text = "Descripcion Corta";
+            // 
+            // label16
+            // 
+            label16.Anchor = AnchorStyles.Top;
+            label16.AutoSize = true;
+            label16.BackColor = Color.Maroon;
+            label16.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label16.ForeColor = Color.White;
+            label16.Location = new Point(25, 337);
+            label16.Name = "label16";
+            label16.Size = new Size(134, 21);
+            label16.TabIndex = 63;
+            label16.Text = "Descripcion Larga";
+            // 
+            // label14
+            // 
+            label14.Anchor = AnchorStyles.Top;
+            label14.AutoSize = true;
+            label14.BackColor = Color.Maroon;
+            label14.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label14.ForeColor = Color.White;
+            label14.Location = new Point(25, 247);
+            label14.Name = "label14";
+            label14.Size = new Size(66, 21);
+            label14.TabIndex = 61;
+            label14.Text = "Calorias";
+            // 
+            // label13
+            // 
+            label13.Anchor = AnchorStyles.Top;
+            label13.AutoSize = true;
+            label13.BackColor = Color.Maroon;
+            label13.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label13.ForeColor = Color.White;
+            label13.Location = new Point(25, 209);
+            label13.Name = "label13";
+            label13.Size = new Size(62, 21);
+            label13.TabIndex = 60;
+            label13.Text = "Calidad";
+            // 
+            // label12
+            // 
+            label12.Anchor = AnchorStyles.Top;
+            label12.AutoSize = true;
+            label12.BackColor = Color.Maroon;
+            label12.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label12.ForeColor = Color.White;
+            label12.Location = new Point(25, 168);
+            label12.Name = "label12";
+            label12.Size = new Size(53, 21);
+            label12.TabIndex = 59;
+            label12.Text = "Precio";
+            // 
+            // label11
+            // 
+            label11.Anchor = AnchorStyles.Top;
+            label11.AutoSize = true;
+            label11.BackColor = Color.Maroon;
+            label11.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label11.ForeColor = Color.White;
+            label11.Location = new Point(25, 84);
+            label11.Name = "label11";
+            label11.Size = new Size(73, 21);
+            label11.TabIndex = 58;
+            label11.Text = "Producto";
+            // 
+            // label10
+            // 
+            label10.Anchor = AnchorStyles.Top;
+            label10.AutoSize = true;
+            label10.BackColor = Color.Maroon;
+            label10.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label10.ForeColor = Color.White;
+            label10.Location = new Point(25, 124);
+            label10.Name = "label10";
+            label10.Size = new Size(62, 21);
+            label10.TabIndex = 57;
+            label10.Text = "Imagen";
+            // 
+            // label9
+            // 
+            label9.Anchor = AnchorStyles.Top;
+            label9.AutoSize = true;
+            label9.BackColor = Color.Maroon;
+            label9.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label9.ForeColor = Color.White;
+            label9.Location = new Point(25, 42);
+            label9.Name = "label9";
+            label9.Size = new Size(77, 21);
+            label9.TabIndex = 56;
+            label9.Text = "Categoría";
             // 
             // AgregarEditarProductoView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(cboCategorias);
-            Controls.Add(txtDescripcionLarga);
-            Controls.Add(label8);
-            Controls.Add(txtDescripcionCorta);
-            Controls.Add(label7);
-            Controls.Add(txtCalorias);
-            Controls.Add(label5);
-            Controls.Add(txtCalidad);
-            Controls.Add(label6);
-            Controls.Add(txtPrecio);
-            Controls.Add(label4);
-            Controls.Add(txtImagen);
-            Controls.Add(label3);
-            Controls.Add(txtCategoria);
-            Controls.Add(label2);
-            Controls.Add(txtProducto);
-            Controls.Add(label1);
-            Controls.Add(btnCancelar);
-            Controls.Add(btnGuardar);
+            BackColor = Color.Gray;
+            ClientSize = new Size(831, 713);
+            Controls.Add(panel1);
+            Controls.Add(btnVolver);
             Name = "AgregarEditarProductoView";
             Text = "AgregarEditarProductoView";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private TextBox txtCategoria;
-        private Label label2;
-        private TextBox txtProducto;
-        private Label label1;
-        private FontAwesome.Sharp.IconButton btnCancelar;
-        private FontAwesome.Sharp.IconButton btnGuardar;
-        private TextBox txtImagen;
-        private Label label3;
-        private TextBox txtPrecio;
-        private Label label4;
-        private TextBox txtCalorias;
-        private Label label5;
-        private TextBox txtCalidad;
-        private Label label6;
-        private TextBox txtDescripcionCorta;
-        private Label label7;
-        private TextBox txtDescripcionLarga;
-        private Label label8;
+        private FontAwesome.Sharp.IconButton btnVolver;
+        private Panel panel1;
+        private Label label17;
+        private Label label16;
+        private Label label14;
+        private Label label13;
+        private Label label12;
+        private Label label11;
+        private Label label10;
+        private Label label9;
         private ComboBox cboCategorias;
+        private TextBox txtCategoria;
+        private TextBox txtImagen;
+        private TextBox txtDescripcionLarga;
+        private TextBox txtDescripcionCorta;
+        private TextBox txtCalorias;
+        private TextBox txtCalidad;
+        private TextBox txtPrecio;
+        private TextBox txtProducto;
+        private FontAwesome.Sharp.IconButton btnGuardar;
     }
 }

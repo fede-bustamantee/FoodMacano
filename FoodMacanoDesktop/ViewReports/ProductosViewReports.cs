@@ -1,5 +1,5 @@
 ﻿using FoodMacanoDesktop.Views.Menu;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Common;
 using Microsoft.Reporting.WinForms;
 
 namespace FoodMacanoDesktop.ViewReports

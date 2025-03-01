@@ -124,10 +124,16 @@
   <data name="logoo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logoo1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MACANO" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MACANO.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Hambuerguesa" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Hambuerguesa.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MACANO" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MACANO.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="MACANO1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MACANO1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cargando" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cargando.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

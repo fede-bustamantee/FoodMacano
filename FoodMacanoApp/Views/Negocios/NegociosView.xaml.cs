@@ -1,6 +1,6 @@
 using FoodMacanoApp.ViewModels;
 using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Common;
 
 namespace FoodMacanoApp.Views.Negocios;
 
@@ -14,18 +14,18 @@ public partial class NegociosView : ContentPage
         _viewModel = new NegocioViewModel(negocioService);
         BindingContext = _viewModel;
 
-        // Cargar los datos cuando se inicie la página
+        // Cargar todos los negocios al iniciar la página
         LoadData();
     }
 
     private async void LoadData()
     {
-        await _viewModel.LoadNegocio();
+        await _viewModel.LoadNegocios(); // Llamar a LoadNegocios en lugar de LoadNegocio
     }
 
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("///InicioView");
     }
 
     private async void OnDireccionTapped(object sender, EventArgs e)

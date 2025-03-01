@@ -36,27 +36,34 @@
             // 
             flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             flowLayoutPanel1.AutoScroll = true;
-            flowLayoutPanel1.Location = new Point(1, 43);
+            flowLayoutPanel1.Location = new Point(1, 103);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(525, 499);
+            flowLayoutPanel1.Size = new Size(525, 439);
             flowLayoutPanel1.TabIndex = 3;
             // 
             // cboCategorias
             // 
+            cboCategorias.BackColor = Color.FromArgb(64, 64, 64);
+            cboCategorias.FlatStyle = FlatStyle.Flat;
+            cboCategorias.ForeColor = Color.White;
             cboCategorias.FormattingEnabled = true;
-            cboCategorias.Location = new Point(12, 12);
+            cboCategorias.Location = new Point(280, 43);
             cboCategorias.Name = "cboCategorias";
-            cboCategorias.Size = new Size(166, 23);
+            cboCategorias.Size = new Size(140, 23);
             cboCategorias.TabIndex = 4;
             // 
-            // PrimerCategoriaView
+            // PorCategoriaView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.Gray;
+            BackgroundImageLayout = ImageLayout.Zoom;
             ClientSize = new Size(930, 540);
             Controls.Add(cboCategorias);
             Controls.Add(flowLayoutPanel1);
-            Name = "PrimerCategoriaView";
+            Cursor = Cursors.Hand;
+            ForeColor = Color.White;
+            Name = "PorCategoriaView";
             Text = "PrimerCategoriaView";
             ResumeLayout(false);
         }

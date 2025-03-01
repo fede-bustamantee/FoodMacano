@@ -46,7 +46,7 @@ namespace BackFoodMacano.Migrations
                     b.ToTable("encargues");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.CarritoCompra", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Cart.CarritoCompra", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,7 +72,7 @@ namespace BackFoodMacano.Migrations
                     b.ToTable("carritoCompra");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.Categoria", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.Categoria", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,249 +110,16 @@ namespace BackFoodMacano.Migrations
                             Id = 3,
                             IconUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/Icons%2FIconBebidas.png?alt=media&token=c87c60a9-215c-4a8f-8939-b3423e48a1c0",
                             Nombre = "Bebidas"
-                        });
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.DescripcionProducto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DescripcionCorta")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("DescripcionLarga")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("descripcionProductos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DescripcionCorta = "Hamburguesa clásica de carne a la parrilla",
-                            DescripcionLarga = "Deliciosa hamburguesa de carne a la parrilla con queso cheddar, lechuga fresca, tomate jugoso y nuestra salsa especial en un pan suave y tostado."
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DescripcionCorta = "Hamburguesa doble con bacon",
-                            DescripcionLarga = "Hamburguesa doble carne, doble queso y tiras de bacon crujiente. Acompañada de cebolla caramelizada y salsa barbacoa casera."
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DescripcionCorta = "Hamburguesa vegetariana",
-                            DescripcionLarga = "Hamburguesa vegetariana a base de lentejas y vegetales, con queso provolone, rúcula y tomates secos. Opción saludable y deliciosa."
                         },
                         new
                         {
                             Id = 4,
-                            DescripcionCorta = "Hamburguesa de pollo",
-                            DescripcionLarga = "Jugosa hamburguesa de pollo a la parrilla con aguacate, lechuga y mayonesa de chipotle en pan integral."
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DescripcionCorta = "Hamburguesa gourmet",
-                            DescripcionLarga = "Hamburguesa gourmet de carne Angus, queso azul, cebolla caramelizada y reducción de vino tinto en pan brioche."
-                        },
-                        new
-                        {
-                            Id = 6,
-                            DescripcionCorta = "Sándwich de milanesa clásico",
-                            DescripcionLarga = "Sándwich de milanesa de ternera con lechuga, tomate, queso y mayonesa en pan francés crujiente."
-                        },
-                        new
-                        {
-                            Id = 7,
-                            DescripcionCorta = "Sándwich de jamón y queso",
-                            DescripcionLarga = "Sándwich caliente de jamón y queso derretido en pan de miga tostado. Un clásico irresistible."
-                        },
-                        new
-                        {
-                            Id = 8,
-                            DescripcionCorta = "Sándwich de pollo",
-                            DescripcionLarga = "Sándwich de pechuga de pollo a la plancha con palta, tomate y lechuga en pan integral."
-                        },
-                        new
-                        {
-                            Id = 9,
-                            DescripcionCorta = "Sándwich vegetariano",
-                            DescripcionLarga = "Sándwich vegetariano con hummus, vegetales asados, queso de cabra y rúcula en pan de centeno."
-                        },
-                        new
-                        {
-                            Id = 10,
-                            DescripcionCorta = "Sándwich de lomito",
-                            DescripcionLarga = "Sándwich de lomito completo con lechuga, tomate, jamón, queso, huevo frito y mayonesa en pan ciabatta."
-                        },
-                        new
-                        {
-                            Id = 11,
-                            DescripcionCorta = "Coca-Cola",
-                            DescripcionLarga = "Refrescante Coca-Cola clásica en botella de 500ml. El sabor de siempre para acompañar tu comida."
-                        },
-                        new
-                        {
-                            Id = 12,
-                            DescripcionCorta = "Agua mineral",
-                            DescripcionLarga = "Agua mineral natural sin gas en botella de 500ml. Hidratación pura y refrescante."
-                        },
-                        new
-                        {
-                            Id = 13,
-                            DescripcionCorta = "Limonada casera",
-                            DescripcionLarga = "Limonada casera preparada con limones frescos, un toque de menta y endulzada con miel. Bebida refrescante de 500ml."
-                        },
-                        new
-                        {
-                            Id = 14,
-                            DescripcionCorta = "Cerveza artesanal",
-                            DescripcionLarga = "Cerveza artesanal tipo IPA en botella de 330ml. Sabor intenso y aromático con notas cítricas y tropicales."
-                        },
-                        new
-                        {
-                            Id = 15,
-                            DescripcionCorta = "Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.",
-                            DescripcionLarga = "Smoothie natural de frutas mixtas (frutilla, banana y naranja) sin azúcar añadida. Vaso de 400ml."
+                            IconUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/Icons%2Fpizza.png?alt=media&token=fcc39a34-2c50-448a-bfa1-81a28fca2dfb",
+                            Nombre = "Pizzas"
                         });
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.DesktopEncargue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaEncargue")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("NombreProducto")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("NumeroMesa")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("desktopEncargues");
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.EncargueDetalle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EncargueId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EncargueId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("encargueDetalles");
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.MauiEncargue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("FechaEncargue")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<string>("UserDisplayName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("mauiEncargue");
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.MauiEncargueDetalle", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EncargueId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NombreProducto")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EncargueId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.ToTable("MauiEncargueDetalle");
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.Negocio", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.Negocio", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -392,17 +159,37 @@ namespace BackFoodMacano.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            Direccion = "Calle Falsa 123, Ciudad Ejemplo",
+                            Id = 2,
+                            Direccion = "Belgrano 329, Gobernador Crespo",
                             Horario = "Lunes a Viernes: 11:00 - 23:00\nSábado: 11:00 - 00:00\nDomingo: 11:00 - 22:00",
                             MapaIframe = "<iframe class=\"map\" src=\"https://www.google.com/maps/place/Gdor.+Crespo,+Santa+Fe/@-30.3611856,-60.4003288,16z/data=!4m6!3m5!1s0x944b0554d0eb3903:0x7b078fba72f704b!8m2!3d-30.3620638!4d-60.4020713!16s%2Fg%2F120y82vp?entry=ttu&g_ep=EgoyMDI1MDEyOC4wIKXMDSoASAFQAw%3D%3D\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
-                            Nombre = "Food Macano",
+                            Nombre = "Food Macano, Restaurante 01",
                             RedesSocialId = 1,
-                            Telefono = "123456789"
+                            Telefono = "3498756567"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Direccion = "San Juan 329, Vera y Pintado",
+                            Horario = "Lunes a Viernes: 11:00 - 23:00\nSábado: 11:00 - 00:00\nDomingo: 11:00 - 22:00",
+                            MapaIframe = "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6900.601861528618!2d-60.34531971028043!3d-30.142811221417357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x944ba702b3cb97c3%3A0xfab9b5972c337c1b!2sVera%20y%20Pintado%2C%20Santa%20Fe!5e0!3m2!1ses-419!2sar!4v1740498816032!5m2!1ses-419!2sar\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+                            Nombre = "Food Macano, Restaurante 02",
+                            RedesSocialId = 1,
+                            Telefono = "3498756569"
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Direccion = "San Martín 329, Calchaquí",
+                            Horario = "Lunes a Viernes: 11:00 - 23:00\nSábado: 11:00 - 00:00\nDomingo: 11:00 - 22:00",
+                            MapaIframe = "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3459.2046380850775!2d-60.286982767738394!3d-29.887203614077283!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x944bbec37fa30239%3A0x363b55a9e714bf24!2sCalchaqu%C3%AD%2C%20Santa%20Fe!5e0!3m2!1ses-419!2sar!4v1740498914063!5m2!1ses-419!2sar\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+                            Nombre = "Food Macano, Restaurante 03",
+                            RedesSocialId = 1,
+                            Telefono = "3498756569"
                         });
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.Producto", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.Producto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -451,152 +238,152 @@ namespace BackFoodMacano.Migrations
                             Calorias = 550,
                             CategoriaId = 1,
                             DescripcionProductoId = 1,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHambuerguesa.png?alt=media&token=03b62ad8-16e4-4b06-b595-28baf10de9a7",
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHamburguesa%2Fhabur.png?alt=media&token=036cfd9a-89b9-44a0-b97f-c87af5398706",
                             Nombre = "Hamburguesa Clásica",
-                            Precio = 500
+                            Precio = 4200
                         },
                         new
                         {
                             Id = 2,
-                            Calidad = "Alta",
+                            Calidad = "Premium",
                             Calorias = 800,
                             CategoriaId = 1,
                             DescripcionProductoId = 2,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FMilanesa.png?alt=media&token=89683de5-6f3d-4a17-be75-be0640e5906b",
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHamburguesa%2FHaburquesoo.png?alt=media&token=21d2b902-5f75-49cb-aa0d-7b91555ab1b3",
                             Nombre = "Hamburguesa Doble Bacon",
-                            Precio = 650
+                            Precio = 5500
                         },
                         new
                         {
                             Id = 3,
-                            Calidad = "Media",
-                            Calorias = 400,
+                            Calidad = "Premium",
+                            Calorias = 720,
                             CategoriaId = 1,
                             DescripcionProductoId = 3,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPiza.png?alt=media&token=d52e606d-597c-4065-aed3-9ae33e633ab8",
-                            Nombre = "Hamburguesa Vegetariana",
-                            Precio = 450
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHamburguesa%2Fhamurchedarr.png?alt=media&token=a6716fc2-965a-4b63-9e06-16ef5b3e194f",
+                            Nombre = "Hamburguesa Angus",
+                            Precio = 6300
                         },
                         new
                         {
                             Id = 4,
-                            Calidad = "Media",
-                            Calorias = 450,
+                            Calidad = "Alta",
+                            Calorias = 680,
                             CategoriaId = 1,
                             DescripcionProductoId = 4,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHambuerguesa.png?alt=media&token=03b62ad8-16e4-4b06-b595-28baf10de9a7",
-                            Nombre = "Hamburguesa de Pollo",
-                            Precio = 480
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHamburguesa%2Fhabur.png?alt=media&token=036cfd9a-89b9-44a0-b97f-c87af5398706",
+                            Nombre = "Hamburguesa Mexicana",
+                            Precio = 5800
                         },
                         new
                         {
                             Id = 5,
                             Calidad = "Premium",
-                            Calorias = 700,
+                            Calorias = 750,
                             CategoriaId = 1,
                             DescripcionProductoId = 5,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FMilanesa.png?alt=media&token=89683de5-6f3d-4a17-be75-be0640e5906b",
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHamburguesa%2FHaburquesoo.png?alt=media&token=21d2b902-5f75-49cb-aa0d-7b91555ab1b3",
                             Nombre = "Hamburguesa Gourmet",
-                            Precio = 750
+                            Precio = 7900
                         },
                         new
                         {
                             Id = 6,
-                            Calidad = "Media",
+                            Calidad = "Alta",
                             Calorias = 600,
                             CategoriaId = 2,
                             DescripcionProductoId = 6,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPiza.png?alt=media&token=d52e606d-597c-4065-aed3-9ae33e633ab8",
-                            Nombre = "Sándwich de Milanesa",
-                            Precio = 450
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FSanguches%2Fmila.png?alt=media&token=9fc4685f-2fd1-41cb-a707-bfe7b35e4bb5",
+                            Nombre = "Sándwich de Milanesa Completo",
+                            Precio = 4700
                         },
                         new
                         {
                             Id = 7,
-                            Calidad = "Media",
-                            Calorias = 400,
+                            Calidad = "Premium",
+                            Calorias = 720,
                             CategoriaId = 2,
                             DescripcionProductoId = 7,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHambuerguesa.png?alt=media&token=03b62ad8-16e4-4b06-b595-28baf10de9a7",
-                            Nombre = "Sándwich Jamón y Queso",
-                            Precio = 350
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FSanguches%2Fmilaquee.png?alt=media&token=46ea6c8d-fe58-469f-9c4e-0646cdaa5a4f",
+                            Nombre = "Sándwich de Lomito Premium",
+                            Precio = 6800
                         },
                         new
                         {
                             Id = 8,
                             Calidad = "Alta",
-                            Calorias = 450,
+                            Calorias = 590,
                             CategoriaId = 2,
                             DescripcionProductoId = 8,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FMilanesa.png?alt=media&token=89683de5-6f3d-4a17-be75-be0640e5906b",
-                            Nombre = "Sándwich de Pollo",
-                            Precio = 400
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FSanguches%2Fmilaeslomm.png?alt=media&token=5312dcbb-3365-40e3-87d1-92ce5ce7056c",
+                            Nombre = "Sándwich Milanesa con Queso",
+                            Precio = 5100
                         },
                         new
                         {
                             Id = 9,
                             Calidad = "Alta",
-                            Calorias = 350,
+                            Calorias = 650,
                             CategoriaId = 2,
                             DescripcionProductoId = 9,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPiza.png?alt=media&token=d52e606d-597c-4065-aed3-9ae33e633ab8",
-                            Nombre = "Sándwich Vegetariano",
-                            Precio = 380
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FSanguches%2Fmila.png?alt=media&token=9fc4685f-2fd1-41cb-a707-bfe7b35e4bb5",
+                            Nombre = "Sándwich Club",
+                            Precio = 5600
                         },
                         new
                         {
                             Id = 10,
                             Calidad = "Premium",
-                            Calorias = 700,
+                            Calorias = 780,
                             CategoriaId = 2,
                             DescripcionProductoId = 10,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHambuerguesa.png?alt=media&token=03b62ad8-16e4-4b06-b595-28baf10de9a7",
-                            Nombre = "Sándwich de Lomito",
-                            Precio = 550
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FSanguches%2Fmilaquee.png?alt=media&token=46ea6c8d-fe58-469f-9c4e-0646cdaa5a4f",
+                            Nombre = "Sándwich de Lomo Completo",
+                            Precio = 7200
                         },
                         new
                         {
                             Id = 11,
                             Calidad = "Alta",
-                            Calorias = 210,
+                            Calorias = 0,
                             CategoriaId = 3,
                             DescripcionProductoId = 11,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FMilanesa.png?alt=media&token=89683de5-6f3d-4a17-be75-be0640e5906b",
-                            Nombre = "Coca-Cola 500ml",
-                            Precio = 150
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FBebidas%2Fcocaa.png?alt=media&token=46e172b8-a890-49dc-b2d6-841e327c6fda",
+                            Nombre = "Agua Mineral 500ml",
+                            Precio = 4100
                         },
                         new
                         {
                             Id = 12,
                             Calidad = "Alta",
-                            Calorias = 0,
+                            Calorias = 210,
                             CategoriaId = 3,
                             DescripcionProductoId = 12,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPiza.png?alt=media&token=d52e606d-597c-4065-aed3-9ae33e633ab8",
-                            Nombre = "Agua Mineral 500ml",
-                            Precio = 100
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FBebidas%2Faguaa.png?alt=media&token=b9677456-0259-47c6-91ec-8f33136c9ab8",
+                            Nombre = "Coca-Cola 500ml",
+                            Precio = 4300
                         },
                         new
                         {
                             Id = 13,
-                            Calidad = "Alta",
-                            Calorias = 120,
+                            Calidad = "Premium",
+                            Calorias = 180,
                             CategoriaId = 3,
                             DescripcionProductoId = 13,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FHambuerguesa.png?alt=media&token=03b62ad8-16e4-4b06-b595-28baf10de9a7",
-                            Nombre = "Limonada Casera 500ml",
-                            Precio = 200
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FBebidas%2Fcoptell.png?alt=media&token=4b440890-37ca-4bae-aadc-3e8656d22940",
+                            Nombre = "Cóctel Especial",
+                            Precio = 5800
                         },
                         new
                         {
                             Id = 14,
-                            Calidad = "Premium",
-                            Calorias = 180,
+                            Calidad = "Alta",
+                            Calorias = 120,
                             CategoriaId = 3,
                             DescripcionProductoId = 14,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FMilanesa.png?alt=media&token=89683de5-6f3d-4a17-be75-be0640e5906b",
-                            Nombre = "Cerveza Artesanal IPA 330ml",
-                            Precio = 300
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FBebidas%2Fcocaa.png?alt=media&token=46e172b8-a890-49dc-b2d6-841e327c6fda",
+                            Nombre = "Limonada Casera",
+                            Precio = 4600
                         },
                         new
                         {
@@ -605,13 +392,68 @@ namespace BackFoodMacano.Migrations
                             Calorias = 200,
                             CategoriaId = 3,
                             DescripcionProductoId = 15,
-                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPiza.png?alt=media&token=d52e606d-597c-4065-aed3-9ae33e633ab8",
-                            Nombre = "Smoothie de Frutas 400ml",
-                            Precio = 250
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FBebidas%2Faguaa.png?alt=media&token=b9677456-0259-47c6-91ec-8f33136c9ab8",
+                            Nombre = "Smoothie de Frutas",
+                            Precio = 4900
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Calidad = "Alta",
+                            Calorias = 850,
+                            CategoriaId = 4,
+                            DescripcionProductoId = 16,
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPizas%2Fpizamitaa.png?alt=media&token=c0a6c4ba-d232-4fe6-9ce7-f8d9a21ffdaa",
+                            Nombre = "Pizza Muzzarella",
+                            Precio = 5200
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Calidad = "Alta",
+                            Calorias = 920,
+                            CategoriaId = 4,
+                            DescripcionProductoId = 17,
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPizas%2Fpizappp.png?alt=media&token=d2d21eb8-bd62-4593-a64c-dfe2b5676244",
+                            Nombre = "Pizza Pepperoni",
+                            Precio = 6100
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Calidad = "Premium",
+                            Calorias = 980,
+                            CategoriaId = 4,
+                            DescripcionProductoId = 18,
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPizas%2Fpizas.png?alt=media&token=6e337a8e-bf33-40db-ba97-02c1c0e3ef7c",
+                            Nombre = "Pizza Cuatro Quesos",
+                            Precio = 6800
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Calidad = "Alta",
+                            Calorias = 880,
+                            CategoriaId = 4,
+                            DescripcionProductoId = 19,
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPizas%2Fpizamitaa.png?alt=media&token=c0a6c4ba-d232-4fe6-9ce7-f8d9a21ffdaa",
+                            Nombre = "Pizza Napolitana",
+                            Precio = 5700
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Calidad = "Premium",
+                            Calorias = 1050,
+                            CategoriaId = 4,
+                            DescripcionProductoId = 20,
+                            ImagenUrl = "https://firebasestorage.googleapis.com/v0/b/foodmacano.appspot.com/o/img%2FPizas%2Fpizappp.png?alt=media&token=d2d21eb8-bd62-4593-a64c-dfe2b5676244",
+                            Nombre = "Pizza Especial",
+                            Precio = 7500
                         });
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.RedesSocial", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.RedesSocial", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -643,6 +485,275 @@ namespace BackFoodMacano.Migrations
                             Instagram = "https://www.instagram.com",
                             Whatsapp = "https://wa.me/543498409675"
                         });
+                });
+
+            modelBuilder.Entity("FoodMacanoServices.Models.DescripcionProducto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DescripcionCorta")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DescripcionLarga")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("descripcionProductos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DescripcionCorta = "Hamburguesa clásica con carne premium y vegetales frescos",
+                            DescripcionLarga = "Deliciosa hamburguesa de carne a la parrilla con queso cheddar, lechuga fresca, tomate jugoso y nuestra salsa especial en un pan suave y tostado."
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DescripcionCorta = "Hamburguesa doble con bacon y queso",
+                            DescripcionLarga = "Hamburguesa doble carne, doble queso y tiras de bacon crujiente. Acompañada de cebolla caramelizada y salsa barbacoa casera."
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DescripcionCorta = "Hamburguesa de carne Angus con cheddar",
+                            DescripcionLarga = "Jugosa hamburguesa de carne Angus premium con queso cheddar derretido, pepinillos, cebolla y salsa especial de la casa."
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DescripcionCorta = "Hamburguesa mexicana picante",
+                            DescripcionLarga = "Hamburguesa con carne sazonada con especias mexicanas, jalapeños, guacamole, queso pepper jack y salsa picante casera."
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DescripcionCorta = "Hamburguesa gourmet con queso azul",
+                            DescripcionLarga = "Hamburguesa gourmet de carne Angus, queso azul, cebolla caramelizada, rúcula fresca y reducción de vino tinto en pan brioche."
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DescripcionCorta = "Sándwich de milanesa completo",
+                            DescripcionLarga = "Sándwich de milanesa de ternera con lechuga, tomate, queso, jamón y mayonesa en pan francés crujiente."
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DescripcionCorta = "Sándwich de lomito premium",
+                            DescripcionLarga = "Sándwich de lomito completo con lechuga, tomate, jamón, queso, huevo frito y mayonesa en pan ciabatta."
+                        },
+                        new
+                        {
+                            Id = 8,
+                            DescripcionCorta = "Sándwich de milanesa con queso",
+                            DescripcionLarga = "Sándwich de milanesa con queso derretido, lechuga fresca, tomate y salsa tártara casera en pan de campo."
+                        },
+                        new
+                        {
+                            Id = 9,
+                            DescripcionCorta = "Sándwich club premium",
+                            DescripcionLarga = "Sándwich club de tres pisos con pollo grillado, bacon crujiente, huevo, lechuga, tomate y mayonesa casera."
+                        },
+                        new
+                        {
+                            Id = 10,
+                            DescripcionCorta = "Sándwich de lomo completo",
+                            DescripcionLarga = "Sándwich de lomo completo con queso derretido, huevo frito, jamón, lechuga, tomate y salsa especial en pan ciabatta."
+                        },
+                        new
+                        {
+                            Id = 11,
+                            DescripcionCorta = "Agua mineral sin gas 500ml",
+                            DescripcionLarga = "Agua mineral natural sin gas en botella de 500ml. Hidratación pura y refrescante."
+                        },
+                        new
+                        {
+                            Id = 12,
+                            DescripcionCorta = "Coca-Cola original 500ml",
+                            DescripcionLarga = "Refrescante Coca-Cola clásica en botella de 500ml. El sabor de siempre para acompañar tu comida."
+                        },
+                        new
+                        {
+                            Id = 13,
+                            DescripcionCorta = "Cóctel especial de la casa",
+                            DescripcionLarga = "Cóctel exclusivo preparado con frutas frescas, licores premium y un toque secreto que lo hace único. Servido en vaso de 350ml."
+                        },
+                        new
+                        {
+                            Id = 14,
+                            DescripcionCorta = "Limonada casera con menta",
+                            DescripcionLarga = "Limonada casera preparada con limones frescos, un toque de menta y endulzada con miel. Bebida refrescante de 500ml."
+                        },
+                        new
+                        {
+                            Id = 15,
+                            DescripcionCorta = "Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.Hamburguesa de carne a la parrilla con queso, lechuga, tomate y mayonesa.",
+                            DescripcionLarga = "Smoothie natural de frutas mixtas (frutilla, banana y naranja) sin azúcar añadida. Vaso de 400ml."
+                        },
+                        new
+                        {
+                            Id = 16,
+                            DescripcionCorta = "Pizza Muzzarella tradicional",
+                            DescripcionLarga = "Pizza con abundante queso muzzarella, salsa de tomate casera y orégano fresco. Masa a la piedra crujiente por fuera y tierna por dentro."
+                        },
+                        new
+                        {
+                            Id = 17,
+                            DescripcionCorta = "Pizza Pepperoni",
+                            DescripcionLarga = "Pizza con salsa de tomate, queso muzzarella y generosa cantidad de pepperoni picante. Una combinación clásica y deliciosa."
+                        },
+                        new
+                        {
+                            Id = 18,
+                            DescripcionCorta = "Pizza Cuatro Quesos",
+                            DescripcionLarga = "Pizza gourmet con selección de cuatro quesos: muzzarella, provolone, parmesano y queso azul. Una explosión de sabores para los amantes del queso."
+                        },
+                        new
+                        {
+                            Id = 19,
+                            DescripcionCorta = "Pizza Napolitana",
+                            DescripcionLarga = "Pizza clásica napolitana con salsa de tomate, muzzarella, rodajas de tomate fresco, ajo y albahaca. Un homenaje a la tradición italiana."
+                        },
+                        new
+                        {
+                            Id = 20,
+                            DescripcionCorta = "Pizza Especial de la Casa",
+                            DescripcionLarga = "Pizza con salsa de tomate, muzzarella, jamón, morrones, aceitunas, huevo y orégano. La especialidad más completa y sabrosa."
+                        });
+                });
+
+            modelBuilder.Entity("FoodMacanoServices.Models.DesktopEncargue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaEncargue")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("NombreProducto")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NumeroMesa")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("desktopEncargues");
+                });
+
+            modelBuilder.Entity("FoodMacanoServices.Models.Orders.EncargueDetalle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EncargueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EncargueId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("encargueDetalles");
+                });
+
+            modelBuilder.Entity("FoodMacanoServices.Models.Orders.MauiEncargue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("FechaEncargue")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("UserDisplayName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("mauiEncargue");
+                });
+
+            modelBuilder.Entity("FoodMacanoServices.Models.Orders.MauiEncargueDetalle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EncargueId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NombreProducto")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EncargueId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("MauiEncargueDetalle");
                 });
 
             modelBuilder.Entity("FoodMacanoServices.Models.Usuario", b =>
@@ -688,9 +799,9 @@ namespace BackFoodMacano.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.CarritoCompra", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Cart.CarritoCompra", b =>
                 {
-                    b.HasOne("FoodMacanoServices.Models.Producto", "Producto")
+                    b.HasOne("FoodMacanoServices.Models.Common.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -707,47 +818,9 @@ namespace BackFoodMacano.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.EncargueDetalle", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.Negocio", b =>
                 {
-                    b.HasOne("Encargue", "Encargue")
-                        .WithMany("EncargueDetalles")
-                        .HasForeignKey("EncargueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FoodMacanoServices.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Encargue");
-
-                    b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.MauiEncargueDetalle", b =>
-                {
-                    b.HasOne("FoodMacanoServices.Models.MauiEncargue", "Encargue")
-                        .WithMany("Detalles")
-                        .HasForeignKey("EncargueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FoodMacanoServices.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Encargue");
-
-                    b.Navigation("Producto");
-                });
-
-            modelBuilder.Entity("FoodMacanoServices.Models.Negocio", b =>
-                {
-                    b.HasOne("FoodMacanoServices.Models.RedesSocial", "RedesSocial")
+                    b.HasOne("FoodMacanoServices.Models.Common.RedesSocial", "RedesSocial")
                         .WithMany()
                         .HasForeignKey("RedesSocialId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -756,9 +829,9 @@ namespace BackFoodMacano.Migrations
                     b.Navigation("RedesSocial");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.Producto", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.Producto", b =>
                 {
-                    b.HasOne("FoodMacanoServices.Models.Categoria", "Categoria")
+                    b.HasOne("FoodMacanoServices.Models.Common.Categoria", "Categoria")
                         .WithMany("Productos")
                         .HasForeignKey("CategoriaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -766,7 +839,7 @@ namespace BackFoodMacano.Migrations
 
                     b.HasOne("FoodMacanoServices.Models.DescripcionProducto", "DescripcionProducto")
                         .WithOne("Producto")
-                        .HasForeignKey("FoodMacanoServices.Models.Producto", "DescripcionProductoId")
+                        .HasForeignKey("FoodMacanoServices.Models.Common.Producto", "DescripcionProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -775,12 +848,50 @@ namespace BackFoodMacano.Migrations
                     b.Navigation("DescripcionProducto");
                 });
 
+            modelBuilder.Entity("FoodMacanoServices.Models.Orders.EncargueDetalle", b =>
+                {
+                    b.HasOne("Encargue", "Encargue")
+                        .WithMany("EncargueDetalles")
+                        .HasForeignKey("EncargueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FoodMacanoServices.Models.Common.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Encargue");
+
+                    b.Navigation("Producto");
+                });
+
+            modelBuilder.Entity("FoodMacanoServices.Models.Orders.MauiEncargueDetalle", b =>
+                {
+                    b.HasOne("FoodMacanoServices.Models.Orders.MauiEncargue", "Encargue")
+                        .WithMany("Detalles")
+                        .HasForeignKey("EncargueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FoodMacanoServices.Models.Common.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Encargue");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("Encargue", b =>
                 {
                     b.Navigation("EncargueDetalles");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.Categoria", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Common.Categoria", b =>
                 {
                     b.Navigation("Productos");
                 });
@@ -790,7 +901,7 @@ namespace BackFoodMacano.Migrations
                     b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("FoodMacanoServices.Models.MauiEncargue", b =>
+            modelBuilder.Entity("FoodMacanoServices.Models.Orders.MauiEncargue", b =>
                 {
                     b.Navigation("Detalles");
                 });

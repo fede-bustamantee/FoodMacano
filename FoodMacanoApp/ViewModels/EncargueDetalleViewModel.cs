@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Orders;
 
 namespace FoodMacanoApp.ViewModels
 {

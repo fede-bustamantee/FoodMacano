@@ -1,48 +1,46 @@
 ﻿using FoodMacanoApp.Class;
 using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Common;
+using System.Collections.ObjectModel;
 
-namespace FoodMacanoApp.ViewModels
+public class NegocioViewModel : NotificationObject
 {
-    public class NegocioViewModel : NotificationObject
+    private readonly IGenericService<Negocio> _negocioService;
+    private ObservableCollection<Negocio> _negocios;
+
+    public ObservableCollection<Negocio> Negocios
     {
-        private readonly IGenericService<Negocio> _negocioService;
-        private Negocio _negocio;
-
-        public Negocio Negocio
+        get => _negocios;
+        set
         {
-            get => _negocio;
-            set
+            _negocios = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public NegocioViewModel(IGenericService<Negocio> negocioService)
+    {
+        _negocioService = negocioService;
+        Negocios = new ObservableCollection<Negocio>();
+    }
+
+    // Método asincrónico para cargar la lista de negocios desde el servicio
+    public async Task LoadNegocios()
+    {
+        try
+        {
+            var negocios = await _negocioService.GetAllAsync(); // Obtiene la lista de negocios desde el servicio
+
+            // Verifica si la lista no está vacía antes de actualizar la colección
+            if (negocios != null && negocios.Any())
             {
-                if (_negocio != value)
-                {
-                    _negocio = value;
-                    OnPropertyChanged();
-                }
+                Negocios = new ObservableCollection<Negocio>(negocios); // Asigna la nueva lista de negocios
             }
         }
-
-        public NegocioViewModel(IGenericService<Negocio> negocioService)
+        catch (Exception ex)
         {
-            _negocioService = negocioService;
-        }
-
-        public async Task LoadNegocio()
-        {
-            try
-            {
-                // Aquí asumimos que solo hay un negocio y tomamos el primero
-                var negocios = await _negocioService.GetAllAsync();
-                if (negocios != null && negocios.Any())
-                {
-                    Negocio = negocios.First();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al cargar el negocio: {ex.Message}");
-                // Aquí podrías manejar el error como prefieras
-            }
+            // Manejo de errores en caso de que la carga de datos falle
+            Console.WriteLine($"Error al cargar los negocios: {ex.Message}");
         }
     }
 }

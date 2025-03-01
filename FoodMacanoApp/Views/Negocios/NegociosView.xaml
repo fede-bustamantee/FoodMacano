@@ -28,115 +28,58 @@
         <!-- Contenido principal -->
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="30" Padding="20,40,20,30">
-                <!-- Tarjeta de información principal -->
-                <Frame BackgroundColor="#2A2A2A" 
-                       CornerRadius="30" 
-                       Padding="20">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="{Binding Negocio.Nombre}" 
-                               TextColor="Orange" 
-                               FontSize="24" 
-                               FontAttributes="Bold"/>
+                <CollectionView ItemsSource="{Binding Negocios}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#2A2A2A" CornerRadius="30" Padding="20">
+                                <VerticalStackLayout Spacing="15">
+                                    <Label Text="{Binding Nombre}" 
+                                   TextColor="Orange" 
+                                   FontSize="24" 
+                                   FontAttributes="Bold"/>
 
-                        <!-- Dirección -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Label Grid.Column="0"
-                                   FontFamily="FontAwesomeSolid"
-                                   Text="&#xf3c5;"
-                                   TextColor="White"/>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Negocio.Direccion}"
-                                   TextDecorations="Underline"
-                                   TextColor="White">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnDireccionTapped"/>
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </Grid>
+                                    <!-- Dirección -->
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Label Grid.Column="0"
+                                       FontFamily="FontAwesomeSolid"
+                                       Text="&#xf3c5;"
+                                       TextColor="White"/>
+                                        <Label Grid.Column="1"
+                                       Text="{Binding Direccion}"
+                                       TextDecorations="Underline"
+                                       TextColor="White">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnDireccionTapped"/>
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </Grid>
 
-                        <!-- Teléfono -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Label Grid.Column="0"
-                                   FontFamily="FontAwesomeSolid"
-                                   Text="&#xf095;"
-                                   TextColor="White"/>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Negocio.Telefono}"
-                                   TextColor="White"/>
-                        </Grid>
+                                    <!-- Teléfono -->
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Label Grid.Column="0"
+                                       FontFamily="FontAwesomeSolid"
+                                       Text="&#xf095;"
+                                       TextColor="White"/>
+                                        <Label Grid.Column="1"
+                                       Text="{Binding Telefono}"
+                                       TextColor="White"/>
+                                    </Grid>
 
-                        <!-- Horario -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Label Grid.Column="0"
-                                   FontFamily="FontAwesomeSolid"
-                                   Text="&#xf017;"
-                                   TextColor="White"/>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Negocio.Horario}"
-                                   TextColor="White"/>
-                        </Grid>
-                    </VerticalStackLayout>
-                </Frame>
-
-                <!-- Redes Sociales -->
-                <Frame BackgroundColor="#2A2A2A" 
-                       CornerRadius="30" 
-                       Padding="20">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="Redes Sociales" 
-                               TextColor="Orange" 
-                               FontSize="20" 
-                               FontAttributes="Bold"/>
-
-                        <!-- Facebook -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Label Grid.Column="0"
-                                   FontFamily="FontAwesomeBrands"
-                                   Text="&#xf39e;"
-                                   TextColor="White"/>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Negocio.RedesSocial.Facebook}"
-                                   TextDecorations="Underline"
-                                   TextColor="White">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnFacebookTapped"/>
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </Grid>
-
-                        <!-- Instagram -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Label Grid.Column="0"
-                                   FontFamily="FontAwesomeBrands"
-                                   Text="&#xf16d;"
-                                   TextColor="White"/>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Negocio.RedesSocial.Instagram}"
-                                   TextDecorations="Underline"
-                                   TextColor="White">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnInstagramTapped"/>
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </Grid>
-
-                        <!-- WhatsApp -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Label Grid.Column="0"
-                                   FontFamily="FontAwesomeBrands"
-                                   Text="&#xf232;"  
-                                   TextColor="White"/>
-                            <Label Grid.Column="1"
-                                   Text="{Binding Negocio.RedesSocial.Whatsapp}"
-                                   TextDecorations="Underline"
-                                   TextColor="White">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnWhatsAppTapped"/>
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </Grid>
-                    </VerticalStackLayout>
-                </Frame>
+                                    <!-- Horario -->
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Label Grid.Column="0"
+                                       FontFamily="FontAwesomeSolid"
+                                       Text="&#xf017;"
+                                       TextColor="White"/>
+                                        <Label Grid.Column="1"
+                                       Text="{Binding Horario}"
+                                       TextColor="White"/>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </VerticalStackLayout>
         </ScrollView>
 

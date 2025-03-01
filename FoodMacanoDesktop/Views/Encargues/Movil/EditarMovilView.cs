@@ -1,25 +1,19 @@
-﻿using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Models.Orders;
+using FoodMacanoServices.Services.Common;
+using FoodMacanoServices.Services.Orders;
 
 namespace FoodMacanoDesktop.Views.Encargues.Movil
 {
     public partial class EditarMovilView : Form
     {
-        private readonly DesktopMovilService _encarguesService;
-        private readonly MauiEncargue _encargue;
+        // Servicios para encargues y productos
+        private DesktopMovilService _encarguesService;
+        private MauiEncargue _encargue;
         private BindingSource _detallesBindingSource;
-        private readonly ProductoService productoService;
+        private ProductoService productoService;
 
+        // Constructor que inicializa los servicios y carga los datos del encargue
         public EditarMovilView(MauiEncargue encargue)
         {
             InitializeComponent();
@@ -29,136 +23,167 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
             productoService = new ProductoService();
 
             ConfigurarFormulario();
-            CargarDatos();
+            CargarDatos(); 
         }
 
+        // Configura los controles del formulario con los datos actuales del encargue
         private void ConfigurarFormulario()
         {
-            // Configurar los controles para editar el encargue
-            txtCliente.Text = _encargue.UserDisplayName;
-            txtDireccion.Text = _encargue.Direccion;
-            dtpFecha.Value = _encargue.FechaEncargue;
-            txtTotal.Text = _encargue.Total.ToString("C2");
-
-            // Cargar los detalles en los TextBox del diseño
-            CargarDetalles();
+            txtCliente.Text = _encargue.UserDisplayName; 
+            txtDireccion.Text = _encargue.Direccion; 
+            dtpFecha.Value = _encargue.FechaEncargue; 
+            ActualizarTotal(); 
+            CargarDetalles(); 
         }
 
+        // Carga los detalles del encargue en los controles del formulario
         private async void CargarDetalles()
         {
             var detalles = _encargue.Detalles.ToList();
             panelDetalles.Controls.Clear();
-            int yPos = 10;
+            panelDetalles.BackColor = Color.Gray;
+            panelDetalles.Padding = new Padding(10);
 
+            // Recorremos los detalles del encargue y los mostramos en el panel
             foreach (var detalle in detalles)
             {
-                // Etiqueta Producto
-                Label lblProducto = new Label
+                // Crear un panel para cada detalle
+                Panel detallePanel = new Panel
+                {
+                    Size = new Size(600, 160),
+                    BackColor = Color.FromArgb(64, 64, 64),
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Padding = new Padding(15),
+                    Margin = new Padding(250, 0, 0, 0)
+                };
+
+                // Crear un TableLayoutPanel para organizar los controles
+                TableLayoutPanel grid = new TableLayoutPanel
+                {
+                    ColumnCount = 4,
+                    RowCount = 2,
+                    Dock = DockStyle.Fill,
+                    Padding = new Padding(5),
+                    AutoSize = true,
+                    AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                    Anchor = AnchorStyles.None,
+                    CellBorderStyle = TableLayoutPanelCellBorderStyle.None
+                };
+
+                // Configuración de las columnas del grid
+                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
+                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));
+                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100)); 
+                grid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); 
+
+                // Fila 1: Producto + Botón para cambiar
+                grid.Controls.Add(new Label
                 {
                     Text = "Producto:",
-                    Location = new Point(10, yPos),
-                    AutoSize = true
-                };
-                panelDetalles.Controls.Add(lblProducto);
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    ForeColor = Color.White,
+                    Anchor = AnchorStyles.None
+                }, 0, 0);
 
-                // TextBox para Producto
                 TextBox txtProducto = new TextBox
                 {
                     Text = detalle.NombreProducto,
-                    Location = new Point(80, yPos),
-                    Width = 150,
-                    ReadOnly = true // Hacer que no sea editable
+                    Font = new Font("Segoe UI", 12),
+                    Anchor = AnchorStyles.None,
+                    ReadOnly = true,
+                    BackColor = Color.WhiteSmoke,
+                    Width = 190
                 };
-                panelDetalles.Controls.Add(txtProducto);
+                grid.Controls.Add(txtProducto, 1, 0);
 
-                // Botón para seleccionar Producto
                 Button btnSelectProduct = new Button
                 {
-                    Text = "Seleccionar Producto", // Cambiar el texto para que sea más claro
-                    Location = new Point(240, yPos),
-                    Width = 200,  // Aumentar el ancho del botón
-                    Height = 40,  // Aumentar la altura del botón
-                    Font = new Font("Arial", 12, FontStyle.Bold)  // Cambiar el tamaño de la fuente para hacerlo más visible
+                    Text = "Cambiar",
+                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                    Size = new Size(90, 32),
+                    FlatStyle = FlatStyle.Flat,
+                    BackColor = Color.Orange,
+                    ForeColor = Color.White,
+                    Anchor = AnchorStyles.None
                 };
-                btnSelectProduct.Click += async (s, e) => await MostrarProductosAsync(txtProducto, detalle);
-                panelDetalles.Controls.Add(btnSelectProduct);
+                btnSelectProduct.FlatAppearance.BorderSize = 0;
+                btnSelectProduct.Click += async (s, e) => await MostrarProductosAsync(txtProducto, detalle, grid);
+                grid.Controls.Add(btnSelectProduct, 2, 0);
 
-                yPos += 60; // Ajustar la distancia entre controles
-
-                // Etiqueta Cantidad
-                Label lblCantidad = new Label { Text = "Cantidad:", Location = new Point(10, yPos), AutoSize = true };
-                panelDetalles.Controls.Add(lblCantidad);
-
-                // TextBox para Cantidad
-                TextBox txtCantidad = new TextBox
+                // Fila 2: Cantidad + Precio centrados
+                grid.Controls.Add(new Label
                 {
-                    Text = detalle.Cantidad.ToString(),
-                    Location = new Point(80, yPos),
-                    Width = 50,
-                    Tag = detalle
-                };
-                txtCantidad.TextChanged += (s, e) =>
+                    Text = "Cantidad:",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    ForeColor = Color.White,
+                    Anchor = AnchorStyles.None
+                }, 0, 1);
+
+                NumericUpDown numCantidad = new NumericUpDown
                 {
-                    if (int.TryParse(txtCantidad.Text, out int cantidad))
-                    {
-                        ((MauiEncargueDetalle)txtCantidad.Tag).Cantidad = cantidad;
-                    }
+                    Value = detalle.Cantidad,
+                    Minimum = 1,
+                    Maximum = 999,
+                    Font = new Font("Segoe UI", 12),
+                    Size = new Size(70, 28),
+                    BackColor = Color.WhiteSmoke,
+                    Anchor = AnchorStyles.None
                 };
-                panelDetalles.Controls.Add(txtCantidad);
-                yPos += 30;
+                numCantidad.ValueChanged += (s, e) =>
+                {
+                    detalle.Cantidad = (int)numCantidad.Value;
+                    ActualizarTotal(); // Actualiza el total cuando cambia la cantidad
+                };
+                grid.Controls.Add(numCantidad, 1, 1);
 
-                // Etiqueta Precio
-                Label lblPrecio = new Label { Text = "Precio:", Location = new Point(10, yPos), AutoSize = true };
-                panelDetalles.Controls.Add(lblPrecio);
+                // Mostrar precio unitario
+                grid.Controls.Add(new Label
+                {
+                    Text = "Precio:",
+                    Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    ForeColor = Color.White,
+                    Anchor = AnchorStyles.None
+                }, 2, 1);
 
-                // TextBox para Precio
                 TextBox txtPrecio = new TextBox
                 {
                     Text = detalle.PrecioUnitario.ToString("C2"),
-                    Location = new Point(80, yPos),
-                    Width = 80,
-                    Tag = detalle
+                    Font = new Font("Segoe UI", 12),
+                    ReadOnly = true,
+                    BackColor = Color.WhiteSmoke,
+                    Width = 140,
+                    Anchor = AnchorStyles.None
                 };
-                txtPrecio.TextChanged += (s, e) =>
-                {
-                    if (decimal.TryParse(txtPrecio.Text, out decimal precio))
-                    {
-                        ((MauiEncargueDetalle)txtPrecio.Tag).PrecioUnitario = precio;
-                    }
-                };
-                panelDetalles.Controls.Add(txtPrecio);
-                yPos += 30;
+                grid.Controls.Add(txtPrecio, 3, 1);
 
-                // Etiqueta Subtotal
-                Label lblSubtotal = new Label { Text = "Subtotal:", Location = new Point(10, yPos), AutoSize = true };
-                panelDetalles.Controls.Add(lblSubtotal);
-
-                // TextBox para Subtotal
-                TextBox txtSubtotal = new TextBox
-                {
-                    Text = detalle.Subtotal.ToString("C2"),
-                    Location = new Point(80, yPos),
-                    Width = 80,
-                    ReadOnly = true
-                };
-                panelDetalles.Controls.Add(txtSubtotal);
-                yPos += 40;
-                _detallesBindingSource.ResetBindings(false);
+                detallePanel.Controls.Add(grid);
+                panelDetalles.Controls.Add(detallePanel);
             }
+
+            panelDetalles.AutoScroll = true; // Habilita el desplazamiento en el panel
         }
-        private async Task MostrarProductosAsync(TextBox txtProducto, MauiEncargueDetalle detalle)
+
+        // Muestra el formulario para seleccionar un producto y actualiza el detalle del encargue
+        private async Task MostrarProductosAsync(TextBox txtProducto, MauiEncargueDetalle detalle, TableLayoutPanel grid)
         {
-            // Obtener la lista de productos disponibles
-            var productos = await productoService.GetAllAsync();
+            var productos = await productoService.GetAllAsync(); // Obtener productos disponibles
 
             // Crear el formulario para seleccionar el producto
             using (var selectProductForm = new Form())
             {
+                selectProductForm.Text = "Seleccionar Producto";
+                selectProductForm.StartPosition = FormStartPosition.CenterScreen;
+                selectProductForm.Size = new Size(300, 400);
+                selectProductForm.BackColor = Color.Gray;
+
                 ListBox listBox = new ListBox
                 {
                     DataSource = productos,
-                    DisplayMember = "Nombre", // Muestra el nombre del producto
-                    ValueMember = "Id", // Usa el Id para identificar el producto seleccionado
+                    DisplayMember = "Nombre",
+                    ValueMember = "Id",
                     Dock = DockStyle.Fill
                 };
                 selectProductForm.Controls.Add(listBox);
@@ -170,22 +195,36 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
                 };
                 selectProductForm.Controls.Add(btnSelect);
 
-                // Al hacer clic en "Seleccionar", actualizamos el TextBox
                 btnSelect.Click += (s, e) =>
                 {
                     if (listBox.SelectedItem is Producto selectedProduct)
                     {
-                        detalle.NombreProducto = selectedProduct.Nombre; // Actualizamos el nombre del producto en el detalle
-                        txtProducto.Text = selectedProduct.Nombre; // Actualizamos el TextBox
+                        detalle.NombreProducto = selectedProduct.Nombre; // Actualizar nombre del producto
+                        txtProducto.Text = selectedProduct.Nombre;
+                        detalle.PrecioUnitario = selectedProduct.Precio; // Actualizar precio unitario
+
+                        var txtPrecio = grid.Controls.OfType<TextBox>().FirstOrDefault(txt => txt != txtProducto && txt.ReadOnly);
+                        if (txtPrecio != null)
+                        {
+                            txtPrecio.Text = selectedProduct.Precio.ToString("C2");
+                        }
+
+                        ActualizarTotal(); // Actualiza el total
                         selectProductForm.Close();
                     }
                 };
 
-                selectProductForm.ShowDialog(); // Muestra el formulario
+                selectProductForm.ShowDialog(); // Mostrar el formulario de selección
             }
         }
+        private void ActualizarTotal()
+        {
+            decimal total = _encargue.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario); // Calcular el total
+            txtTotal.Text = total.ToString("C2"); // Mostrar el total
+            _encargue.Total = total; // Actualizar el total en el encargue
+        }
 
-
+        // Cargar los datos de los detalles en el BindingSource
         private void CargarDatos()
         {
             _detallesBindingSource.DataSource = _encargue.Detalles;
@@ -196,16 +235,17 @@ namespace FoodMacanoDesktop.Views.Encargues.Movil
             _encargue.Direccion = txtDireccion.Text;
             _encargue.FechaEncargue = dtpFecha.Value;
 
-            await _encarguesService.UpdateEncargueAsync(_encargue);
+            await _encarguesService.UpdateEncargueAsync(_encargue); // Actualizar encargue en el servicio
 
-            // Actualizar los detalles
-            CargarDetalles(); // Esto recargará los detalles en la vista
-            _detallesBindingSource.ResetBindings(false);
+            CargarDetalles(); // Recargar detalles
+            _detallesBindingSource.ResetBindings(false); // Actualizar bindings
 
-            // Notificar que los datos fueron actualizados
-            this.DialogResult = DialogResult.OK;
+            this.DialogResult = DialogResult.OK; // Cerrar formulario con éxito
             this.Close();
         }
-
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

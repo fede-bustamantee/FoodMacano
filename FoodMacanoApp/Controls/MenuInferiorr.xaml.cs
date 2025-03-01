@@ -70,17 +70,17 @@ namespace FoodMacanoApp.Controls
 
         private async void OnEncargueClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("EncargueView");
+            await Shell.Current.GoToAsync("/EncargueView");
         }
 
         private async void OnHorariosClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("NegocioView");
+            await Shell.Current.GoToAsync("/NegocioView");
         }
 
         private async void OnPerfilClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("PerfilView");
+            await Shell.Current.GoToAsync("/PerfilView");
         }
     }
 }

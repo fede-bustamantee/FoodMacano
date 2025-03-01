@@ -1,14 +1,5 @@
-﻿using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Services.Common;
 
 namespace FoodMacanoDesktop.Views.Configuracion.Categorias
 {
@@ -32,8 +23,12 @@ namespace FoodMacanoDesktop.Views.Configuracion.Categorias
             txtNombre.Text = categoria.Nombre;
             txtIconUrl.Text = categoria.IconUrl;
         }
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
-        private async void btnGuardar_Click(object sender, EventArgs e)
+        private async void btnGuardar_Click_1(object sender, EventArgs e)
         {
             categoria.Nombre = txtNombre.Text;
             categoria.IconUrl = txtIconUrl.Text;

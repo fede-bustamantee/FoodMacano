@@ -1,14 +1,5 @@
-﻿using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Services.Common;
 
 namespace FoodMacanoDesktop.Views.Configuracion.Datos
 {
@@ -47,6 +38,10 @@ namespace FoodMacanoDesktop.Views.Configuracion.Datos
                 txtWhatsapp.Text = negocio.RedesSocial.Whatsapp;
             }
         }
+        private void btnVolver_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
         private async void btnGuardar_Click(object sender, EventArgs e)
         {
@@ -56,7 +51,7 @@ namespace FoodMacanoDesktop.Views.Configuracion.Datos
                 btnGuardar.Enabled = false;
 
                 // Actualizar datos de redes sociales
-                redesSocial.Instagram = txtInstagram.Text;
+                redesSocial.Instagram = txtFacebook.Text;
                 redesSocial.Facebook = txtFacebook.Text;
                 redesSocial.Whatsapp = txtWhatsapp.Text;
 

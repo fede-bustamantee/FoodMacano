@@ -21,6 +21,7 @@ namespace FoodMacanoApp
         }
         private void RegisterRoutes()
         {
+            // Se registran las rutas para la navegación dentro de la aplicación
             Routing.RegisterRoute("Registrarse", typeof(RegisterView));
             Routing.RegisterRoute("InicioView", typeof(InicioView));
             Routing.RegisterRoute("CarritoView", typeof(CarritoView));
@@ -36,34 +37,26 @@ namespace FoodMacanoApp
         {
             try
             {
-                // Primero verificar el BindingContext
+                Console.WriteLine("Habilitando la aplicación después del login...");
+
                 if (this.BindingContext is not ShellViewModel viewModel)
                 {
-                    await Shell.Current.DisplayAlert("Error", "Error de inicialización de la aplicación", "OK");
-                    return;
+                    throw new InvalidOperationException("ShellViewModel es null en EnableAppAfterLogin");
                 }
 
-                // Actualizar el estado antes de navegar
                 viewModel.UserIsLogout = false;
 
-                // Asegurarse que la ruta existe
-                var route = $"//{nameof(InicioView)}";
-                await Shell.Current.GoToAsync(route, true);
+                await Shell.Current.GoToAsync($"//{nameof(InicioView)}", true);
+
+                Console.WriteLine("Navegación a InicioView completada");
             }
             catch (Exception ex)
             {
-                // Log del error para debugging
-                Console.WriteLine($"Error en EnableAppAfterLogin: {ex.Message}");
-                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                Console.WriteLine($"Error en EnableAppAfterLogin: {ex.GetType().Name}: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
 
-                // Mensaje amigable al usuario
-                await Shell.Current.DisplayAlert(
-                    "Error",
-                    "No se pudo acceder a la página principal. Por favor, intente nuevamente.",
-                    "OK"
-                );
+                await Shell.Current.DisplayAlert("Error", "No se pudo acceder a la página principal", "OK");
 
-                // Reiniciar el estado si algo falla
                 if (this.BindingContext is ShellViewModel vm)
                 {
                     vm.UserIsLogout = true;
@@ -73,12 +66,17 @@ namespace FoodMacanoApp
 
         public void DisableAppAfterLogin()
         {
+            // Obtiene el servicio de autenticación desde los servicios registrados en la aplicación
             var authService = Application.Current.Handler.MauiContext.Services.GetService<IAuthService>();
             if (authService != null)
             {
-                authService.Logout();
+                authService.Logout(); // Cierra sesión del usuario
             }
+
+            // Deshabilita el menú lateral (Flyout)
             FlyoutBehavior = FlyoutBehavior.Disabled;
+
+            // Redirige al usuario a la pantalla de inicio de sesión
             Shell.Current.GoToAsync("LoginView");
         }
     }

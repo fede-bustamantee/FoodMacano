@@ -1,5 +1,5 @@
 using FoodMacanoApp.ViewModels;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Orders;
 
 namespace FoodMacanoApp.Views.Encargue;
 

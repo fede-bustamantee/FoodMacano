@@ -24,7 +24,6 @@ public partial class PerfilView : ContentPage
         bool confirmacion = await DisplayAlert("Cerrar Sesión", "¿Estás seguro de que deseas cerrar sesión?", "Sí", "No");
         if (confirmacion)
         {
-            // Use the method directly instead of accessing CerrarSesionCommand
             _viewModel.CerrarSesion();
             var appShell = (AppShell)App.Current.MainPage;
             appShell.DisableAppAfterLogin();

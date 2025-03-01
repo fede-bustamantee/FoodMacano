@@ -1,8 +1,8 @@
 using FoodMacanoApp.ViewModels;
 using FoodMacanoApp.Views.Carrito;
 using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
+using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Services.Carrito;
 using Microsoft.Maui.Graphics;
 using System.Globalization;
 

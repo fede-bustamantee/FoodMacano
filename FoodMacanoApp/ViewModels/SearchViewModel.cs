@@ -1,7 +1,7 @@
 ﻿using FoodMacanoApp.Class;
 using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
+using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Services.Carrito;
 using System.Collections.ObjectModel;
 
 namespace FoodMacanoApp.ViewModels
@@ -53,20 +53,21 @@ namespace FoodMacanoApp.ViewModels
             Task.Run(async () => await CargarProductos());
         }
 
+        // Método para obtener todos los productos desde el servicio
         private async Task CargarProductos()
         {
             try
             {
-                var productos = await _productoService.GetAllAsync();
+                var productos = await _productoService.GetAllAsync(); // Obtener productos de la base de datos o API
                 if (productos != null)
                 {
                     _todosLosProductos.Clear();
                     foreach (var producto in productos)
                     {
-                        _todosLosProductos.Add(producto);
+                        _todosLosProductos.Add(producto); // Agregar los productos a la lista
                     }
                 }
-                MensajeError = string.Empty;
+                MensajeError = string.Empty; // Limpiar mensajes de error
             }
             catch (Exception ex)
             {
@@ -75,11 +76,12 @@ namespace FoodMacanoApp.ViewModels
             }
         }
 
+        // Método para filtrar los productos según un texto ingresado por el usuario
         public void FiltrarProductosPorNombre(string textoBusqueda)
         {
             if (string.IsNullOrWhiteSpace(textoBusqueda))
             {
-                ProductosFiltrados.Clear();
+                ProductosFiltrados.Clear(); // Limpiar los productos filtrados si el texto está vacío
                 return;
             }
 
@@ -90,16 +92,17 @@ namespace FoodMacanoApp.ViewModels
             ProductosFiltrados.Clear();
             foreach (var producto in productosFiltrados)
             {
-                ProductosFiltrados.Add(producto);
+                ProductosFiltrados.Add(producto); // Agregar productos filtrados a la colección
             }
         }
 
+        // Método para agregar un producto al carrito de compras
         public async Task AgregarAlCarrito(Producto producto)
         {
             try
             {
-                await _carritoService.AddToCartAsync(producto);
-                MensajeError = string.Empty;
+                await _carritoService.AddToCartAsync(producto); // Agregar producto al carrito
+                MensajeError = string.Empty; // Limpiar mensajes de error
             }
             catch (Exception ex)
             {

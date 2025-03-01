@@ -16,7 +16,7 @@
             </div>
             <div class="form-group">
                 <label for="password">Contraseña</label>
-                <input type="password" @bind="usuario.Password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
+                <input type="password" @bind="password" class="form-control" id="password" placeholder="Ingresa tu contraseña">
             </div>
             <div class="form-group">
                 <label for="user">Nombre de usuario</label>
@@ -41,6 +41,7 @@
 <link href="css/alert.css" rel="stylesheet" />
 @code {
     private Usuario usuario = new Usuario();
+    private string password = string.Empty; // Separamos la contraseña del objeto Usuario
 
     private async Task Registe()
     {
@@ -59,7 +60,7 @@
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(usuario.Password))
+            if (string.IsNullOrWhiteSpace(password))
             {
                 await SweetAlert.FireAsync(new SweetAlertOptions
                     {
@@ -71,7 +72,7 @@
                 return;
             }
 
-            if (usuario.Password.Length < 6)
+            if (password.Length < 6)
             {
                 await SweetAlert.FireAsync(new SweetAlertOptions
                     {
@@ -110,10 +111,12 @@
             }
 
             // Intentar crear el usuario en Firebase
-            var firebaseId = await AuthService.RegisterWithEmailPassword(usuario.Email, usuario.Password);
+            var firebaseId = await AuthService.RegisterWithEmailPassword(usuario.Email, password);
 
             if (!string.IsNullOrEmpty(firebaseId))
             {
+                // Asignar la contraseña y el firebaseId antes de crear el usuario en la BD
+                usuario.Password = password;
                 usuario.FirebaseId = firebaseId;
                 await UsuarioService.CrearUsuarioAsync(usuario);
 

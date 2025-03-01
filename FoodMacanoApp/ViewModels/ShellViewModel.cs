@@ -31,8 +31,8 @@ namespace FoodMacanoApp.ViewModels
         private void OnLogout(object obj)
         {
             UserIsLogout = true;
-            var institutoShell = (AppShell)App.Current.MainPage;
-            institutoShell.DisableAppAfterLogin();
+            var appShell = (AppShell)App.Current.MainPage;
+            appShell.DisableAppAfterLogin();
         }
     }
 }

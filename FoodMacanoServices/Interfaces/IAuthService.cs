@@ -1,4 +1,4 @@
-﻿using FoodMacanoServices.Models;
+﻿using FoodMacanoServices.Models.FireAuth;
 using System;
 using System.Collections.Generic;
 using System.Linq;

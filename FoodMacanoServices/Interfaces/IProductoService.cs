@@ -1,5 +1,5 @@
 ﻿using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Common;
 
 namespace FoodMacanoServices.Interfaces
 {

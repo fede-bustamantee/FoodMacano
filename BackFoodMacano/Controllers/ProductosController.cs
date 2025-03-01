@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BackFoodMacano.DataContext;
-using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Common;
 
 namespace BackFoodMacano.Controllers
 {

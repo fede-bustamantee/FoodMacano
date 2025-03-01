@@ -1,5 +1,6 @@
 ﻿using BackFoodMacano.DataContext;
 using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Orders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

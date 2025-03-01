@@ -1,14 +1,6 @@
-﻿using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using FoodMacanoDesktop.Views.Menu;
+using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Services.Common;
 
 namespace FoodMacanoDesktop.Views.Configuracion.Categorias
 {
@@ -27,21 +19,14 @@ namespace FoodMacanoDesktop.Views.Configuracion.Categorias
         {
             var categorias = await categoriaService.GetAllAsync();
             listaCategorias.DataSource = categorias;
+            OcultarColumnas();
         }
-
-        private void btnEditar_Click(object sender, EventArgs e)
+        private void OcultarColumnas()
         {
-            var categoria = (Categoria)listaCategorias.Current;
-            AgregarEditarCategoriaView agregarEditarCategoriaView = new AgregarEditarCategoriaView(categoria);
-            agregarEditarCategoriaView.ShowDialog();
-            CargarDatosGrilla();
-        }
+            if (dataGridCategorias.Columns.Count == 0) return; // Evita el error si no hay columnas
 
-        private void btnAgregar_Click(object sender, EventArgs e)
-        {
-            AgregarEditarCategoriaView agregarEditarCategoriaView = new AgregarEditarCategoriaView();
-            agregarEditarCategoriaView.ShowDialog();
-            CargarDatosGrilla();
+            if (dataGridCategorias.Columns.Contains("Id"))
+                dataGridCategorias.Columns["Id"].Visible = false;
         }
 
         private async void btnEliminar_Click(object sender, EventArgs e)
@@ -60,5 +45,45 @@ namespace FoodMacanoDesktop.Views.Configuracion.Categorias
                 CargarDatosGrilla();
             }
         }
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            AgregarEditarCategoriaView agregarEditarCategoriaView = new AgregarEditarCategoriaView();
+
+            // Buscar si el formulario principal está abierto
+            MenuPrincipalView? menuPrincipal = Application.OpenForms.OfType<MenuPrincipalView>().FirstOrDefault();
+
+            if (menuPrincipal != null)
+            {
+                menuPrincipal.AbrirFormulariosHijos(agregarEditarCategoriaView);
+                agregarEditarCategoriaView.FormClosed += (s, args) => CargarDatosGrilla(); // Recargar la grilla al cerrar
+            }
+            else
+            {
+                agregarEditarCategoriaView.ShowDialog();
+                CargarDatosGrilla();
+            }
+        }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            var categoria = (Categoria)listaCategorias.Current;
+            AgregarEditarCategoriaView agregarEditarCategoriaView = new AgregarEditarCategoriaView(categoria);
+
+            // Buscar si el formulario principal está abierto
+            MenuPrincipalView? menuPrincipal = Application.OpenForms.OfType<MenuPrincipalView>().FirstOrDefault();
+
+            if (menuPrincipal != null)
+            {
+                menuPrincipal.AbrirFormulariosHijos(agregarEditarCategoriaView);
+                agregarEditarCategoriaView.FormClosed += (s, args) => CargarDatosGrilla(); // Recargar la grilla al cerrar
+            }
+            else
+            {
+                agregarEditarCategoriaView.ShowDialog();
+                CargarDatosGrilla();
+            }
+        }
+
+
     }
 }

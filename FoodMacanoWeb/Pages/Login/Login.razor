@@ -34,11 +34,11 @@
             <div class="login-form">
                 <div class="form-group">
                     <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" class="form-control" @bind="usuario.Email" placeholder="Correo electrónico" />
+                    <input type="email" id="email" class="form-control" @bind="email" placeholder="Correo electrónico" />
                 </div>
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input type="password" id="password" class="form-control" @bind="usuario.Password" placeholder="Contraseña" />
+                    <input type="password" id="password" class="form-control" @bind="password" placeholder="Contraseña" />
                 </div>
                 <div class="form-group remember-me">
                     <input type="checkbox" id="rememberMe" @bind="rememberMe" />
@@ -62,7 +62,8 @@
 <link href="css/alert.css" rel="stylesheet" />
 
 @code {
-    private Usuario usuario = new Usuario();
+    private string email = string.Empty;
+    private string password = string.Empty;
     private bool EstaAutenticado = false;
     private string mensajeError = string.Empty;
     private bool rememberMe = false;
@@ -75,7 +76,7 @@
 
     private async Task IniciarSesion()
     {
-        if (string.IsNullOrWhiteSpace(usuario.Email) || string.IsNullOrWhiteSpace(usuario.Password))
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
             await SweetAlert.FireAsync(new SweetAlertOptions
                 {
@@ -92,7 +93,7 @@
             // Establecer la persistencia antes de iniciar sesión
             await AuthService.SetPersistence(rememberMe);
 
-            var (firebaseId, isEmailVerified) = await AuthService.SignInWithEmailPassword(usuario.Email, usuario.Password, rememberMe);
+            var (firebaseId, isEmailVerified) = await AuthService.SignInWithEmailPassword(email, password, rememberMe);
 
             if (string.IsNullOrEmpty(firebaseId))
             {
@@ -142,8 +143,8 @@
                     ConfirmButtonText = "Aceptar"
                 });
 
-            // Opcional: Limpiar los campos después de un error
-            usuario.Password = string.Empty;
+            // Limpiar campos después de un error
+            password = string.Empty;
         }
         finally
         {
@@ -175,12 +176,15 @@
                         ? displayName
                         : email.Split('@')[0];
 
+                    // Generamos una contraseña aleatoria para usuarios de Google
+                    string randomPassword = Guid.NewGuid().ToString("N").Substring(0, 12);
+
                     var nuevoUsuario = new Usuario
                         {
                             FirebaseId = firebaseId,
                             User = userName,
                             Email = email,
-                            Password = "defaultPassword",
+                            Password = randomPassword, // Contraseña aleatoria que nunca se utilizará directamente
                             TipoUsuario = TipoUsuarioEnum.Cliente
                         };
 
@@ -216,7 +220,7 @@
             await SweetAlert.FireAsync(new SweetAlertOptions
                 {
                     Title = "Error",
-                    Text = "Ocurrió un error durante la autenticación. Inténtalo más tarde.",
+                    Text = "Ocurrió un error durante la autenticación. Inténtalo más Tarde",
                     Icon = SweetAlertIcon.Error,
                     ConfirmButtonText = "Aceptar"
                 });
@@ -227,7 +231,6 @@
     private async Task CerrarSesion()
     {
         await AuthService.SignOut();
-        usuario = new Usuario();
         EstaAutenticado = false;
         NavigationManager.NavigateTo("/");
     }

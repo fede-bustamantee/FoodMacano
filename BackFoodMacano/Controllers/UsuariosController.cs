@@ -1,10 +1,12 @@
 ﻿using BackFoodMacano.DataContext;
 using FoodMacanoServices.Models;
+using FoodMacanoServices.Models.Cart;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FoodMacanoServices.Models.FireAuth;
 
 namespace FoodMacanoServices.Controllers
 {
@@ -18,9 +20,10 @@ namespace FoodMacanoServices.Controllers
         {
             _context = context;
         }
+
         // GET: api/Usuarios/email/{email}
         [HttpGet("email/{email}")]
-        public async Task<ActionResult<Usuario>> GetUsuarioByEmail(string email)
+        public async Task<ActionResult<UsuarioDTO>> GetUsuarioByEmail(string email)
         {
             var usuario = await _context.usuarios
                 .FirstOrDefaultAsync(u => u.Email == email);
@@ -30,19 +33,22 @@ namespace FoodMacanoServices.Controllers
                 return NotFound();
             }
 
-            return usuario;
+            // Convertir a DTO para no enviar la contraseña
+            return UsuarioDTO.FromUsuario(usuario);
         }
 
         // GET: api/Usuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
         {
-            return await _context.usuarios.ToListAsync();
+            var usuarios = await _context.usuarios.ToListAsync();
+            // Convertir a DTO para no enviar la contraseña
+            return usuarios.Select(u => UsuarioDTO.FromUsuario(u)).ToList();
         }
 
         // GET: api/Usuarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        public async Task<ActionResult<UsuarioDTO>> GetUsuario(int id)
         {
             var usuario = await _context.usuarios
                 .FirstOrDefaultAsync(u => u.Id == id);
@@ -52,17 +58,30 @@ namespace FoodMacanoServices.Controllers
                 return NotFound();
             }
 
-            return usuario;
+            // Convertir a DTO para no enviar la contraseña
+            return UsuarioDTO.FromUsuario(usuario);
         }
 
         // POST: api/Usuarios
         [HttpPost]
-        public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+        public async Task<ActionResult<UsuarioDTO>> PostUsuario(Usuario usuario)
         {
+            // Verificamos si ya existe un usuario con ese correo
+            var usuarioExistente = await _context.usuarios
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email);
+
+            if (usuarioExistente != null)
+            {
+                return BadRequest("El correo electrónico ya está registrado");
+            }
+
             _context.usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
+            // Convertir a DTO para no enviar la contraseña en la respuesta
+            var usuarioDto = UsuarioDTO.FromUsuario(usuario);
+
+            return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuarioDto);
         }
 
         // PUT: api/Usuarios/5
@@ -72,6 +91,16 @@ namespace FoodMacanoServices.Controllers
             if (id != usuario.Id)
             {
                 return BadRequest();
+            }
+
+            // Si la contraseña está vacía, mantener la contraseña actual
+            if (string.IsNullOrEmpty(usuario.Password))
+            {
+                var usuarioActual = await _context.usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+                if (usuarioActual != null)
+                {
+                    usuario.Password = usuarioActual.Password;
+                }
             }
 
             _context.Entry(usuario).State = EntityState.Modified;

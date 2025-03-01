@@ -1,14 +1,14 @@
 ﻿using FoodMacanoApp.Class;
-using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
 using FoodMacanoServices.Interfaces;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Windows.Input;
+using FoodMacanoServices.Services.Carrito;
+using FoodMacanoServices.Models.Common;
 
 namespace FoodMacanoApp.ViewModels
 {
-	public class InicioViewModel : NotificationObject
+    public class InicioViewModel : NotificationObject
 	{
 		private readonly IGenericService<Producto> _productoService;
 		private readonly IGenericService<Categoria> _categoriaService;

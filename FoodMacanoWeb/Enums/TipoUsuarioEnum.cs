@@ -5,6 +5,5 @@
         Cliente,
         Empleado,
         Gerente
-
     }
 }

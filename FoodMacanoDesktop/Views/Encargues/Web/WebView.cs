@@ -1,213 +1,228 @@
 ﻿using FoodMacanoDesktop.Views.Encargues.Web;
-using FoodMacanoServices.Services;
-using System;
+using FoodMacanoDesktop.Views.Menu;
+using FoodMacanoServices.Services.Orders;
 using System.Data;
 
 namespace FoodMacanoDesktop.Views.Encargues
 {
     public partial class WebView : Form
     {
-        private readonly DesktopWebService _encarguesService;
+        private DesktopWebService _encarguesService;
         private BindingSource bindingSource;
         private List<Encargue> _encargues;
-        private readonly DataTable _detallesTable;
-
         public WebView()
         {
             InitializeComponent();
-            _encarguesService = new DesktopWebService();
-            bindingSource = new BindingSource();
-            _detallesTable = CreateDetallesTable();
+            _encarguesService = new DesktopWebService(); // Instancia el servicio que manejará los encargues.
+            bindingSource = new BindingSource(); // Instancia la fuente de datos para el DataGridView.
+
+            // Configura las columnas del DataGridView.
             ConfigureDataGridView();
-            ConfigureDetailsGridView();
+
+            // Configura los eventos para los controles.
+            dataGridViewEncargues.CellDoubleClick += DataGridViewEncargues_CellDoubleClick;
+            dtpFecha.ValueChanged += dtpFecha_ValueChanged;
+
             LoadEncarguesAsync();
         }
 
+        // Evento que se dispara cuando el valor de la fecha en el control dtpFecha cambia.
+        private void dtpFecha_ValueChanged(object sender, EventArgs e)
+        {
+            // Filtra los encargues según la fecha seleccionada.
+            FilterEncarguesByDate(dtpFecha.Value);
+        }
+
+        // Configura las columnas del DataGridView donde se mostrarán los encargues.
         private void ConfigureDataGridView()
         {
-            dataGridViewEncargues.DataSource = bindingSource;
-            dataGridViewEncargues.CellDoubleClick += DataGridViewEncargues_CellDoubleClick;
+            dataGridViewEncargues.AutoGenerateColumns = false; // Evita la generación automática de columnas.
+            dataGridViewEncargues.Columns.Clear(); // Limpia las columnas actuales.
+
+            // Agrega las columnas deseadas con sus respectivas configuraciones.
+            dataGridViewEncargues.Columns.AddRange(new DataGridViewColumn[]
+            {
+                new DataGridViewTextBoxColumn
+                {
+                    Name = "Usuario",
+                    DataPropertyName = "Usuario.User",
+                    HeaderText = "Cliente",
+                    ReadOnly = true,
+                    Width = 100
+                },
+                new DataGridViewTextBoxColumn
+                {
+                    Name = "FechaEncargue",
+                    DataPropertyName = "FechaEncargue",
+                    HeaderText = "Fecha",
+                    ReadOnly = true,
+                    Width = 120
+                },
+                new DataGridViewTextBoxColumn
+                {
+                    Name = "Total",
+                    HeaderText = "Total",
+                    ReadOnly = true,
+                    Width = 100
+                }
+            });
         }
 
-        private void ConfigureDetailsGridView()
+        // Filtra los encargues de acuerdo con la fecha seleccionada.
+        private void FilterEncarguesByDate(DateTime fecha)
         {
-            dgvDetalles.AutoGenerateColumns = true;
-            dgvDetalles.DataSource = _detallesTable;
-            dgvDetalles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvDetalles.AllowUserToAddRows = false;
-            dgvDetalles.AllowUserToDeleteRows = false;
-            dgvDetalles.ReadOnly = true;
-            dgvDetalles.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            if (_encargues == null || !_encargues.Any()) return;
 
-            // Estilo de visualización
-            dgvDetalles.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.LightGray;
-            dgvDetalles.DefaultCellStyle.Padding = new Padding(3);
+            // Filtra la lista de encargues para mostrar solo los que coinciden con la fecha seleccionada.
+            var encarguesFiltrados = _encargues
+                .Where(enc => enc.FechaEncargue.Date == fecha.Date)
+                .Select(enc => new
+                {
+                    EncargueOriginal = enc,
+                    Usuario = enc.Usuario,
+                    Total = enc.EncargueDetalles.Sum(d => d.Cantidad * d.Producto.Precio)
+                })
+                .ToList();
 
-            dataGridViewEncargues.DataSource = bindingSource;
-            dataGridViewEncargues.CellDoubleClick += DataGridViewEncargues_CellDoubleClick;
+            // Limpia las filas actuales del DataGridView.
+            dataGridViewEncargues.Rows.Clear();
 
-            // Agregar estas configuraciones
-            dataGridViewEncargues.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewEncargues.MultiSelect = false;
-            dataGridViewEncargues.AllowUserToAddRows = false;
+            // Agrega los encargues filtrados al DataGridView.
+            foreach (var enc in encarguesFiltrados)
+            {
+                int rowIndex = dataGridViewEncargues.Rows.Add(
+                    enc.Usuario?.User ?? "N/A",
+                    enc.EncargueOriginal.FechaEncargue.ToString("dd/MM/yyyy HH:mm"),
+                    $"${enc.Total:N2}"
+                );
+                // Asocia el objeto de encargue con la fila para su posterior acceso.
+                dataGridViewEncargues.Rows[rowIndex].Tag = enc.EncargueOriginal;
+            }
         }
-
-        private DataTable CreateDetallesTable()
-        {
-            var table = new DataTable();
-            table.Columns.Add("Concepto", typeof(string));
-            table.Columns.Add("Valor", typeof(string));
-            return table;
-        }
-
         private async void LoadEncarguesAsync()
         {
             try
             {
+                // Obtiene los encargues desde el servicio.
                 _encargues = await _encarguesService.GetAllEncarguesAsync();
-
-                var fechas = _encargues.Select(e => e.FechaEncargue.Date).Distinct().ToList();
-
-                cboFecha.Items.Clear();
-                foreach (var fecha in fechas)
-                {
-                    cboFecha.Items.Add(fecha.ToString("dd/MM/yyyy"));
-                }
-
-                if (fechas.Any())
-                {
-                    cboFecha.SelectedIndex = 0;
-                }
-
-                bindingSource.DataSource = _encargues;
+                // Filtra los encargues de acuerdo con la fecha seleccionada en el control dtpFecha.
+                FilterEncarguesByDate(dtpFecha.Value);
             }
             catch (Exception ex)
             {
+                // Muestra un mensaje de error si ocurre algún problema al cargar los encargues.
                 MessageBox.Show($"Error al cargar los encargues: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        // Evento que se dispara cuando se hace doble clic en una fila del DataGridView.
         private void DataGridViewEncargues_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            // Verifica si se hizo doble clic en una fila válida.
+            if (e.RowIndex < 0) return;
+
+            // Obtiene el objeto encargue asociado con la fila seleccionada.
+            var encargue = dataGridViewEncargues.Rows[e.RowIndex].Tag as Encargue;
+            if (encargue != null)
             {
-                var encargue = (Encargue)bindingSource[e.RowIndex];
+                // Muestra los detalles del encargue seleccionado.
                 ShowEncargueDetails(encargue);
             }
         }
 
+        // Muestra los detalles del encargue seleccionado en el DataGridView dgvDetalles.
         private void ShowEncargueDetails(Encargue encargue)
         {
-            _detallesTable.Rows.Clear();
-
-            // Información del Encargue
-            // Información del Encargue
-            _detallesTable.Rows.Add("=== DATOS DEL ENCARGUE ===", "");
-            _detallesTable.Rows.Add("ID Encargue", encargue.Id);
-            _detallesTable.Rows.Add("Número de Encargue", encargue.NumeroEncargue);
-            _detallesTable.Rows.Add("Fecha y Hora", encargue.FechaEncargue.ToString("dd/MM/yyyy HH:mm:ss"));
-
-            // Información del Producto
-            if (encargue.EncargueDetalles.Any())
+            try
             {
-                _detallesTable.Rows.Add("", "");
-                _detallesTable.Rows.Add("=== PRODUCTOS DEL ENCARGUE ===", "");
+                dgvDetalles.DataSource = null; // Limpia el DataGridView antes de cargar los nuevos datos.
 
-                foreach (var detalle in encargue.EncargueDetalles)
+                if (encargue?.EncargueDetalles != null && encargue.EncargueDetalles.Any())
                 {
-                    if (detalle.Producto != null)
+                    // Filtra los detalles del encargue para mostrar el nombre, cantidad y precio de cada producto.
+                    var detallesFiltrados = encargue.EncargueDetalles.Select(ed => new
                     {
-                        _detallesTable.Rows.Add("ID Producto", detalle.Producto.Id);
-                        _detallesTable.Rows.Add("Nombre Producto", detalle.Producto.Nombre);
-                        _detallesTable.Rows.Add("Cantidad", detalle.Cantidad);
-                        _detallesTable.Rows.Add("Precio Unitario", $"${detalle.Producto.Precio:N2}");
-                        _detallesTable.Rows.Add("", "------------------");
+                        Producto = ed.Producto.Nombre,
+                        Cantidad = ed.Cantidad,
+                        PrecioUnitario = ed.Producto.Precio 
+                    }).ToList();
+
+                    // Asigna los detalles al DataGridView.
+                    dgvDetalles.DataSource = detallesFiltrados;
+
+                    // Opcional: Formatea las columnas según sea necesario (ejemplo, el precio con dos decimales).
+                    foreach (DataGridViewColumn column in dgvDetalles.Columns)
+                    {
+                        if (column.Name == "PrecioUnitario")
+                        {
+                            column.DefaultCellStyle.Format = "N2"; // Formatea el precio unitario con dos decimales.
+                        }
                     }
                 }
             }
-
-            // Información del Usuario
-            if (encargue.Usuario != null)
+            catch (Exception ex)
             {
-                _detallesTable.Rows.Add("", "");
-                _detallesTable.Rows.Add("=== DATOS DEL USUARIO ===", "");
-                _detallesTable.Rows.Add("ID Usuario", encargue.Usuario.Id);
-                _detallesTable.Rows.Add("Username", encargue.Usuario.User);
-                _detallesTable.Rows.Add("Email", encargue.Usuario.Email);
-                _detallesTable.Rows.Add("Tipo Usuario", encargue.Usuario.TipoUsuario);
-                _detallesTable.Rows.Add("Firebase ID", encargue.Usuario.FirebaseId);
+                MessageBox.Show($"Error al mostrar los detalles: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            // Total del Encargue
-            _detallesTable.Rows.Add("", "");
-            _detallesTable.Rows.Add("=== TOTAL ===", "");
-
-            decimal total = 0;
-
-            foreach (var detalle in encargue.EncargueDetalles) // Asegúrate de que Encargue tiene una lista de EncargueDetalles
-            {
-                total += (detalle.Producto?.Precio ?? 0) * detalle.Cantidad;
-            }
-
-            _detallesTable.Rows.Add("Total del Encargue", $"${total:N2}");
-
-
-            // Refrescar el DataGridView
-            dgvDetalles.Refresh();
-            dgvDetalles.AutoResizeRows();
-        }
-
-        private void cboFecha_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_encargues == null || !_encargues.Any()) return;
-
-            var fechaSeleccionada = DateTime.Parse(cboFecha.SelectedItem.ToString());
-
-            var encarguesFiltrados = _encargues
-                .Where(enc => enc.FechaEncargue.Date == fechaSeleccionada.Date)
-                .ToList();
-
-            bindingSource.DataSource = encarguesFiltrados;
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
-            var encargue = bindingSource.Current as Encargue;
-            if (encargue == null) return;
-
-            var editarEncargueView = new EditarWebView(encargue);
-            if (editarEncargueView.ShowDialog() == DialogResult.OK)
+            // Verifica si hay una fila seleccionada en el DataGridView.
+            if (dataGridViewEncargues.CurrentRow?.Tag is Encargue encargue)
             {
-                LoadEncarguesAsync();  // Recargar la lista
-                ShowEncargueDetails(encargue);  // Actualizar los detalles
+                var editarEncargueView = new EditarWebView(encargue);
+                // Agrega un manejador para el evento FormClosed para recargar los encargues si se edita uno.
+                editarEncargueView.FormClosed += (s, args) =>
+                {
+                    if (((Form)s).DialogResult == DialogResult.OK)
+                    {
+                        LoadEncarguesAsync(); // Recarga los encargues.
+                        ShowEncargueDetails(encargue); // Muestra los detalles del encargue editado.
+                    }
+                };
+
+                // Verifica si hay un formulario de menú abierto para cargar el formulario hijo.
+                MenuPrincipalView? menu = Application.OpenForms.OfType<MenuPrincipalView>().FirstOrDefault();
+                if (menu != null)
+                {
+                    menu.AbrirFormulariosHijos(editarEncargueView);
+                }
+                else
+                {
+                    // Si no hay un formulario de menú, muestra el formulario de edición como un diálogo.
+                    editarEncargueView.ShowDialog();
+                }
             }
         }
 
         private async void btnEliminar_Click(object sender, EventArgs e)
         {
-            // Obtener el encargue seleccionado
-            var encargue = bindingSource.Current as Encargue;
-            if (encargue == null) return;
-
-            var respuesta = MessageBox.Show(
-                $"¿Está seguro que desea eliminar el encargue #{encargue.NumeroEncargue}?",
-                "Confirmar eliminación",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (respuesta == DialogResult.Yes)
+            // Verifica si hay una fila seleccionada en el DataGridView.
+            if (dataGridViewEncargues.CurrentRow?.Tag is Encargue encargue)
             {
-                try
+                // Muestra una ventana de confirmación para eliminar el encargue.
+                var respuesta = MessageBox.Show(
+                    $"¿Está seguro que desea eliminar el encargue #{encargue.NumeroEncargue}?",
+                    "Confirmar eliminación",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (respuesta == DialogResult.Yes)
                 {
-                    await _encarguesService.DeleteEncargueAsync(encargue.Id);
-                    LoadEncarguesAsync();  // Recargar la lista
-                    _detallesTable.Clear(); // Limpiar los detalles
-                    MessageBox.Show("Encargue eliminado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al eliminar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    try
+                    {
+                        // Elimina el encargue mediante el servicio.
+                        await _encarguesService.DeleteEncargueAsync(encargue.Id);
+                        LoadEncarguesAsync(); // Recarga los encargues después de la eliminación.
+                        dgvDetalles.DataSource = null; // Limpia los detalles del encargue.
+                        MessageBox.Show("Encargue eliminado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al eliminar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

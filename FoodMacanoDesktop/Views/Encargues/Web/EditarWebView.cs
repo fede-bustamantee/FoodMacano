@@ -1,23 +1,16 @@
-﻿using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Models.Orders;
+using FoodMacanoServices.Services.Common;
+using FoodMacanoServices.Services.Orders;
 
 namespace FoodMacanoDesktop.Views.Encargues.Web
 {
     public partial class EditarWebView : Form
     {
-        private readonly DesktopWebService _encarguesService;
-        private readonly Encargue _encargue;
-        private BindingSource _detallesBindingSource;
-        private readonly ProductoService _productoService;
+        private DesktopWebService _encarguesService;
+        private Encargue _encargue; 
+        private BindingSource _detallesBindingSource; 
+        private ProductoService _productoService;
         private Panel panelDetalles;
 
         public EditarWebView(Encargue encargue)
@@ -28,181 +21,164 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
             _detallesBindingSource = new BindingSource();
             _productoService = new ProductoService();
 
-            InitializeCustomComponents();
+            Configuaraciontxt();
             ConfigurarFormulario();
+            // Cargamos los datos del encargue
             CargarDatos();
         }
 
-        private void InitializeCustomComponents()
+        // Este método configura los controles de texto para mostrar los datos del encargue
+        private void Configuaraciontxt()
         {
-            this.Size = new Size(800, 600);
-
-            // TextBox para Usuario
-            Label lblUsuario = new Label
+            if (_encargue != null)
             {
-                Text = "Usuario:",
-                Location = new Point(10, 10),
-                AutoSize = true
-            };
-            TextBox txtUsuario = new TextBox
-            {
-                Text = _encargue.Usuario?.User ?? "",
-                Location = new Point(10, 30),
-                Width = 200
-            };
+                // Mostramos los datos del cliente y la fecha del encargue
+                txtCliente.Text = _encargue.Usuario?.User ?? "Desconocido"; 
+                dtpFecha.Value = _encargue.FechaEncargue; 
 
-            // TextBox para Total
-            Label lblTotal = new Label
-            {
-                Text = "Total:",
-                Location = new Point(10, 110),
-                AutoSize = true
-            };
-            TextBox txtTotal = new TextBox
-            {
-                Text = CalcularTotal().ToString("C2"),
-                Location = new Point(10, 130),
-                Width = 200,
-                ReadOnly = true
-            };
+                // Calculamos el total del encargue sumando los productos (cantidad * precio)
+                decimal total = _encargue.EncargueDetalles.Sum(d => d.Cantidad * d.Producto.Precio);
+                txtTotal.Text = total.ToString("C2");
 
-            // DateTimePicker
-            DateTimePicker dtpFecha = new DateTimePicker
-            {
-                Value = _encargue.FechaEncargue,
-                Location = new Point(10, 160),
-                Width = 200
-            };
-
-            // Panel para los detalles
-            panelDetalles = new Panel
-            {
-                Location = new Point(10, 200),
-                Size = new Size(760, 300),
-                AutoScroll = true,
-                BorderStyle = BorderStyle.FixedSingle
-            };
-
-            // Agregar controles al formulario
-            this.Controls.AddRange(new Control[] {
-            lblUsuario, txtUsuario,
-            lblTotal, txtTotal,
-            dtpFecha,
-            panelDetalles,
-        });
-        }
-
-        private void CargarDetalles()
-        {
-            panelDetalles.Controls.Clear();
-            int yPos = 10;
-
-            foreach (var detalle in _encargue.EncargueDetalles)
-            {
-                // Grupo Producto
-                Label lblProducto = new Label
+                // Verificamos si el panel donde se muestran los detalles es null
+                // Si lo es, lo creamos y lo agregamos al formulario
+                if (panelDetalles == null)
                 {
-                    Text = "Producto:",
-                    Location = new Point(10, yPos),
-                    AutoSize = true
-                };
-                panelDetalles.Controls.Add(lblProducto);
-
-                TextBox txtProducto = new TextBox
-                {
-                    Text = detalle.Producto?.Nombre ?? "",
-                    Location = new Point(80, yPos),
-                    Width = 150,
-                    ReadOnly = true,
-                    Tag = detalle
-                };
-                panelDetalles.Controls.Add(txtProducto);
-
-                Button btnSelectProduct = new Button
-                {
-                    Text = "Seleccionar Producto",
-                    Location = new Point(240, yPos),
-                    Width = 200,
-                    Height = 40,
-                    Font = new Font("Arial", 12, FontStyle.Bold)
-                };
-                btnSelectProduct.Click += async (s, e) => await MostrarProductosAsync(txtProducto, detalle);
-                panelDetalles.Controls.Add(btnSelectProduct);
-
-                yPos += 60;
-
-                // Grupo Cantidad
-                Label lblCantidad = new Label
-                {
-                    Text = "Cantidad:",
-                    Location = new Point(10, yPos),
-                    AutoSize = true
-                };
-                panelDetalles.Controls.Add(lblCantidad);
-
-                TextBox txtCantidad = new TextBox
-                {
-                    Text = detalle.Cantidad.ToString(),
-                    Location = new Point(80, yPos),
-                    Width = 50,
-                    Tag = detalle
-                };
-                txtCantidad.TextChanged += (s, e) =>
-                {
-                    if (int.TryParse(txtCantidad.Text, out int cantidad))
+                    panelDetalles = new Panel
                     {
-                        var det = (EncargueDetalle)txtCantidad.Tag;
-                        det.Cantidad = cantidad;
-                        ActualizarTotal();
-                    }
-                };
-                panelDetalles.Controls.Add(txtCantidad);
-                yPos += 30;
-
-                // Grupo Precio
-                Label lblPrecio = new Label
-                {
-                    Text = "Precio:",
-                    Location = new Point(10, yPos),
-                    AutoSize = true
-                };
-                panelDetalles.Controls.Add(lblPrecio);
-
-                TextBox txtPrecio = new TextBox
-                {
-                    Text = detalle.Producto?.Precio.ToString("C2") ?? "0",
-                    Location = new Point(80, yPos),
-                    Width = 80,
-                    ReadOnly = true
-                };
-                panelDetalles.Controls.Add(txtPrecio);
-                yPos += 30;
-
-                // Grupo Subtotal
-                Label lblSubtotal = new Label
-                {
-                    Text = "Subtotal:",
-                    Location = new Point(10, yPos),
-                    AutoSize = true
-                };
-                panelDetalles.Controls.Add(lblSubtotal);
-
-                TextBox txtSubtotal = new TextBox
-                {
-                    Text = (detalle.Cantidad * (detalle.Producto?.Precio ?? 0)).ToString("C2"),
-                    Location = new Point(80, yPos),
-                    Width = 80,
-                    ReadOnly = true,
-                    Tag = detalle
-                };
-                panelDetalles.Controls.Add(txtSubtotal);
-                yPos += 50;
+                        Location = new Point(10, 200),
+                        Size = new Size(760, 300),
+                        AutoScroll = true,
+                        BorderStyle = BorderStyle.FixedSingle
+                    };
+                    this.Controls.Add(panelDetalles);
+                }
+                CargarDetalles();
             }
         }
 
+        // Método para cargar los detalles del encargue
+        private void CargarDetalles()
+        {
+            panelDetalles.Controls.Clear(); // Limpiamos los controles previos
+            panelDetalles.BorderStyle = BorderStyle.None;
+            panelDetalles.BackColor = Color.Gray;
+            panelDetalles.Width = 600; 
+            panelDetalles.Left = ((this.ClientSize.Width - panelDetalles.Width) / 2) + 200; // Centramos el panel
+
+            int yPos = 10; // Posición inicial para los controles de cada detalle
+
+            // Recorremos los detalles del encargue y los mostramos en el panel
+            foreach (var detalle in _encargue.EncargueDetalles)
+            {
+                // Creamos un panel para cada producto del detalle
+                Panel panelItem = new Panel
+                {
+                    Size = new Size(560, 100),
+                    Location = new Point(10, yPos),
+                    BackColor = Color.FromArgb(40, 40, 40)
+                };
+                panelDetalles.Controls.Add(panelItem);
+
+                // Agregamos el control Label para mostrar "Producto:"
+                Label lblProducto = new Label
+                {
+                    Text = "Producto:",
+                    Location = new Point(10, 15),
+                    ForeColor = Color.White,
+                    AutoSize = true,
+                    Font = new Font("Arial", 11, FontStyle.Bold) 
+                };
+                panelItem.Controls.Add(lblProducto);
+
+                // Creamos un TextBox para mostrar el nombre del producto (solo lectura)
+                TextBox txtProducto = new TextBox
+                {
+                    Text = detalle.Producto?.Nombre ?? "",
+                    Location = new Point(90, 12),
+                    Width = 200,
+                    Height = 25,
+                    ReadOnly = true,
+                    Font = new Font("Arial", 11)
+                };
+                panelItem.Controls.Add(txtProducto);
+
+                // Botón "Cambiar" para cambiar el producto
+                Button btnCambiar = new Button
+                {
+                    Text = "Cambiar",
+                    Location = new Point(300, 10),
+                    Width = 90,
+                    Height = 30,
+                    BackColor = Color.Orange,
+                    FlatStyle = FlatStyle.Flat,
+                    ForeColor = Color.Black,
+                    Font = new Font("Arial", 11, FontStyle.Bold)
+                };
+                btnCambiar.Click += async (s, e) => await MostrarProductosAsync(txtProducto, detalle); // Evento al hacer clic
+                panelItem.Controls.Add(btnCambiar);
+
+                // Agregamos el control Label para mostrar "Cantidad:"
+                Label lblCantidad = new Label
+                {
+                    Text = "Cantidad:",
+                    Location = new Point(10, 60),
+                    ForeColor = Color.White,
+                    AutoSize = true,
+                    Font = new Font("Arial", 11, FontStyle.Bold)
+                };
+                panelItem.Controls.Add(lblCantidad);
+
+                // Creamos un NumericUpDown para modificar la cantidad del producto
+                NumericUpDown numCantidad = new NumericUpDown
+                {
+                    Value = detalle.Cantidad,
+                    Location = new Point(90, 55),
+                    Width = 50,
+                    Minimum = 1,
+                    Maximum = 100,
+                    Font = new Font("Arial", 11)
+                };
+                numCantidad.ValueChanged += (s, e) =>
+                {
+                    var det = (EncargueDetalle)numCantidad.Tag;
+                    det.Cantidad = (int)numCantidad.Value; // Actualizamos la cantidad
+                    ActualizarTotal(); // Actualizamos el total
+                };
+                numCantidad.Tag = detalle; // Asignamos el detalle al control
+                panelItem.Controls.Add(numCantidad);
+
+                // Agregamos el control Label para mostrar "Precio:"
+                Label lblPrecio = new Label
+                {
+                    Text = "Precio:",
+                    Location = new Point(170, 60),
+                    ForeColor = Color.White,
+                    AutoSize = true,
+                    Font = new Font("Arial", 11, FontStyle.Bold)
+                };
+                panelItem.Controls.Add(lblPrecio);
+
+                // Creamos un TextBox para mostrar el precio del producto (solo lectura)
+                TextBox txtPrecio = new TextBox
+                {
+                    Text = detalle.Producto?.Precio.ToString("C2") ?? "0",
+                    Location = new Point(230, 55),
+                    Width = 90,
+                    Height = 25,
+                    ReadOnly = true,
+                    Font = new Font("Arial", 11)
+                };
+                panelItem.Controls.Add(txtPrecio);
+
+                yPos += 110; // Incrementamos la posición vertical para el siguiente detalle
+            }
+        }
+
+        // Método para mostrar la lista de productos y permitir seleccionar uno
         private async Task MostrarProductosAsync(TextBox txtProducto, EncargueDetalle detalle)
         {
-            var productos = await _productoService.GetAllAsync();
+            var productos = await _productoService.GetAllAsync(); // Obtenemos todos los productos
 
             using (var selectProductForm = new Form())
             {
@@ -212,9 +188,9 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
 
                 ListBox listBox = new ListBox
                 {
-                    DataSource = productos,
+                    DataSource = productos, // Asignamos los productos a la lista
                     DisplayMember = "Nombre",
-                    ValueMember = "Id",
+                    ValueMember = "Id", 
                     Dock = DockStyle.Fill
                 };
                 selectProductForm.Controls.Add(listBox);
@@ -226,99 +202,75 @@ namespace FoodMacanoDesktop.Views.Encargues.Web
                     Height = 40,
                     Font = new Font("Arial", 12)
                 };
-                selectProductForm.Controls.Add(btnSelect);
 
+                // Evento cuando se selecciona un producto
                 btnSelect.Click += (s, e) =>
                 {
                     if (listBox.SelectedItem is Producto selectedProduct)
                     {
-                        detalle.ProductoId = selectedProduct.Id;
-                        detalle.Producto = selectedProduct;
-                        txtProducto.Text = selectedProduct.Nombre;
+                        detalle.Producto = selectedProduct; // Actualizamos el producto seleccionado
+                        txtProducto.Text = selectedProduct.Nombre; // Mostramos el nombre en el TextBox
 
-                        // Actualizar precio y subtotal
-                        var txtPrecio = ObtenerControlHermano(txtProducto, "Precio:") as TextBox;
-                        if (txtPrecio != null) txtPrecio.Text = selectedProduct.Precio.ToString("C2");
+                        Panel panelItem = txtProducto.Parent as Panel; // Obtenemos el panel del detalle
+                        if (panelItem != null)
+                        {
+                            var txtPrecio = panelItem.Controls.OfType<TextBox>().FirstOrDefault(txt => txt != txtProducto && txt.ReadOnly);
+                            if (txtPrecio != null)
+                            {
+                                // Actualizamos el precio mostrado
+                                txtPrecio.Text = selectedProduct.Precio.ToString("C2");
+                            }
+                        }
 
-                        var txtSubtotal = ObtenerControlHermano(txtProducto, "Subtotal:") as TextBox;
-                        if (txtSubtotal != null) ActualizarSubtotal(detalle, txtSubtotal);
-
-                        ActualizarTotal();
-                        selectProductForm.Close();
+                        ActualizarTotal(); // Actualizamos el total general
+                        selectProductForm.Close(); // Cerramos el formulario de selección de productos
                     }
                 };
 
-                selectProductForm.ShowDialog();
+                selectProductForm.Controls.Add(btnSelect);
+                selectProductForm.ShowDialog(); // Mostramos el formulario para seleccionar un producto
             }
         }
-
-        private Control ObtenerControlHermano(Control control, string labelText)
-        {
-            var controls = control.Parent.Controls;
-            for (int i = 0; i < controls.Count; i++)
-            {
-                if (controls[i] is Label label && label.Text == labelText)
-                {
-                    if (i + 1 < controls.Count && controls[i + 1] is TextBox)
-                    {
-                        return controls[i + 1];
-                    }
-                }
-            }
-            return null;
-        }
-
-        private void ActualizarSubtotal(EncargueDetalle detalle, TextBox txtSubtotal)
-        {
-            decimal subtotal = detalle.Cantidad * (detalle.Producto?.Precio ?? 0);
-            txtSubtotal.Text = subtotal.ToString("C2");
-        }
-
         private void ActualizarTotal()
         {
-            var txtTotal = Controls.OfType<TextBox>().FirstOrDefault(t => t.Text.StartsWith("$"));
-            if (txtTotal != null)
-            {
-                txtTotal.Text = CalcularTotal().ToString("C2");
-            }
+            // Sumamos todos los subtotales (cantidad * precio) y mostramos el total
+            decimal total = _encargue.EncargueDetalles.Sum(d => d.Cantidad * (d.Producto?.Precio ?? 0));
+            txtTotal.Text = total.ToString("C2");
         }
 
-        private decimal CalcularTotal()
-        {
-            return _encargue.EncargueDetalles.Sum(d => d.Cantidad * (d.Producto?.Precio ?? 0));
-        }
-
+        // Método para cargar los datos iniciales del encargue
         private void CargarDatos()
         {
-            _detallesBindingSource.DataSource = _encargue.EncargueDetalles;
-            CargarDetalles();
+            _detallesBindingSource.DataSource = _encargue.EncargueDetalles; // Asignamos los detalles al BindingSource
+            CargarDetalles(); // Cargamos los detalles en los controles del formulario
         }
 
+        // Método para configurar el formulario
         private void ConfigurarFormulario()
         {
-            this.Text = "Editar Encargue";
-            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Editar Encargue"; // Establecemos el título del formulario
+            this.StartPosition = FormStartPosition.CenterScreen; // Centrado en la pantalla
         }
 
-        private async void btnGuardar_Click_1(object sender, EventArgs e)
+        // Evento para cerrar el formulario
+        private void btnVolver_Click(object sender, EventArgs e)
         {
-            try
-            {
-                var dtpFecha = Controls.OfType<DateTimePicker>().FirstOrDefault();
-                if (dtpFecha != null)
-                {
-                    _encargue.FechaEncargue = dtpFecha.Value;
-                }
+            this.Close();
+        }
 
-                await _encarguesService.UpdateEncargueAsync(_encargue);
-                MessageBox.Show("Encargue actualizado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
-            }
-            catch (Exception ex)
+        // Evento para guardar los cambios del encargue
+        private async void btnGuardar_Click(object sender, EventArgs e)
+        {
+            var dtpFecha = Controls.OfType<DateTimePicker>().FirstOrDefault(); // Obtenemos el DateTimePicker
+            if (dtpFecha != null)
             {
-                MessageBox.Show($"Error al actualizar el encargue: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _encargue.FechaEncargue = dtpFecha.Value; // Actualizamos la fecha del encargue
             }
+
+            await _encarguesService.UpdateEncargueAsync(_encargue); // Guardamos los cambios
+            MessageBox.Show("Encargue actualizado exitosamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            DialogResult = DialogResult.OK; // Indicamos que los cambios fueron exitosos
+            Close();
         }
     }
 }

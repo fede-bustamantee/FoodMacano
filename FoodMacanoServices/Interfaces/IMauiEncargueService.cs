@@ -1,4 +1,4 @@
-﻿using FoodMacanoServices.Models;
+﻿using FoodMacanoServices.Models.Orders;
 
 namespace FoodMacanoServices.Interfaces
 {

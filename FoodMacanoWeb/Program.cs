@@ -1,7 +1,11 @@
 using CurrieTechnologies.Razor.SweetAlert2;
 using FoodMacanoServices.Interfaces;
 using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
+using FoodMacanoServices.Models.Cart;
+using FoodMacanoServices.Models.Common;
+using FoodMacanoServices.Services.Common;
+using FoodMacanoServices.Services.FireAuth;
+using FoodMacanoServices.Services.Orders;
 using FoodMacanoWeb;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

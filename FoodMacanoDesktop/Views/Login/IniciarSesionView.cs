@@ -1,13 +1,17 @@
 ﻿using Firebase.Auth.Providers;
-using Firebase.Auth.Repository;
 using Firebase.Auth;
+using FoodMacanoDesktop.Views.ShowInActivity;
 
 namespace FoodMacanoDesktop.Views.Login
 {
     public partial class IniciarSesionView : Form
     {
+        // Cliente de autenticación de Firebase
         FirebaseAuthClient firebaseAuthClient;
+
+        // Propiedad para indicar si el inicio de sesión fue exitoso
         public bool loginSuccessfull { get; set; } = false;
+
         public IniciarSesionView()
         {
             InitializeComponent();
@@ -15,35 +19,40 @@ namespace FoodMacanoDesktop.Views.Login
         }
         private void ConfiguracionFirebase()
         {
-
-
-            // Configure...
+            // Configuración de Firebase con la API Key y el proveedor de autenticación
             var config = new FirebaseAuthConfig
             {
                 ApiKey = "AIzaSyDpXHQyD5bFCjGkuPklXEASuX0B7a-peTE",
                 AuthDomain = "foodmacano.firebaseapp.com",
                 Providers = new FirebaseAuthProvider[]
                 {
-                    // Add and configure individual providers
-                    new EmailProvider()
-                    // ...
+                    new EmailProvider() // Permite el inicio de sesión con email y contraseña
                 },
-
             };
 
-            // ...and create your FirebaseAuthClient
+            // Se crea una instancia del cliente
             firebaseAuthClient = new FirebaseAuthClient(config);
         }
         private async void btnIngresar_Click_1(object sender, EventArgs e)
         {
+            // Se muestra una pantalla de carga con un mensaje de "Verificando credenciales..."
+            var loadingForm = new ActivityView();
+            loadingForm.Message = "Verificando credenciales...";
+            loadingForm.Show();
+
             try
             {
+                // Intenta iniciar sesión con el email y la contraseña ingresados en los TextBox
                 var result = await firebaseAuthClient.SignInWithEmailAndPasswordAsync(txtEmail.Text, txtPassword.Text);
+
+                // Si el login es exitoso, se marca la variable loginSuccessfull como verdadera
                 loginSuccessfull = true;
-                this.Close();  // Close the login form if login is successful
+                loadingForm.Close();
+                this.Close();
             }
             catch
             {
+                loadingForm.Close();
                 MessageBox.Show("Email o password incorrecto, intentelo nuevamente");
             }
         }
@@ -51,7 +60,6 @@ namespace FoodMacanoDesktop.Views.Login
         {
             this.Close();
         }
-
         private void chkVerContraseña_CheckedChanged_1(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = chkVerContraseña.Checked ? '\0' : '*';

@@ -4,7 +4,7 @@ using FoodMacanoDesktop.Views.DatosDelNegocio;
 using FoodMacanoDesktop.Views.Encargues;
 using FoodMacanoDesktop.Views.Configuracion.Categorias;
 using FoodMacanoDesktop.ViewReports;
-using FoodMacanoServices.Services;
+using FoodMacanoServices.Services.Common;
 
 namespace FoodMacanoDesktop.Views.Menu
 {
@@ -24,6 +24,9 @@ namespace FoodMacanoDesktop.Views.Menu
             productoService = new ProductoService();
             negocioService = new NegocioService();
             this.IsMdiContainer = true;
+
+            AbrirFormulariosHijos(new InicioView());
+            ResaltarBoton(btnInicio);
         }
         //Metodo sin retorno que oculta todos los submenus cuando se llama
         private void SubMenu()
@@ -63,8 +66,6 @@ namespace FoodMacanoDesktop.Views.Menu
         private Form? FormularioActivo = null; //variable que almacena el formulario que se abre
         public void AbrirFormulariosHijos(Form formularioHijos)//parametro que representa el formulario hijo que se debe abrir
         {
-            if (FormularioActivo != null) FormularioActivo.Close(); //si hay algun formulario activo se cierra
-
             //La variable FormularioActivo se actualiza para referenciar al nuevo formulario hijo que se está abriendo.
             FormularioActivo = formularioHijos; //se guarda el formulario que se abre en la variable
 
@@ -226,6 +227,12 @@ namespace FoodMacanoDesktop.Views.Menu
         {
             MostrarSubmenu(SubmenuConfiguracion);
             ResaltarEncabezadosAbiertos();
+        }
+
+        private void btnInicio_Click(object sender, EventArgs e)
+        {
+            AbrirFormulariosHijos(new InicioView());
+            ResaltarBoton(btnInicio);
         }
     }
 }

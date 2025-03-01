@@ -53,10 +53,10 @@
             btnPorCategoria = new FontAwesome.Sharp.IconButton();
             btnTodosPedidos = new FontAwesome.Sharp.IconButton();
             btnPedidos = new FontAwesome.Sharp.IconButton();
+            btnInicio = new FontAwesome.Sharp.IconButton();
             MenuLogo = new Panel();
             pictureBox3 = new PictureBox();
             PanelFormulario = new Panel();
-            pictureBox2 = new PictureBox();
             MenuLateral.SuspendLayout();
             SubmenuConfiguracion.SuspendLayout();
             submenuDatos.SuspendLayout();
@@ -66,14 +66,12 @@
             SubmenuPedidos.SuspendLayout();
             MenuLogo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
-            PanelFormulario.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
             // MenuLateral
             // 
             MenuLateral.AutoScroll = true;
-            MenuLateral.BackColor = Color.Black;
+            MenuLateral.BackColor = Color.FromArgb(64, 64, 64);
             MenuLateral.BorderStyle = BorderStyle.Fixed3D;
             MenuLateral.Controls.Add(SubmenuConfiguracion);
             MenuLateral.Controls.Add(btnConfiguracion);
@@ -87,6 +85,7 @@
             MenuLateral.Controls.Add(btnEncargues);
             MenuLateral.Controls.Add(SubmenuPedidos);
             MenuLateral.Controls.Add(btnPedidos);
+            MenuLateral.Controls.Add(btnInicio);
             MenuLateral.Controls.Add(MenuLogo);
             MenuLateral.Dock = DockStyle.Left;
             MenuLateral.Location = new Point(0, 0);
@@ -96,12 +95,12 @@
             // 
             // SubmenuConfiguracion
             // 
-            SubmenuConfiguracion.BackColor = Color.FromArgb(35, 32, 39);
+            SubmenuConfiguracion.BackColor = Color.Maroon;
             SubmenuConfiguracion.Controls.Add(btnConfigDatos);
             SubmenuConfiguracion.Controls.Add(btnConfigCategorias);
             SubmenuConfiguracion.Controls.Add(btnConfigProducto);
             SubmenuConfiguracion.Dock = DockStyle.Top;
-            SubmenuConfiguracion.Location = new Point(0, 597);
+            SubmenuConfiguracion.Location = new Point(0, 636);
             SubmenuConfiguracion.Name = "SubmenuConfiguracion";
             SubmenuConfiguracion.Size = new Size(176, 120);
             SubmenuConfiguracion.TabIndex = 16;
@@ -180,6 +179,7 @@
             // 
             // btnConfiguracion
             // 
+            btnConfiguracion.BackColor = Color.FromArgb(64, 64, 64);
             btnConfiguracion.Dock = DockStyle.Top;
             btnConfiguracion.FlatAppearance.BorderSize = 0;
             btnConfiguracion.FlatAppearance.MouseOverBackColor = Color.Red;
@@ -190,7 +190,7 @@
             btnConfiguracion.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnConfiguracion.IconSize = 30;
             btnConfiguracion.ImageAlign = ContentAlignment.MiddleLeft;
-            btnConfiguracion.Location = new Point(0, 552);
+            btnConfiguracion.Location = new Point(0, 591);
             btnConfiguracion.Name = "btnConfiguracion";
             btnConfiguracion.Padding = new Padding(5, 0, 0, 0);
             btnConfiguracion.Size = new Size(176, 45);
@@ -198,15 +198,15 @@
             btnConfiguracion.Text = "Configuracion";
             btnConfiguracion.TextAlign = ContentAlignment.MiddleLeft;
             btnConfiguracion.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnConfiguracion.UseVisualStyleBackColor = true;
+            btnConfiguracion.UseVisualStyleBackColor = false;
             btnConfiguracion.Click += btnConfiguracion_Click;
             // 
             // submenuDatos
             // 
-            submenuDatos.BackColor = Color.FromArgb(35, 32, 39);
+            submenuDatos.BackColor = Color.Maroon;
             submenuDatos.Controls.Add(btnNDatos);
             submenuDatos.Dock = DockStyle.Top;
-            submenuDatos.Location = new Point(0, 512);
+            submenuDatos.Location = new Point(0, 551);
             submenuDatos.Name = "submenuDatos";
             submenuDatos.Size = new Size(176, 40);
             submenuDatos.TabIndex = 20;
@@ -237,6 +237,7 @@
             // 
             // btnNosotros
             // 
+            btnNosotros.BackColor = Color.FromArgb(64, 64, 64);
             btnNosotros.Dock = DockStyle.Top;
             btnNosotros.FlatAppearance.BorderSize = 0;
             btnNosotros.FlatAppearance.MouseDownBackColor = Color.Transparent;
@@ -249,7 +250,7 @@
             btnNosotros.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnNosotros.IconSize = 30;
             btnNosotros.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNosotros.Location = new Point(0, 467);
+            btnNosotros.Location = new Point(0, 506);
             btnNosotros.Name = "btnNosotros";
             btnNosotros.Padding = new Padding(5, 0, 0, 0);
             btnNosotros.Size = new Size(176, 45);
@@ -257,15 +258,15 @@
             btnNosotros.Text = "Sobre Nosotros";
             btnNosotros.TextAlign = ContentAlignment.MiddleLeft;
             btnNosotros.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnNosotros.UseVisualStyleBackColor = true;
+            btnNosotros.UseVisualStyleBackColor = false;
             btnNosotros.Click += btnNosotros_Click;
             // 
             // SubmenuProductos
             // 
-            SubmenuProductos.BackColor = Color.FromArgb(35, 32, 39);
+            SubmenuProductos.BackColor = Color.Maroon;
             SubmenuProductos.Controls.Add(btnTodosProductos);
             SubmenuProductos.Dock = DockStyle.Top;
-            SubmenuProductos.Location = new Point(0, 427);
+            SubmenuProductos.Location = new Point(0, 466);
             SubmenuProductos.Name = "SubmenuProductos";
             SubmenuProductos.Size = new Size(176, 40);
             SubmenuProductos.TabIndex = 14;
@@ -296,6 +297,7 @@
             // 
             // btnProductos
             // 
+            btnProductos.BackColor = Color.FromArgb(64, 64, 64);
             btnProductos.Dock = DockStyle.Top;
             btnProductos.FlatAppearance.BorderSize = 0;
             btnProductos.FlatAppearance.MouseDownBackColor = Color.Transparent;
@@ -308,7 +310,7 @@
             btnProductos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnProductos.IconSize = 30;
             btnProductos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnProductos.Location = new Point(0, 382);
+            btnProductos.Location = new Point(0, 421);
             btnProductos.Name = "btnProductos";
             btnProductos.Padding = new Padding(5, 0, 0, 0);
             btnProductos.Size = new Size(176, 45);
@@ -316,15 +318,15 @@
             btnProductos.Text = "Productos";
             btnProductos.TextAlign = ContentAlignment.MiddleLeft;
             btnProductos.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnProductos.UseVisualStyleBackColor = true;
+            btnProductos.UseVisualStyleBackColor = false;
             btnProductos.Click += btnProductos_Click;
             // 
             // SubmenuSalir
             // 
-            SubmenuSalir.BackColor = Color.FromArgb(35, 32, 39);
+            SubmenuSalir.BackColor = Color.Maroon;
             SubmenuSalir.Controls.Add(btnSalirDelSistema);
             SubmenuSalir.Dock = DockStyle.Bottom;
-            SubmenuSalir.Location = new Point(0, 717);
+            SubmenuSalir.Location = new Point(0, 756);
             SubmenuSalir.Name = "SubmenuSalir";
             SubmenuSalir.Size = new Size(176, 40);
             SubmenuSalir.TabIndex = 8;
@@ -355,6 +357,7 @@
             // 
             // btnSalir
             // 
+            btnSalir.BackColor = Color.FromArgb(64, 64, 64);
             btnSalir.Dock = DockStyle.Bottom;
             btnSalir.FlatAppearance.BorderSize = 0;
             btnSalir.FlatAppearance.MouseOverBackColor = Color.Red;
@@ -365,7 +368,7 @@
             btnSalir.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnSalir.IconSize = 30;
             btnSalir.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSalir.Location = new Point(0, 757);
+            btnSalir.Location = new Point(0, 796);
             btnSalir.Name = "btnSalir";
             btnSalir.Padding = new Padding(5, 0, 0, 0);
             btnSalir.Size = new Size(176, 45);
@@ -373,17 +376,17 @@
             btnSalir.Text = "Salir";
             btnSalir.TextAlign = ContentAlignment.MiddleLeft;
             btnSalir.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnSalir.UseVisualStyleBackColor = true;
+            btnSalir.UseVisualStyleBackColor = false;
             btnSalir.Click += btnSalir_Click;
             // 
             // SubmenuEncargues
             // 
-            SubmenuEncargues.BackColor = Color.FromArgb(35, 32, 39);
+            SubmenuEncargues.BackColor = Color.Maroon;
             SubmenuEncargues.Controls.Add(btnEncargusMovil);
             SubmenuEncargues.Controls.Add(btnEncargusWeb);
             SubmenuEncargues.Controls.Add(btnEncargusNegocio);
             SubmenuEncargues.Dock = DockStyle.Top;
-            SubmenuEncargues.Location = new Point(0, 262);
+            SubmenuEncargues.Location = new Point(0, 301);
             SubmenuEncargues.Name = "SubmenuEncargues";
             SubmenuEncargues.Size = new Size(176, 120);
             SubmenuEncargues.TabIndex = 4;
@@ -462,6 +465,7 @@
             // 
             // btnEncargues
             // 
+            btnEncargues.BackColor = Color.FromArgb(64, 64, 64);
             btnEncargues.Dock = DockStyle.Top;
             btnEncargues.FlatAppearance.BorderSize = 0;
             btnEncargues.FlatAppearance.MouseOverBackColor = Color.Red;
@@ -472,7 +476,7 @@
             btnEncargues.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnEncargues.IconSize = 30;
             btnEncargues.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEncargues.Location = new Point(0, 217);
+            btnEncargues.Location = new Point(0, 256);
             btnEncargues.Name = "btnEncargues";
             btnEncargues.Padding = new Padding(5, 0, 0, 0);
             btnEncargues.Size = new Size(176, 45);
@@ -480,18 +484,18 @@
             btnEncargues.Text = "Encargues";
             btnEncargues.TextAlign = ContentAlignment.MiddleLeft;
             btnEncargues.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnEncargues.UseVisualStyleBackColor = true;
+            btnEncargues.UseVisualStyleBackColor = false;
             btnEncargues.Click += btnEncargues_Click;
             // 
             // SubmenuPedidos
             // 
-            SubmenuPedidos.BackColor = Color.FromArgb(35, 32, 39);
+            SubmenuPedidos.BackColor = Color.Maroon;
             SubmenuPedidos.Controls.Add(btnPorCategoria);
             SubmenuPedidos.Controls.Add(btnTodosPedidos);
             SubmenuPedidos.Dock = DockStyle.Top;
-            SubmenuPedidos.Location = new Point(0, 131);
+            SubmenuPedidos.Location = new Point(0, 176);
             SubmenuPedidos.Name = "SubmenuPedidos";
-            SubmenuPedidos.Size = new Size(176, 86);
+            SubmenuPedidos.Size = new Size(176, 80);
             SubmenuPedidos.TabIndex = 2;
             // 
             // btnPorCategoria
@@ -508,10 +512,10 @@
             btnPorCategoria.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnPorCategoria.IconSize = 30;
             btnPorCategoria.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPorCategoria.Location = new Point(0, 43);
+            btnPorCategoria.Location = new Point(0, 40);
             btnPorCategoria.Name = "btnPorCategoria";
             btnPorCategoria.Padding = new Padding(20, 0, 0, 0);
-            btnPorCategoria.Size = new Size(176, 43);
+            btnPorCategoria.Size = new Size(176, 40);
             btnPorCategoria.TabIndex = 2;
             btnPorCategoria.Text = "Por Categoría";
             btnPorCategoria.TextAlign = ContentAlignment.MiddleLeft;
@@ -536,7 +540,7 @@
             btnTodosPedidos.Location = new Point(0, 0);
             btnTodosPedidos.Name = "btnTodosPedidos";
             btnTodosPedidos.Padding = new Padding(20, 0, 0, 0);
-            btnTodosPedidos.Size = new Size(176, 43);
+            btnTodosPedidos.Size = new Size(176, 40);
             btnTodosPedidos.TabIndex = 1;
             btnTodosPedidos.Text = "Todos";
             btnTodosPedidos.TextAlign = ContentAlignment.MiddleLeft;
@@ -546,6 +550,7 @@
             // 
             // btnPedidos
             // 
+            btnPedidos.BackColor = Color.FromArgb(64, 64, 64);
             btnPedidos.Dock = DockStyle.Top;
             btnPedidos.FlatAppearance.BorderSize = 0;
             btnPedidos.FlatAppearance.MouseDownBackColor = Color.Transparent;
@@ -558,7 +563,7 @@
             btnPedidos.IconFont = FontAwesome.Sharp.IconFont.Auto;
             btnPedidos.IconSize = 30;
             btnPedidos.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPedidos.Location = new Point(0, 86);
+            btnPedidos.Location = new Point(0, 131);
             btnPedidos.Name = "btnPedidos";
             btnPedidos.Padding = new Padding(5, 0, 0, 0);
             btnPedidos.Size = new Size(176, 45);
@@ -566,12 +571,38 @@
             btnPedidos.Text = "Hacer Pedido";
             btnPedidos.TextAlign = ContentAlignment.MiddleLeft;
             btnPedidos.TextImageRelation = TextImageRelation.ImageBeforeText;
-            btnPedidos.UseVisualStyleBackColor = true;
+            btnPedidos.UseVisualStyleBackColor = false;
             btnPedidos.Click += btnPedidos_Click;
+            // 
+            // btnInicio
+            // 
+            btnInicio.BackColor = Color.FromArgb(64, 64, 64);
+            btnInicio.Dock = DockStyle.Top;
+            btnInicio.FlatAppearance.BorderSize = 0;
+            btnInicio.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            btnInicio.FlatAppearance.MouseOverBackColor = Color.Red;
+            btnInicio.FlatStyle = FlatStyle.Flat;
+            btnInicio.Font = new Font("Segoe UI", 10F);
+            btnInicio.ForeColor = Color.White;
+            btnInicio.IconChar = FontAwesome.Sharp.IconChar.House;
+            btnInicio.IconColor = Color.Orange;
+            btnInicio.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            btnInicio.IconSize = 30;
+            btnInicio.ImageAlign = ContentAlignment.MiddleLeft;
+            btnInicio.Location = new Point(0, 86);
+            btnInicio.Name = "btnInicio";
+            btnInicio.Padding = new Padding(5, 0, 0, 0);
+            btnInicio.Size = new Size(176, 45);
+            btnInicio.TabIndex = 21;
+            btnInicio.Text = "Inicio";
+            btnInicio.TextAlign = ContentAlignment.MiddleLeft;
+            btnInicio.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnInicio.UseVisualStyleBackColor = false;
+            btnInicio.Click += btnInicio_Click;
             // 
             // MenuLogo
             // 
-            MenuLogo.BackColor = Color.Black;
+            MenuLogo.BackColor = Color.FromArgb(64, 64, 64);
             MenuLogo.Controls.Add(pictureBox3);
             MenuLogo.Dock = DockStyle.Top;
             MenuLogo.Location = new Point(0, 0);
@@ -592,22 +623,11 @@
             // PanelFormulario
             // 
             PanelFormulario.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            PanelFormulario.BackColor = Color.FromArgb(32, 35, 39);
-            PanelFormulario.Controls.Add(pictureBox2);
+            PanelFormulario.BackColor = Color.Gray;
             PanelFormulario.Location = new Point(197, -1);
             PanelFormulario.Name = "PanelFormulario";
             PanelFormulario.Size = new Size(1057, 696);
             PanelFormulario.TabIndex = 1;
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.Anchor = AnchorStyles.None;
-            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
-            pictureBox2.Location = new Point(206, 146);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(666, 369);
-            pictureBox2.TabIndex = 1;
-            pictureBox2.TabStop = false;
             // 
             // MenuPrincipalView
             // 
@@ -618,6 +638,7 @@
             Controls.Add(PanelFormulario);
             Controls.Add(MenuLateral);
             Font = new Font("Segoe UI", 10F);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Location = new Point(110, 0);
             Name = "MenuPrincipalView";
             StartPosition = FormStartPosition.Manual;
@@ -632,8 +653,6 @@
             SubmenuPedidos.ResumeLayout(false);
             MenuLogo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
-            PanelFormulario.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
         }
 
@@ -641,7 +660,6 @@
 
         private Panel MenuLateral;
         private Panel MenuLogo;
-        private Panel PanelFormulario;
         private Panel SubmenuPedidos;
         private FontAwesome.Sharp.IconButton btnPedidos;
         private FontAwesome.Sharp.IconButton btnNosotros;
@@ -668,6 +686,7 @@
         private FontAwesome.Sharp.IconButton btnConfigProducto;
         private FontAwesome.Sharp.IconButton btnConfiguracion;
         private FontAwesome.Sharp.IconButton btnNDatos;
-        private PictureBox pictureBox2;
+        private FontAwesome.Sharp.IconButton btnInicio;
+        private Panel PanelFormulario;
     }
 }

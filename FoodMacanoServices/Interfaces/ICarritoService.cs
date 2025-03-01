@@ -1,4 +1,5 @@
-﻿using FoodMacanoServices.Models;
+﻿using FoodMacanoServices.Models.Cart;
+using FoodMacanoServices.Models.Common;
 
 namespace FoodMacanoServices.Interfaces
 {

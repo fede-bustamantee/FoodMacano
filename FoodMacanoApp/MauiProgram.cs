@@ -5,14 +5,16 @@ using FoodMacanoApp.Views.Inicio;
 using FoodMacanoApp.Views.Login;
 using Microsoft.Extensions.Logging;
 using FoodMacanoServices.Interfaces;
-using FoodMacanoServices.Models;
-using FoodMacanoServices.Services;
 using FoodMacanoApp.Views.Encargue;
 using FoodMacanoApp.Views.Informacion;
 using FoodMacanoApp.Views.Negocios;
 using FoodMacanoApp.Views.Perfil;
 using FoodMacanoApp.Views.Busqueda;
-using FoodMacanoApp.ViewModels;
+using FoodMacanoServices.Services.Common;
+using FoodMacanoServices.Services.Carrito;
+using FoodMacanoServices.Services.Orders;
+using FoodMacanoServices.Services.FireAuth;
+using FoodMacanoServices.Models.Common;
 
 namespace FoodMacanoApp
 {

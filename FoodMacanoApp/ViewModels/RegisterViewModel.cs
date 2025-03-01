@@ -29,9 +29,13 @@ namespace FoodMacanoApp.ViewModels
 
         public RegisterViewModel()
         {
+            // Se obtiene la clave de API de Firebase desde los recursos de la aplicación
             FirebaseApiKey = Properties.Resources.ApiKeyFirebase;
+            // Se construye la URL de solicitud para el envío de correos de verificación
             RequestUri = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=" + FirebaseApiKey;
+            // Se define el comando de registro
             RegistrarseCommand = new RelayCommand(Registrarse);
+            // Se inicializa el cliente de autenticación de Firebase
             _clientAuth = new FirebaseAuthClient(new FirebaseAuthConfig()
             {
                 ApiKey = FirebaseApiKey,
@@ -64,23 +68,30 @@ namespace FoodMacanoApp.ViewModels
 
             try
             {
+                // Crear usuario en Firebase con correo y contraseña
                 var user = await _clientAuth.CreateUserWithEmailAndPasswordAsync(email, password, nombre);
+                // Enviar correo de verificación
                 await SendVerificationEmailAsync(user.User.GetIdTokenAsync().Result);
+                // Notificar al usuario sobre la creación de la cuenta
                 await Application.Current.MainPage.DisplayAlert("Registrarse", "¡Cuenta creada! Veríficala", "Ok");
+                // Redirigir a la vista de inicio de sesión
                 await Shell.Current.GoToAsync("LoginView");
             }
             catch (FirebaseAuthException error)
             {
+                // Captura errores específicos de autenticación de Firebase
                 await Application.Current.MainPage.DisplayAlert("Registrarse", "Ocurrió un problema: " + error.Reason, "Ok");
             }
             catch (Exception ex)
             {
+                // Captura errores generales
                 await Application.Current.MainPage.DisplayAlert("Registrarse", "Ocurrió un error inesperado: " + ex.Message, "Ok");
             }
         }
 
         public async Task SendVerificationEmailAsync(string idToken)
         {
+            // Método para enviar correo de verificación al usuario
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

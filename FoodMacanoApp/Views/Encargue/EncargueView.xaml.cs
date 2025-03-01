@@ -1,7 +1,8 @@
 using FoodMacanoApp.ViewModels;
-using FoodMacanoServices.Services;
 using FoodMacanoServices.Interfaces;
 using Microsoft.Maui.Controls;
+using FoodMacanoServices.Services.Orders;
+using FoodMacanoServices.Services.FireAuth;
 
 namespace FoodMacanoApp.Views.Encargue
 {
