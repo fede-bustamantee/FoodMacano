@@ -13,48 +13,93 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
-.info{
+.info {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 100px 0;
-    max-width: 1200px; /* Limita el ancho máximo */
-    margin: auto; /* Centra horizontalmente */
-}
-.info-img{
-    width:50%;
-}
-.info-img img{
-    width:450px;
-    height:auto;
-}
-.info-txt{
-    width:50%;
-}
-.info-txt h2{
-    font-size:75px;
-    color:#ffffff;
-    font-weight:800;
-    text-transform:uppercase;
-    margin-bottom:25px;
+    max-width: 1200px;
+    margin: auto;
+    gap: 30px;
+    flex-wrap: wrap;
 }
 
-.info-txt p{
-    font-size:18px;
-    color:#a7a7a7;
-    margin-bottom:50px;
+.info-img {
+    width: 50%;
+    display: flex;
+    justify-content: center;
 }
-.btn-2{
-    display:inline-block;
-    padding:15px 35px;
-    background-color:#db241b;
-    color:#ffffff;
-    font-weight:800;
-    text-transform:uppercase;
-    border-radius:50px;
+
+    .info-img img {
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+    }
+
+.info-txt {
+    width: 50%;
 }
-.btn-2:hover{
-    background-color:#74221e;
+
+    .info-txt h2 {
+        font-size: 75px;
+        color: #ffffff;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 25px;
+    }
+
+    .info-txt p {
+        font-size: 18px;
+        color: #a7a7a7;
+        margin-bottom: 50px;
+    }
+
+.btn-2 {
+    display: inline-block;
+    padding: 15px 35px;
+    background-color: #db241b;
+    color: #ffffff;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 50px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-2:hover {
+        background-color: #74221e;
+    }
+
+@media (max-width: 992px) {
+    .info {
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .info-img,
+    .info-txt {
+        width: 100%;
+    }
+
+        .info-txt h2 {
+            font-size: 50px;
+        }
+
+        .info-txt p {
+            font-size: 16px;
+        }
+}
+
+@media (max-width: 576px) {
+    .info-txt h2 {
+        font-size: 36px;
+    }
+
+    .btn-2 {
+        padding: 12px 25px;
+        font-size: 14px;
+    }
 }

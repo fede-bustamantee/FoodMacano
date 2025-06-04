@@ -332,3 +332,37 @@
 .fa-spinner {
     font-size: 18px;
 }
+@media screen and (max-width: 768px) {
+    .tabs {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+        .tabs label {
+            width: 45%; /* Dos por fila */
+            font-size: 14px;
+            margin: 5px;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+    .product-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .product {
+        width: 90%;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .product-img,
+    .product-txt {
+        width: 100%;
+        text-align: center;
+        margin-left: 0;
+    }
+}

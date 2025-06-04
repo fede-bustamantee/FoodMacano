@@ -107,16 +107,26 @@
         }
 
         var swipers = [];
-        document.querySelectorAll('.mySwiper-2').forEach(function (swiperElement, index) {
-            swipers[index] = new Swiper(swiperElement, {
-                slidesPerView: 3,
-                spaceBetween: 30,
-                navigation: {
-                    nextEl: swiperElement.querySelector('.swiper-button-next'),
-                    prevEl: swiperElement.querySelector('.swiper-button-prev'),
-                }
-            });
-        });
+document.querySelectorAll('.mySwiper-2').forEach(function (swiperElement, index) {
+    swipers[index] = new Swiper(swiperElement, {
+        slidesPerView: 3,
+        spaceBetween: 30,
+        navigation: {
+            nextEl: swiperElement.querySelector('.swiper-button-next'),
+            prevEl: swiperElement.querySelector('.swiper-button-prev'),
+        },
+        breakpoints: {
+            0: {
+                slidesPerView: 2, // Móviles
+                spaceBetween: 10
+            },
+            768: {
+                slidesPerView: 3, // Tablets y PC
+                spaceBetween: 30
+            }
+        }
+    });
+});
     };
 </script>
 
